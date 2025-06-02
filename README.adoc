@@ -44,7 +44,7 @@ The Redpanda docs team uses GitHub issues to track, plan, and prioritize tasks. 
 
 You have the option to assign the issue to yourself or leave the assignee field blank. The Redpanda docs team triages all new issues and will allocate a writer if one isn't already assigned.
 
-If you are a Redpanda employee, submit doc issues in the Documentation [Jira board](https://redpandadata.atlassian.net/jira/software/c/projects/DOC/boards/65).
+If you are a Redpanda employee, submit doc issues in the Documentation https://redpandadata.atlassian.net/jira/software/c/projects/DOC/boards/65[Jira board].
 
 === Contribute content
 
