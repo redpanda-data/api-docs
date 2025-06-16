@@ -1,4 +1,4 @@
-# authentication.overlay.yaml
+# Security Schemes Description for Control Plane and Data Plane APIs
 overlay: 1.0.0
 info:
   title: Redpanda Cloud API OAuth Description
