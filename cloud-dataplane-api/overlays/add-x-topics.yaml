@@ -1,6 +1,6 @@
 overlay: 1.0.0
 info:
-  title: Redpanda Cloud API Topics
+  title: Redpanda Cloud Data Plane API Topics
   version: v1
 
 actions:
@@ -12,9 +12,7 @@ actions:
       #   content: quickstart.md
       - title: Authentication
         content: ../../shared/x-topics/about-authentication.md
-      - title: Regions and Usage Tiers
-        content: ../x-topics/cloud-api-regions.md
       - title: Error and Status Codes
-        content: ../x-topics/controlplane-api-error-and-status-codes.md
+        content: ../x-topics/dataplane-api-error-and-status-codes.md
       - title: Deprecation Policy
         content: ../../shared/x-topics/cloud-api-deprecation-policy.md

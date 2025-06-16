@@ -1,3 +1,5 @@
+# Cloud Control Plane API Error and Status Codes
+
 The Redpanda Cloud API uses HTTP codes to indicate the status of a request. The response payload also includes [additional error codes and descriptions](#error-codes-and-details) that provide more detail about why an operation failed.
 
 Example request:
@@ -99,15 +101,3 @@ The Control Plane API returns a set of possible error codes that are mostly dist
 | REASON_REMOTE_REPLICA_SAME_AS_SOURCE | Remote read replica cannot be the same as the source cluster. |
 | REASON_REMOTE_REPLICA_CYCLE | Remote read replica may not list the source cluster as a replica of itself. |
 | REASON_REMOTE_REPLICA_INVALID_DELETION | Source cluster cannot be deleted if it has read replicas. |
-
-### Data Plane API error details
-
-| Reason | Description |
-|--------|-------------|
-| REASON_FEATURE_NOT_CONFIGURED | The feature is not configured. |
-| REASON_CONSOLE_ERROR | Internal Redpanda Console or data plane error. |
-| REASON_REDPANDA_ADMIN_API_ERROR | Redpanda Admin API returned an error. |
-| REASON_KAFKA_API_ERROR | Redpanda or Kafka protocol error. |
-| REASON_KAFKA_CONNECT_API_ERROR | Kafka Connect API error. |
-| REASON_TYPE_MAPPING_ERROR | Type mapping error translating internal or external types to API types. |
-| REASON_SECRET_STORE_ERROR | Cloud provider's secret store manager error. |

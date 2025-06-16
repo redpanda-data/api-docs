@@ -1,7 +1,7 @@
 # authentication.overlay.yaml
 overlay: 1.0.0
 info:
-  title: Redpanda Cloud API Authentication
+  title: Redpanda Cloud API OAuth Description
   version: v1
 
 actions:
