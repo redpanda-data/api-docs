@@ -1,0 +1,10 @@
+# authentication.overlay.yaml
+overlay: 1.0.0
+info:
+  title: Redpanda Cloud API Authentication
+  version: v1
+
+actions:
+  - target: $.components.securitySchemes.auth0
+    update:
+      description: The Cloud APIs use OAuth 2.0 for authentication. You must create a service account in the Cloud UI in order to request an access token. You can use the same access token to authenticate requests to both the Control Plane and Data Plane APIs.

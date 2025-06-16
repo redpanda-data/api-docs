@@ -72,8 +72,8 @@ To build the files, run:
 
 == Versioning
 
-tbd
+
 
 == Repository Structure
 
-tbd
+
