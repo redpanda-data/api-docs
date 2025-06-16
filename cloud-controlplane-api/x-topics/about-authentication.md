@@ -25,3 +25,15 @@ Users with administrative privileges in a Redpanda Cloud organization can create
       -d "client_id=<client-id>" \
       -d "client_secret=<client-secret>"
     ```
+
+    The request response provides an access token that remains valid for one hour.
+
+## Authenticate API requests
+
+You must pass the access token in the authorization header of each API request: 
+
+```bash
+curl -H "Authorization: Bearer $YOUR_TOKEN"
+```
+
+> **Tip:** When using a shell substitution variable for the token, use double quotes to wrap the header value.
