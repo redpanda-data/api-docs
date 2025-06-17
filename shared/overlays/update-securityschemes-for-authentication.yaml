@@ -1,4 +1,4 @@
-# Security Schemes Description for Control Plane and Data Plane APIs
+# This overlay extends the Redpanda Cloud Control Plane and Data Plane API specifications by updating the description of security schemes used for authentication.
 overlay: 1.0.0
 info:
   title: Redpanda Cloud API OAuth Description
