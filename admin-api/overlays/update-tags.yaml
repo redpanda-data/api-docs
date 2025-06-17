@@ -1,0 +1,11 @@
+# This overlay extends the Redpanda Admin API specification by updating descriptions for existing tags.
+overlay: 1.0.0
+info:
+  title: Redpanda Admin API Tags
+  version: v1
+
+actions:
+  - target: $.tags[?(@.name=="Mount and unmount topics")]
+    description: Update mount/unmount tag description
+    update:
+      description: "[Mount and unmount topics](https://docs.redpanda.com/current/manage/mountable-topics/) in Redpanda clusters. Requires that you have [Tiered Storage](https://docs.redpanda.com/current/manage/tiered-storage/) enabled."

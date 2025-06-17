@@ -1,0 +1,25 @@
+# This overlay extends the Redpanda Cloud Control Plane API specification by adding topics to the root of the document.
+overlay: 1.0.0
+info:
+  title: Redpanda Control Plane API Topics
+  version: v1
+
+actions:
+  - target: $
+    description: Add x-topics to the root of the document
+    update:
+      x-topics:
+      # - title: Quickstart
+      #   content: quickstart.md
+      - title: Authentication
+        content: 
+          $ref: ../../shared/x-topics/about-authentication.md
+      - title: Regions and Usage Tiers
+        content: 
+          $ref: ../x-topics/cloud-api-regions.md
+      - title: Error and Status Codes
+        content: 
+          $ref: ../x-topics/controlplane-api-error-and-status-codes.md
+      - title: Deprecation Policy
+        content: 
+          $ref: ../../shared/x-topics/cloud-api-deprecation-policy.md
