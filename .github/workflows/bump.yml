@@ -146,6 +146,8 @@ jobs:
           token: ${{secrets.BUMP_TOKEN}}
           file: ${{ steps.format.outputs.file_path }}
           overlay: ${{ steps.overlays.outputs.overlay_paths }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   api-diff:
     if: ${{ github.event_name == 'pull_request' && fromJson(needs.determine-doc-ids.outputs.matrix).doc_id[0] != null }}
@@ -181,3 +183,5 @@ jobs:
           token: ${{secrets.BUMP_TOKEN}}
           file: ${{ steps.format.outputs.file_path }}
           command: diff
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
