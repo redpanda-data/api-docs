@@ -175,6 +175,40 @@ jobs:
             exit 1
           fi
 
+      - name: Determine overlays
+        id: overlays
+        run: |
+          OVERLAYS=""
+
+          # Function to add overlay path with comma if needed
+          add_overlay() {
+            local overlay_path="$1"
+            if [ -f "$overlay_path" ]; then
+              if [ -n "$OVERLAYS" ]; then
+                OVERLAYS="$OVERLAYS,$overlay_path"
+              else
+                OVERLAYS="$overlay_path"
+              fi
+            fi
+          }
+
+          # Check for doc-specific overlays (list each overlay file individually)
+          if [ -d "${{ matrix.doc_id }}/overlays" ]; then
+            find "${{ matrix.doc_id }}/overlays" -name "*.yaml" -type f | sort | while read overlay_file; do
+              add_overlay "$overlay_file"
+            done
+          fi
+
+          # Check for shared overlays - only apply to cloud APIs
+          if [[ "${{ matrix.doc_id }}" == "cloud-"* ]] && [ -d "shared/overlays" ]; then
+            find "shared/overlays" -name "*.yaml" -type f | sort | while read overlay_file; do
+              add_overlay "$overlay_file"
+            done
+          fi
+
+          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          echo "Using overlays: $OVERLAYS"
+
       - name: Comment pull request with API diff
         uses: bump-sh/github-action@v1
         with:
@@ -182,6 +216,7 @@ jobs:
           doc: ${{ matrix.doc_id }}
           token: ${{secrets.BUMP_TOKEN}}
           file: ${{ steps.format.outputs.file_path }}
+          overlay: ${{ steps.overlays.outputs.overlay_paths }}
           command: diff
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
