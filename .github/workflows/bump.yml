@@ -97,8 +97,6 @@ jobs:
             echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}.yaml" >> $GITHUB_OUTPUT
           elif [ -f "${{ matrix.doc_id }}/${{ matrix.doc_id }}.json" ]; then
             echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}.json" >> $GITHUB_OUTPUT
-          elif [ -f "${{ matrix.doc_id }}/${{ matrix.doc_id }}-api.json" ]; then
-            echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}-api.json" >> $GITHUB_OUTPUT
           else
             echo "No API definition file found for ${{ matrix.doc_id }}"
             exit 1
