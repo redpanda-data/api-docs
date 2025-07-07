@@ -1,0 +1,220 @@
+name: Check and deploy API documentation
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  determine-doc-ids:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
+          else
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
+          fi
+          echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
+          echo "$CHANGED_FILES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Set matrix
+        id: set-matrix
+        run: |
+          DOCS=()
+
+          # Check for changes in API doc folders
+          if echo "$CHANGED_FILES" | grep -q "^admin/"; then
+            DOCS+=("admin")
+          fi
+          if echo "$CHANGED_FILES" | grep -q "^cloud-controlplane/"; then
+            DOCS+=("cloud-controlplane")
+          fi
+          if echo "$CHANGED_FILES" | grep -q "^cloud-dataplane/"; then
+            DOCS+=("cloud-dataplane")
+          fi
+          if echo "$CHANGED_FILES" | grep -q "^schema-registry/"; then
+            DOCS+=("schema-registry")
+          fi
+          if echo "$CHANGED_FILES" | grep -q "^http-proxy/"; then
+            DOCS+=("http-proxy")
+          fi
+          # Check for changes in shared resources that might affect all docs
+          if echo "$CHANGED_FILES" | grep -q "^shared/"; then
+            if [ ${#DOCS[@]} -eq 0 ]; then
+              # If only shared files changed and no specific doc files, include all docs
+              DOCS+=("admin" "cloud-controlplane" "cloud-dataplane" "schema-registry" "http-proxy")
+            fi
+          fi
+
+          # If no files changed in any monitored directories, abort the workflow
+          if [ ${#DOCS[@]} -eq 0 ]; then
+            echo "No relevant files were changed. Exiting workflow."
+            echo "matrix={\"doc_id\":[]}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Convert bash array to JSON array for GitHub Actions matrix
+          JSON_ARRAY=$(printf '"%s",' "${DOCS[@]}" | sed 's/,$//')
+          JSON_MATRIX="{\"doc_id\":[$JSON_ARRAY]}"
+          echo "matrix=$JSON_MATRIX" >> $GITHUB_OUTPUT
+          echo "Created matrix: $JSON_MATRIX"
+
+  deploy-doc:
+    if: ${{ github.event_name == 'push' && fromJson(needs.determine-doc-ids.outputs.matrix).doc_id[0] != null }}
+    needs: determine-doc-ids
+    name: Deploy API documentation on Bump.sh
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.determine-doc-ids.outputs.matrix)}}
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Determine file format
+        id: format
+        run: |
+          if [ -f "${{ matrix.doc_id }}/${{ matrix.doc_id }}.yaml" ]; then
+            echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}.yaml" >> $GITHUB_OUTPUT
+          elif [ -f "${{ matrix.doc_id }}/${{ matrix.doc_id }}.json" ]; then
+            echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}.json" >> $GITHUB_OUTPUT
+          else
+            echo "No API definition file found for ${{ matrix.doc_id }}"
+            exit 1
+          fi
+
+      - name: Determine overlays
+        id: overlays
+        run: |
+          OVERLAYS=""
+
+          # Function to add overlay path with comma if needed
+          add_overlay() {
+            local overlay_path="$1"
+            if [ -f "$overlay_path" ]; then
+              if [ -n "$OVERLAYS" ]; then
+                OVERLAYS="$OVERLAYS,$overlay_path"
+              else
+                OVERLAYS="$overlay_path"
+              fi
+            fi
+          }
+
+          # Check for doc-specific overlays (list each overlay file individually)
+          if [ -d "${{ matrix.doc_id }}/overlays" ]; then
+            find "${{ matrix.doc_id }}/overlays" -name "*.yaml" -type f | sort | while read overlay_file; do
+              add_overlay "$overlay_file"
+            done
+          fi
+
+          # Check for shared overlays - only apply to cloud APIs
+          if [[ "${{ matrix.doc_id }}" == "cloud-"* ]] && [ -d "shared/overlays" ]; then
+            find "shared/overlays" -name "*.yaml" -type f | sort | while read overlay_file; do
+              add_overlay "$overlay_file"
+            done
+          fi
+
+          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          echo "Using overlays: $OVERLAYS"
+
+      - name: Deploy API documentation
+        uses: bump-sh/github-action@v1
+        with:
+          hub: redpanda
+          doc: ${{ matrix.doc_id }}
+          token: ${{secrets.BUMP_TOKEN}}
+          file: ${{ steps.format.outputs.file_path }}
+          overlay: ${{ steps.overlays.outputs.overlay_paths }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  api-diff:
+    if: ${{ github.event_name == 'pull_request' && fromJson(needs.determine-doc-ids.outputs.matrix).doc_id[0] != null }}
+    needs: determine-doc-ids
+    name: Check API diff on Bump.sh
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.determine-doc-ids.outputs.matrix)}}
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Determine file format
+        id: format
+        run: |
+          if [ -f "${{ matrix.doc_id }}/${{ matrix.doc_id }}.yaml" ]; then
+            echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}.yaml" >> $GITHUB_OUTPUT
+          elif [ -f "${{ matrix.doc_id }}/${{ matrix.doc_id }}.json" ]; then
+            echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}.json" >> $GITHUB_OUTPUT
+          elif [ -f "${{ matrix.doc_id }}/${{ matrix.doc_id }}-api.json" ]; then
+            echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}-api.json" >> $GITHUB_OUTPUT
+          else
+            echo "No API definition file found for ${{ matrix.doc_id }}"
+            exit 1
+          fi
+
+      - name: Determine overlays
+        id: overlays
+        run: |
+          OVERLAYS=""
+
+          # Function to add overlay path with comma if needed
+          add_overlay() {
+            local overlay_path="$1"
+            if [ -f "$overlay_path" ]; then
+              if [ -n "$OVERLAYS" ]; then
+                OVERLAYS="$OVERLAYS,$overlay_path"
+              else
+                OVERLAYS="$overlay_path"
+              fi
+            fi
+          }
+
+          # Check for doc-specific overlays (list each overlay file individually)
+          if [ -d "${{ matrix.doc_id }}/overlays" ]; then
+            find "${{ matrix.doc_id }}/overlays" -name "*.yaml" -type f | sort | while read overlay_file; do
+              add_overlay "$overlay_file"
+            done
+          fi
+
+          # Check for shared overlays - only apply to cloud APIs
+          if [[ "${{ matrix.doc_id }}" == "cloud-"* ]] && [ -d "shared/overlays" ]; then
+            find "shared/overlays" -name "*.yaml" -type f | sort | while read overlay_file; do
+              add_overlay "$overlay_file"
+            done
+          fi
+
+          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          echo "Using overlays: $OVERLAYS"
+
+      - name: Comment pull request with API diff
+        uses: bump-sh/github-action@v1
+        with:
+          hub: redpanda
+          doc: ${{ matrix.doc_id }}
+          token: ${{secrets.BUMP_TOKEN}}
+          file: ${{ steps.format.outputs.file_path }}
+          overlay: ${{ steps.overlays.outputs.overlay_paths }}
+          command: diff
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
