@@ -21,6 +21,9 @@ actions:
       - title: Regions and Usage Tiers
         content: 
           $ref: ../x-topics/cloud-api-regions.md
+      - title: Long-running Operations
+        content: 
+          $ref: ../x-topics/long-running-operations.md
       - title: Error and Status Codes
         content: 
           $ref: ../x-topics/controlplane-api-error-and-status-codes.md
