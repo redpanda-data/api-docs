@@ -1,4 +1,4 @@
-# Cloud Data Plane API Error and Status Codes
+# Data Plane API Error and Status Codes
 
 The Redpanda Cloud API uses HTTP codes to indicate the status of a request. The response payload also includes [additional error codes and descriptions](#error-codes-and-details) that provide more detail about why an operation failed.
 
