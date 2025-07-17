@@ -1,0 +1,22 @@
+{
+  "name": "api-docs",
+  "version": "1.0.0",
+  "description": "Redpanda API documentation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redpanda-data/api-docs.git"
+  },
+  "author": "Redpanda Docs Team",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/redpanda-data/api-docs/issues"
+  },
+  "homepage": "https://github.com/redpanda-data/api-docs#readme",
+  "dependencies": {
+    "@redpanda-data/docs-extensions-and-macros": "^4.6.7"
+  }
+}
