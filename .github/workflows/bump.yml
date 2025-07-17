@@ -107,29 +107,29 @@ jobs:
         run: |
           OVERLAYS=""
 
-          # Function to add overlay path with comma if needed
-          add_overlay() {
-            local overlay_path="$1"
-            if [ -f "$overlay_path" ]; then
-              if [ -n "$OVERLAYS" ]; then
-                OVERLAYS="$OVERLAYS,$overlay_path"
-              else
-                OVERLAYS="$overlay_path"
-              fi
-            fi
-          }
-
-          # Check for doc-specific overlays (list each overlay file individually)
+          # Check for doc-specific overlays
           if [ -d "${{ matrix.doc_id }}/overlays" ]; then
-            find "${{ matrix.doc_id }}/overlays" -name "*.yaml" -type f | sort | while read overlay_file; do
-              add_overlay "$overlay_file"
+            for overlay_file in "${{ matrix.doc_id }}/overlays"/*.yaml; do
+              if [ -f "$overlay_file" ]; then
+                if [ -n "$OVERLAYS" ]; then
+                  OVERLAYS="$OVERLAYS,$overlay_file"
+                else
+                  OVERLAYS="$overlay_file"
+                fi
+              fi
             done
           fi
 
           # Check for shared overlays - only apply to cloud APIs
           if [[ "${{ matrix.doc_id }}" == "cloud-"* ]] && [ -d "shared/overlays" ]; then
-            find "shared/overlays" -name "*.yaml" -type f | sort | while read overlay_file; do
-              add_overlay "$overlay_file"
+            for overlay_file in shared/overlays/*.yaml; do
+              if [ -f "$overlay_file" ]; then
+                if [ -n "$OVERLAYS" ]; then
+                  OVERLAYS="$OVERLAYS,$overlay_file"
+                else
+                  OVERLAYS="$overlay_file"
+                fi
+              fi
             done
           fi
 
@@ -178,29 +178,29 @@ jobs:
         run: |
           OVERLAYS=""
 
-          # Function to add overlay path with comma if needed
-          add_overlay() {
-            local overlay_path="$1"
-            if [ -f "$overlay_path" ]; then
-              if [ -n "$OVERLAYS" ]; then
-                OVERLAYS="$OVERLAYS,$overlay_path"
-              else
-                OVERLAYS="$overlay_path"
-              fi
-            fi
-          }
-
-          # Check for doc-specific overlays (list each overlay file individually)
+          # Check for doc-specific overlays
           if [ -d "${{ matrix.doc_id }}/overlays" ]; then
-            find "${{ matrix.doc_id }}/overlays" -name "*.yaml" -type f | sort | while read overlay_file; do
-              add_overlay "$overlay_file"
+            for overlay_file in "${{ matrix.doc_id }}/overlays"/*.yaml; do
+              if [ -f "$overlay_file" ]; then
+                if [ -n "$OVERLAYS" ]; then
+                  OVERLAYS="$OVERLAYS,$overlay_file"
+                else
+                  OVERLAYS="$overlay_file"
+                fi
+              fi
             done
           fi
 
           # Check for shared overlays - only apply to cloud APIs
           if [[ "${{ matrix.doc_id }}" == "cloud-"* ]] && [ -d "shared/overlays" ]; then
-            find "shared/overlays" -name "*.yaml" -type f | sort | while read overlay_file; do
-              add_overlay "$overlay_file"
+            for overlay_file in shared/overlays/*.yaml; do
+              if [ -f "$overlay_file" ]; then
+                if [ -n "$OVERLAYS" ]; then
+                  OVERLAYS="$OVERLAYS,$overlay_file"
+                else
+                  OVERLAYS="$overlay_file"
+                fi
+              fi
             done
           fi
 
