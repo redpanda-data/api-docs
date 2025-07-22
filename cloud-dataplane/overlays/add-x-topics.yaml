@@ -9,14 +9,18 @@ actions:
     description: Add x-topics to the root of the document
     update:
       x-topics:
-      # - title: Quickstart
-      #   content: quickstart.md
+      - title: Quickstart
+        content:
+          $ref: ../x-topics/quickstart.md
+      - title: Cloud API Overview
+        content: 
+          $ref: ../../shared/x-topics/cloud-api-overview.md
       - title: Authentication
         content: 
           $ref: ../../shared/x-topics/about-authentication.md
       - title: Error and Status Codes
         content: 
-          $ref: ../x-topics/dataplane-api-error-and-status-codes.md
+          $ref: ../x-topics/error-and-status-codes.md
       - title: Deprecation Policy
         content: 
           $ref: ../../shared/x-topics/cloud-api-deprecation-policy.md

@@ -1,12 +1,11 @@
-# Cloud Data Plane API Error and Status Codes
+# Data Plane API Error and Status Codes
 
 The Redpanda Cloud API uses HTTP codes to indicate the status of a request. The response payload also includes [additional error codes and descriptions](#error-codes-and-details) that provide more detail about why an operation failed.
 
 Example request:
 
 ```bash
-curl https://api.redpanda.com/v1/clusters | jq
-```
+curl https://<dataplane_api_url>/topics | jq
 
 Example response:
 
@@ -18,9 +17,8 @@ Example response:
     {
       "@type": "google.rpc.ErrorInfo",
       "reason": "REASON_NO_TOKEN",
-      "domain": "redpanda.com/controlplane",
+      "domain": "redpanda.com/dataplane",
       "metadata": {}
-    },
     {
       "@type": "google.rpc.Help",
       "links": [
