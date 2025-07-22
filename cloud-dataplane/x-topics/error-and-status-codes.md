@@ -17,7 +17,6 @@ Example response:
     {
       "@type": "google.rpc.ErrorInfo",
       "reason": "REASON_NO_TOKEN",
-      "reason": "REASON_NO_TOKEN",
       "domain": "redpanda.com/dataplane",
       "metadata": {}
     {
