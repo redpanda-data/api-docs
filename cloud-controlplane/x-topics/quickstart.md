@@ -23,9 +23,7 @@ You can issue requests against the Control Plane API from your browser when view
   1. Enter the `client_id` and `client_secret` values you generated using the service account.
   1. For `audience`, select `cloudv2-production.redpanda.cloud`. 
 1. Click **Send Request** on the code example to the right.
-
-The Response block should populate with an `access_token` value. Copy the string value without the quotes. To you make your next request on a different endpoint in the API Explorer, add the access token in the Authentication field.
-
+The Response block should populate with an `access_token` value. Copy the string value without the quotes. To make your next request to a different endpoint in the API Explorer, add the access token in the Authentication field.
 > **Warning:** API requests from this page are executed against your actual environment and data, not a sandbox.
 
 ## Create a new cluster

@@ -11,7 +11,7 @@ actions:
       x-topics:
       - title: Quickstart
         content:
-          $ref: ../x-topics/controlplane-api-quickstart.md
+          $ref: ../x-topics/quickstart.md
       - title: Cloud API Overview
         content: 
           $ref: ../../shared/x-topics/cloud-api-overview.md
@@ -20,13 +20,13 @@ actions:
           $ref: ../../shared/x-topics/about-authentication.md
       - title: Regions and Usage Tiers
         content: 
-          $ref: ../x-topics/cloud-api-regions.md
+          $ref: ../x-topics/cloud-regions.md
       - title: Long-running Operations
         content: 
           $ref: ../x-topics/long-running-operations.md
       - title: Error and Status Codes
         content: 
-          $ref: ../x-topics/controlplane-api-error-and-status-codes.md
+          $ref: ../x-topics/error-and-status-codes.md
       - title: Deprecation Policy
         content: 
           $ref: ../../shared/x-topics/cloud-api-deprecation-policy.md

@@ -5,8 +5,7 @@ The Redpanda Cloud API uses HTTP codes to indicate the status of a request. The 
 Example request:
 
 ```bash
-curl https://api.redpanda.com/v1/clusters | jq
-```
+curl https://<dataplane_api_url>/topics | jq
 
 Example response:
 
@@ -18,9 +17,9 @@ Example response:
     {
       "@type": "google.rpc.ErrorInfo",
       "reason": "REASON_NO_TOKEN",
-      "domain": "redpanda.com/controlplane",
+      "reason": "REASON_NO_TOKEN",
+      "domain": "redpanda.com/dataplane",
       "metadata": {}
-    },
     {
       "@type": "google.rpc.Help",
       "links": [
