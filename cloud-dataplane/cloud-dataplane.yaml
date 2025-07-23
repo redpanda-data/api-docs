@@ -1,7 +1,7 @@
 components:
   schemas:
     ACL.Operation:
-      description: The operation that is allowed or denied (e.g. READ).
+      description: This is a test of the new diff preview functionality.
       enum:
         - OPERATION_ANY
         - OPERATION_ALL
