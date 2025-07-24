@@ -35,6 +35,7 @@ jobs:
           token: ${{ env.ACTIONS_BOT_TOKEN }}
 
       - name: Get commit SHA and build URL
+        working-directory: redpanda-docs
         id: commit-info
         run: |
           COMMIT_SHA="${{ github.event.client_payload.commit_sha }}"
@@ -43,10 +44,12 @@ jobs:
           echo "COMMIT_URL=${COMMIT_URL}" >> $GITHUB_ENV
 
       - name: Install dependencies
+        working-directory: redpanda-docs
         run: |
           npm install
 
       - name: Run the script and save the output
+        working-directory: redpanda-docs
         run: |
           npx doc-tools fetch -o redpanda-data -r cloudv2 -p proto/gen/openapi/openapi.controlplane.prod.yaml -d ../../modules/ROOT/attachments cloud-controlplane-api.yaml
           npx doc-tools fetch -o redpanda-data -r cloudv2 -p proto/gen/openapi/openapi.dataplane.prod.yaml -d ../../modules/ROOT/attachments cloud-dataplane-api.yaml
