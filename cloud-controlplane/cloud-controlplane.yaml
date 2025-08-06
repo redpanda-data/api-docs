@@ -3356,7 +3356,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-      summary: List Clusters
+      summary: List clusters
       tags:
         - Clusters
     post:
@@ -3445,7 +3445,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-      summary: Create Cluster
+      summary: Create cluster
       tags:
         - Clusters
   /v1/clusters/{cluster.id}:
@@ -3563,7 +3563,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-      summary: Update Cluster
+      summary: Update cluster
       tags:
         - Clusters
   /v1/clusters/{id}:
@@ -3606,7 +3606,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-      summary: Delete Cluster
+      summary: Delete cluster
       tags:
         - Clusters
     get:
@@ -3696,7 +3696,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-      summary: Get Cluster
+      summary: Get cluster
       tags:
         - Clusters
   /v1/networks:
@@ -3769,7 +3769,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-      summary: List Networks
+      summary: List networks
       tags:
         - Networks
     post:
@@ -3826,7 +3826,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-      summary: Create Network
+      summary: Create network
       tags:
         - Networks
   /v1/networks/{id}:
@@ -3869,7 +3869,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-      summary: Delete Network
+      summary: Delete network
       tags:
         - Networks
     get:
@@ -3916,7 +3916,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-      summary: Get Network
+      summary: Get network
       tags:
         - Networks
   /v1/operations:
@@ -3988,7 +3988,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Operations
+      summary: List operations
       tags:
         - Operations
   /v1/operations/{id}:
@@ -4221,7 +4221,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get Operation
+      summary: Get operation
       tags:
         - Operations
   /v1/organizations/available:
@@ -4433,7 +4433,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Reach out to support.
-      summary: List Resource Groups
+      summary: List resource groups
       tags:
         - Resource Groups
     post:
@@ -4468,7 +4468,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Reach out to support.
-      summary: Create Resource Group
+      summary: Create resource group
       tags:
         - Resource Groups
   /v1/resource-groups/{id}:
@@ -4495,7 +4495,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Not Found
-      summary: Delete Resource Group
+      summary: Delete resource group
       tags:
         - Resource Groups
     get:
@@ -4538,7 +4538,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Reach out to support.
-      summary: Get Resource Group
+      summary: Get resource group
       tags:
         - Resource Groups
   /v1/resource-groups/{resource_group.id}:
@@ -4589,7 +4589,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Reach out to support.
-      summary: Update Resource Group
+      summary: Update resource group
       tags:
         - Resource Groups
   /v1/role-bindings:
@@ -4654,7 +4654,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Role Bindings
+      summary: List role bindings
       tags:
         - Control Plane Role Bindings
     post:
@@ -4687,7 +4687,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Create Role Binding
+      summary: Create role binding
       tags:
         - Control Plane Role Bindings
   /v1/role-bindings/{id}:
@@ -4718,7 +4718,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Delete Role Binding
+      summary: Delete role binding
       tags:
         - Control Plane Role Bindings
     get:
@@ -4755,7 +4755,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get Role Binding
+      summary: Get role binding
       tags:
         - Control Plane Role Bindings
   /v1/serverless/clusters:
@@ -4834,7 +4834,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Serverless Clusters
+      summary: List Serverless clusters
       tags:
         - Serverless Clusters
     post:
@@ -4879,7 +4879,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Create Serverless Cluster
+      summary: Create Serverless cluster
       tags:
         - Serverless Clusters
   /v1/serverless/clusters/{id}:
@@ -4918,7 +4918,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Delete Serverless Cluster
+      summary: Delete Serverless cluster
       tags:
         - Serverless Clusters
     get:
@@ -4960,7 +4960,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get Serverless Cluster
+      summary: Get Serverless cluster
       tags:
         - Serverless Clusters
   /v1/serverless/region:
@@ -5002,7 +5002,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get ServerlessRegion
+      summary: Get Serverless region
       tags:
         - Serverless Regions
   /v1/serverless/regions:
@@ -5055,7 +5055,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List ServerlessRegions
+      summary: List Serverless regions
       tags:
         - Serverless Regions
   /v1/service-accounts:
@@ -5095,7 +5095,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Service Accounts
+      summary: List service accounts
       tags:
         - Control Plane Service Accounts
     post:
@@ -5128,7 +5128,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Create Service Account
+      summary: Create service account
       tags:
         - Control Plane Service Accounts
   /v1/service-accounts/{id}:
@@ -5159,7 +5159,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Delete Service Account
+      summary: Delete service account
       tags:
         - Control Plane Service Accounts
     get:
@@ -5196,7 +5196,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get Service Account
+      summary: Get service account
       tags:
         - Control Plane Service Accounts
     patch:
@@ -5240,7 +5240,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Update Service Account
+      summary: Update service account
       tags:
         - Control Plane Service Accounts
   /v1/service-accounts/{id}/credentials:
@@ -5278,7 +5278,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get Service Account Credentials
+      summary: Get service account credentials
       tags:
         - Control Plane Service Accounts
   /v1/service-accounts/{id}/rotate-secret:
@@ -5316,7 +5316,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Rotate Service Account Secret
+      summary: Rotate service account secret
       tags:
         - Control Plane Service Accounts
   /v1/user-invites:
@@ -5352,9 +5352,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List User Invites
+      summary: List user invites
       tags:
-        - User invites
+        - User Invites
     post:
       description: Create a Redpanda Cloud user invite.
       operationId: UserInviteService_CreateUserInvite
@@ -5384,9 +5384,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Create User Invite
+      summary: Create user invite
       tags:
-        - User invites
+        - User Invites
   /v1/user-invites/{id}:
     delete:
       description: Delete Redpanda Cloud User from the organization.
@@ -5417,7 +5417,7 @@ paths:
           description: An unexpected error response.
       summary: Delete User from the organization
       tags:
-        - User invites
+        - User Invites
     get:
       description: Get Redpanda user invite.
       operationId: UserInviteService_GetUserInvite
@@ -5452,9 +5452,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get User Invite
+      summary: Get user invite
       tags:
-        - User invites
+        - User Invites
     patch:
       description: Update a Redpanda Cloud user invite.
       operationId: UserInviteService_UpdateUserInvite
@@ -5496,9 +5496,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Update UserInvite
+      summary: Update user invite
       tags:
-        - User invites
+        - User Invites
   /v1/users:
     get:
       description: List Redpanda Cloud Users.
@@ -5536,7 +5536,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Users
+      summary: List users
       tags:
         - Control Plane Users
   /v1/users/{id}:
@@ -5567,7 +5567,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Delete User
+      summary: Delete user
       tags:
         - Control Plane Users
     get:
@@ -5608,7 +5608,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get User
+      summary: Get user
       tags:
         - Control Plane Users
 security:
@@ -5641,4 +5641,4 @@ tags:
   - description: Manage Redpanda Cloud organization users.
     name: Control Plane Users
   - description: Manage user invites for your organization.
-    name: User invites
+    name: User Invites
