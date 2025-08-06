@@ -1780,6 +1780,7 @@ components:
 info:
   title: Redpanda Cloud Data Plane API
   version: v1
+  description: 'Use the Data Plane API to manage topics, ACLs, and connectors within each cluster.'
 openapi: 3.0.3
 paths:
   /v1/acls:
