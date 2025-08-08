@@ -572,7 +572,7 @@ components:
         schema_registry:
           $ref: '#/components/schemas/SchemaRegistrySpec'
         throughput_tier:
-          description: '[Throughput tier](https://docs.redpanda.com/api/cloud-controlplane-api/#api-description) of the cluster. See also: Redpanda Cloud [Dedicated tiers](https://docs.redpanda.com/redpanda-cloud/reference/tiers/dedicated-tiers/#dedicated-usage-tiers) and [BYOC tiers](https://docs.redpanda.com/redpanda-cloud/reference/tiers/byoc-tiers/).'
+          description: '[Throughput tier](https://docs.redpanda.com/api/dpc/cloud-controlplane/topic/topic-regions-and-usage-tiers) of the cluster. See also: Redpanda Cloud [Dedicated tiers](https://docs.redpanda.com/redpanda-cloud/reference/tiers/dedicated-tiers/#dedicated-usage-tiers) and [BYOC tiers](https://docs.redpanda.com/redpanda-cloud/reference/tiers/byoc-tiers/).'
           type: string
         type:
           $ref: '#/components/schemas/Cluster.Type'
@@ -1441,7 +1441,7 @@ components:
           $ref: '#/components/schemas/User'
       type: object
     HTTPProxySpec:
-      description: Cluster's HTTP Proxy properties. See [Use Redpanda with the HTTP Proxy API](https://docs.redpanda.com/redpanda-cloud/develop/http-proxy/) and the [HTTP Proxy API reference](https://docs.redpanda.com/api/pandaproxy-rest) for more information.
+      description: Cluster's HTTP Proxy properties. See [Use Redpanda with the HTTP Proxy API](https://docs.redpanda.com/redpanda-cloud/develop/http-proxy/) and the [HTTP Proxy API reference](https://docs.redpanda.com/api/doc/http-proxy) for more information.
       properties:
         mtls:
           $ref: '#/components/schemas/MTLSSpec'
@@ -2428,7 +2428,7 @@ components:
       title: SASL configuration
       type: object
     SchemaRegistrySpec:
-      description: Cluster's Schema Registry properties. See the [Schema Registry overview](https://docs.redpanda.com/redpanda-cloud/manage/schema-reg/schema-reg-overview/) and the [Schema Registry API reference](https://docs.redpanda.com/api/pandaproxy-schema-registry) for more information.
+      description: Cluster's Schema Registry properties. See the [Schema Registry overview](https://docs.redpanda.com/redpanda-cloud/manage/schema-reg/schema-reg-overview/) and the [Schema Registry API reference](https://docs.redpanda.com/api/doc/schema-registry) for more information.
       properties:
         mtls:
           $ref: '#/components/schemas/MTLSSpec'
@@ -3360,7 +3360,7 @@ paths:
       tags:
         - Clusters
     post:
-      description: Create a Redpanda cluster. Returns a long-running operation. See [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/) for more information. Call `GET /v1/operations/{id}` to check operation state. Refer to [Regions](https://docs.redpanda.com/api/cloud-controlplane-api.html#api-description) for the list of available regions, zones, and tiers combinations for each cloud provider. For BYOC clusters, follow additional steps to [create a BYOC cluster](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-byoc-controlplane-api/#additional-steps-to-create-a-byoc-cluster).
+      description: Create a Redpanda cluster. Returns a long-running operation. See [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/) for more information. Call `GET /v1/operations/{id}` to check operation state. Refer to [Regions](https://docs.redpanda.com/api/dpc/cloud-controlplane/topic/topic-regions-and-usage-tiers) for the list of available regions, zones, and tiers combinations for each cloud provider. For BYOC clusters, follow additional steps to [create a BYOC cluster](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-byoc-controlplane-api/#additional-steps-to-create-a-byoc-cluster).
       operationId: ClusterService_CreateCluster
       requestBody:
         content:
