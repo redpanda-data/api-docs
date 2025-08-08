@@ -1,6 +1,6 @@
 # Redpanda Cloud Control Plane API Quickstart
 
-The following steps describe how to authenticate with the Control API and create a new Redpanda cluster. For more information on the Control Plane API, see the Redpanda Cloud API Overview.
+The following steps describe how to authenticate with the Control API and create a new Redpanda cluster. For more information on the Control Plane API, see the Cloud API Overview.
 
 > **Note:** Redpanda Cloud uses a control plane and data plane architecture. 
 To see the available endpoints for managing resources within your clusters, such as topics, users, access control lists (ACLs), and connectors, see the Data Plane API Reference.
@@ -14,15 +14,15 @@ To use the Control Plane API:
 
 **BYOC only**: To create a BYOC cluster, [install or update `rpk`](https://docs.redpanda.com/redpanda-cloud/manage/rpk/rpk-install).
 
-## Create a new cluster
-
-> **Warning:** API requests from this page are executed against your actual environment and data, not a sandbox.
-
 ### Authenticate to the API from API Explorer
 
-To make API requests in your browser, you must obtain an access token. You can do so by clicking **Get token** on the first API request you intend to make. Before you can create a new cluster, your first step is to create a new resource group, and then create a network, if you don't already have a resource group or network you want to use.
+To make API requests in your browser, you must obtain an access token. You can do so by clicking **Get token** on the API endpoint you want to call.
 
 If you successfully retrieve an access token, it is valid for one hour. You can use the same token in requests to both Control Plane and Data Plane API endpoints, for as long as the token is valid.
+
+## Create a new cluster
+
+> **Warning:** API requests from the API Explorer are executed against your actual environment and data, not a sandbox.
 
 ### BYOC or Dedicated
 
@@ -67,9 +67,16 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 
 ## Next steps: try the Data Plane APIs
 
-1. Retrieve your cluster's Data Plane API URL by making a **Get cluster** (BYOC, Dedicated) or **Get Serverless cluster** (Serverless) request in the API Explorer.
+1. Retrieve your cluster's data plane API URL by making a **Get cluster** (BYOC, Dedicated) or **Get Serverless cluster** (Serverless) request in the API Explorer.
 1. Save the value of `dataplane_api.url` from the response body.
 1. From the **Redpanda APIs** selector, go to **Cloud Data Plane API**.
 1. Select an operation, for example **Create topic** or **List users**. 
-1. In the URL field, add the Data Plane API URL. You can now make Data Plane API requests to your target cluster.
+1. In the URL field, add the data plane API URL. You can now make Data Plane API requests to your target cluster.
 
+See also: [Data Plane API Quickstart](https://docs.redpanda.com/api/doc/cloud-dataplane/topic/topic-quickstart)
+
+## Suggested reading
+
+- Learn about Redpanda Cloud [network security and connectivity](https://docs.redpanda.com/redpanda-cloud/networking/) for BYOC and Dedicated clusters.
+- Manage [authentication and authorization](https://docs.redpanda.com/redpanda-cloud/security/authorization/) in Redpanda Cloud.
+- [Create a Kafka client or generate a sample application](https://docs.redpanda.com/redpanda-cloud/get-started/cluster-types/serverless/#connect-with-your-cluster) to interact with your Serverless cluster.
