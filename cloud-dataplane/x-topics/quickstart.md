@@ -1,5 +1,3 @@
-# Redpanda Cloud Data Plane API Quickstart
-
 The following steps describe how to authenticate with the Data Plane APIs and create a new topic. For more information on the Data Plane APIs, see the Cloud API Overview.
 
 > **Note:** Redpanda Cloud uses a control plane and data plane architecture. To see the available endpoints for managing your clusters, networks, and resource groups, see the Control Plane API Reference.

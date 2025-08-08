@@ -1,5 +1,3 @@
-# Redpanda Cloud API Overview
-
 The Redpanda Cloud API is a collection of REST APIs that allow you to interact with different parts of Redpanda Cloud. You can call the API endpoints directly, or use tools like Terraform or Python scripts to automate cluster management and manage Redpanda Cloud resources.
 
 ## Requirements
@@ -79,3 +77,4 @@ When an endpoint returns a list containing more items than can be returned in a 
 ## Versioning and deprecation
 
 The Cloud API Deprecation Policy outlines the process for phasing out an API version or specific features within an API. See Deprecation Policy for details.
+

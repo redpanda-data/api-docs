@@ -1,5 +1,3 @@
-# Redpanda Cloud Control Plane API Quickstart
-
 The following steps describe how to authenticate with the Control API and create a new Redpanda cluster. For more information on the Control Plane API, see the Cloud API Overview.
 
 > **Note:** Redpanda Cloud uses a control plane and data plane architecture. 
