@@ -34,7 +34,7 @@ The quickest ways to produce to and consume from the topic are to use [`rpk`](ht
 For example, to use `rpk` to produce to a topic named `test-topic`, run:
 
 ```
-echo "hello" | rpk topic produce test-topic
+echo "hello world" | rpk topic produce test-topic
 ```
 
 ## Suggested reading
