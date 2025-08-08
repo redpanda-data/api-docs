@@ -1,5 +1,3 @@
-# Long-running Operations in Redpanda Cloud
-
 Some Cloud API endpoints do not directly return the resource itself, but instead return an operation. These operations may be long-running, meaning they may not complete immediately and can take several seconds or minutes to finish. Examples include creating or deleting clusters and networks, and updating cluster properties. Long-running operations are asynchronous and return a response indicating that the request has been accepted and is being processed.
 
 When you initiate a long-running operation, the API responds with a status code such as `202 Accepted` and includes an operation ID. The following is an example response of Create Cluster:

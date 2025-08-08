@@ -1,6 +1,4 @@
-# Redpanda Cloud Control Plane API Quickstart
-
-The following steps describe how to authenticate with the Control API and create a new Redpanda cluster. For more information on the Control Plane API, see the Redpanda Cloud API Overview.
+The following steps describe how to authenticate with the Control API and create a new Redpanda cluster. For more information on the Control Plane API, see the Cloud API Overview.
 
 > **Note:** Redpanda Cloud uses a control plane and data plane architecture. 
 To see the available endpoints for managing resources within your clusters, such as topics, users, access control lists (ACLs), and connectors, see the Data Plane API Reference.
@@ -12,28 +10,32 @@ To use the Control Plane API:
 1. You must be a customer with an existing organization in Redpanda Cloud.
 2. You can only use one organization for authentication.
 
+**BYOC only**: To create a BYOC cluster, [install or update `rpk`](https://docs.redpanda.com/redpanda-cloud/manage/rpk/rpk-install).
+
 ### Authenticate to the API from API Explorer
 
-You can issue requests against the Control Plane API from your browser when viewing the API Explorer:
+To make API requests in your browser, you must obtain an access token. You can do so by clicking **Get token** on the API endpoint you want to call.
 
-1. In the Redpanda Cloud UI, create a [service account (client)](https://cloud.redpanda.com/organization-iam?tab=service-accounts). Save the client ID and secret.
-1. Go to the "Get access token" endpoint and click **Run in API Explorer**.
-1. In the request body:
-  1. For `grant_type`, select `client_credentials`.
-  1. Enter the `client_id` and `client_secret` values you generated using the service account.
-  1. For `audience`, select `cloudv2-production.redpanda.cloud`. 
-1. Click **Send Request** on the code example to the right.
-The Response block should populate with an `access_token` value. Copy the string value without the quotes. To make your next request to a different endpoint in the API Explorer, add the access token in the Authentication field.
-> **Warning:** API requests from this page are executed against your actual environment and data, not a sandbox.
+If you successfully retrieve an access token, it is valid for one hour. You can use the same token in requests to both Control Plane and Data Plane API endpoints, for as long as the token is valid.
 
 ## Create a new cluster
 
+> **Warning:** API requests from the API Explorer are executed against your actual environment and data, not a sandbox.
+
 ### BYOC or Dedicated
 
-1. Create a resource group by making a Create Resource Group request. The response returns a resource group ID. Pass this ID later when you call the Create Cluster endpoint.
-1. Create a network by making a Create Network request. Note that this endpoint returns a long-running operation. The response returns a network ID in `resource_id`. Pass this ID when you call the Create Cluster endpoint.  
-1. When the Create Network operation is complete, create a cluster by making a Create Cluster request. Note that this endpoint returns a long-running operation.
-1. For BYOC, run `rpk cloud byoc` in the shell, passing the `metadata.cluster_id` from the Create Cluster response as a flag:
+1. In the page header, click **API Explorer**.
+1. On the **Choose an operation** dropdown, select **Create resource group**.
+1. Click **Get token**. You may be prompted to log in to the Redpanda Cloud UI. After you log in, the browser automatically redirects you back to the Create resource group endpoint in the API Explorer.
+1. Prepare your Create resource group request.
+  1. Under **Body**, click **+ Add** and provide a name for your resource group. A resource group is a container to organize your Redpanda Cloud resources, such as clusters and networks.
+  1. Click **Send request**. If successful, the response returns a resource group ID. Pass this ID when you make a Create network request. 
+1. On the dropdown, select **Create network**.
+1. Prepare your Create network request.
+  1. Include the ID of the resource group you created in the previous step. 
+  1. Click **Send request**. Note that this endpoint returns a long-running operation. The response returns a network ID in `metadata.network_id`. Pass this ID when you call the Create Cluster endpoint.To check the operation state, make a **Get operation** request with the `operation.id`.  
+1. When the Create network operation is complete, make a Create cluster request. Use the resource group and network IDs you just created. Note that this endpoint also returns a long-running operation.
+1. For BYOC, run `rpk cloud byoc` in the shell, passing the `metadata.cluster_id` from the Create cluster response as a flag:
 
    **AWS:**
    ```bash
@@ -50,7 +52,30 @@ The Response block should populate with an `access_token` value. Copy the string
 
 ### Serverless
 
-1. Make a Get Resource Group request to retrieve the default resource group ID. Pass this ID later when you call the Create Serverless Cluster endpoint.
-1. Make a Get Serverless Regions request to see available regions.
-1. Create a cluster by making a Create Serverless Cluster request, passing in the default resource group ID and desired cloud region in the request.
+1. In the page header, click **API Explorer**.
+1. On the **Choose an operation** dropdown, select **Create resource group**.
+1. Click **Get token**. You may be prompted to log in to the Redpanda Cloud UI. After you log in, the browser automatically redirects you back to the Create resource group endpoint in the API Explorer.
+1. Prepare your Create resource group request.
+  1. Under **Body**, click **+ Add** and provide a name for your resource group. A resource group is a container to organize your Redpanda Cloud resources, such as clusters and networks.
+  1. Click **Send request**. If successful, the response returns a resource group ID. Pass this ID later when you make a Create Serverless cluster request. 
+1. On the dropdown, select **Create Serverless cluster**. 
+1. Prepare your Create Serverless cluster request.
+  1. Make a Get Serverless Regions request to see available regions.
+  1. In the request body, use the resource group ID and desired cloud region.
+  1. Click **Send request**. Note that this endpoint returns a long-running operation. The response returns a Serverless cluster ID in `metadata.cluster_id`. To check the operation state, make a **Get operation** request with the `operation.id`.
 
+## Next steps: try the Data Plane APIs
+
+1. Retrieve your cluster's data plane API URL by making a **Get cluster** (BYOC, Dedicated) or **Get Serverless cluster** (Serverless) request in the API Explorer.
+1. Save the value of `dataplane_api.url` from the response body.
+1. From the **Redpanda APIs** selector, go to **Cloud Data Plane API**.
+1. Select an operation, for example **Create topic** or **List users**. 
+1. In the URL field, add the data plane API URL. You can now make Data Plane API requests to your target cluster.
+
+See also: [Data Plane API Quickstart](https://docs.redpanda.com/api/doc/cloud-dataplane/topic/topic-quickstart)
+
+## Suggested reading
+
+- Learn about Redpanda Cloud [network security and connectivity](https://docs.redpanda.com/redpanda-cloud/networking/) for BYOC and Dedicated clusters.
+- Manage [authentication and authorization](https://docs.redpanda.com/redpanda-cloud/security/authorization/) in Redpanda Cloud.
+- [Create a Kafka client or generate a sample application](https://docs.redpanda.com/redpanda-cloud/get-started/cluster-types/serverless/#connect-with-your-cluster) to interact with your Serverless cluster.
