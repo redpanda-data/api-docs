@@ -42,6 +42,6 @@ echo "hello" | rpk topic produce test-topic
 ## Suggested reading
 
 - Use the Data Plane APIs to do [common tasks](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-dataplane-api) in your cluster such as create a user or use Redpanda Connect.
-- [`rpk topic produce`](https://docs.redpanda.com/redpanda-cloud/reference/rpk/rpk-topic/rpk-topic-produce/)
-- [`rpk topic consume`](https://docs.redpanda.com/redpanda-cloud/reference/rpk/rpk-topic/rpk-topic-consume/)
+- See the [`rpk topic produce`](https://docs.redpanda.com/redpanda-cloud/reference/rpk/rpk-topic/rpk-topic-produce/) reference.
+- See the [`rpk topic consume`](https://docs.redpanda.com/redpanda-cloud/reference/rpk/rpk-topic/rpk-topic-consume/) reference.
 

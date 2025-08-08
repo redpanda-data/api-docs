@@ -31,11 +31,11 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 1. Click **Get token**. You may be prompted to log in to the Redpanda Cloud UI. After you log in, the browser automatically redirects you back to the Create resource group endpoint in the API Explorer.
 1. Prepare your Create resource group request.
   1. Under **Body**, click **+ Add** and provide a name for your resource group. A resource group is a container to organize your Redpanda Cloud resources, such as clusters and networks.
-  1. Click **Send Request**. If successful, the response returns a resource group ID. Pass this ID when you make a Create network request. 
+  1. Click **Send request**. If successful, the response returns a resource group ID. Pass this ID when you make a Create network request. 
 1. On the dropdown, select **Create network**.
 1. Prepare your Create network request.
   1. Include the ID of the resource group you created in the previous step. 
-  1. Click **Send Request**. Note that this endpoint returns a long-running operation. The response returns a network ID in `metadata.network_id`. Pass this ID when you call the Create Cluster endpoint.To check the operation state, make a **Get operation** request with the `operation.id`.  
+  1. Click **Send request**. Note that this endpoint returns a long-running operation. The response returns a network ID in `metadata.network_id`. Pass this ID when you call the Create Cluster endpoint.To check the operation state, make a **Get operation** request with the `operation.id`.  
 1. When the Create network operation is complete, make a Create cluster request. Use the resource group and network IDs you just created. Note that this endpoint also returns a long-running operation.
 1. For BYOC, run `rpk cloud byoc` in the shell, passing the `metadata.cluster_id` from the Create cluster response as a flag:
 
@@ -59,11 +59,12 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 1. Click **Get token**. You may be prompted to log in to the Redpanda Cloud UI. After you log in, the browser automatically redirects you back to the Create resource group endpoint in the API Explorer.
 1. Prepare your Create resource group request.
   1. Under **Body**, click **+ Add** and provide a name for your resource group. A resource group is a container to organize your Redpanda Cloud resources, such as clusters and networks.
-  1. Click **Send Request**. If successful, the response returns a resource group ID. Pass this ID later when you make a Create Serverless cluster request. 
+  1. Click **Send request**. If successful, the response returns a resource group ID. Pass this ID later when you make a Create Serverless cluster request. 
 1. On the dropdown, select **Create Serverless cluster**. 
 1. Prepare your Create Serverless cluster request.
   1. Make a Get Serverless Regions request to see available regions.
   1. In the request body, use the resource group ID and desired cloud region.
+  1. Click **Send request**. Note that this endpoint returns a long-running operation. The response returns a Serverless cluster ID in `metadata.cluster_id`. To check the operation state, make a **Get operation** request with the `operation.id`.
 
 ## Next steps: try the Data Plane APIs
 
