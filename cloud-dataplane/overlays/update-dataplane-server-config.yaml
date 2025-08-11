@@ -1,0 +1,21 @@
+# Overlay to update server configuration for Bump API Explorer compatibility.
+# This updates the server URL, variable description to better match usage in API Explorer.
+
+overlay: 1.0.0
+info:
+  title: Update Server Configuration
+  version: 1.0.0
+actions:
+  # Update only the server URL template
+  - target: "$.servers[0].url"
+    update: "https://{dataplane.api.subdomain}.cloud.redpanda.com"
+  
+  # Update only the variables section
+  - target: "$.servers[0].variables"
+    update:
+      dataplane.api.subdomain:
+        default: "dataplane.api.subdomain"
+        description: |-
+          From the `dataplane_api.url` value in the Control Plane API response, extract the subdomain (the part between `https://` and `.cloud.redpanda.com`). Enter this value in the Data Plane API URL field.
+          
+          Example: If the URL is `https://api-a4cb21.ck09mi9c4vs17hng9gig.fmc.prd.cloud.redpanda.com`, enter `api-a4cb21.ck09mi9c4vs17hng9gig.fmc.prd`

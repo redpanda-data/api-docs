@@ -4976,14 +4976,14 @@ security:
   - auth0: []
 servers:
   - description: Data Plane API
-    url: 'https://{dataplane.api.subdomain}.cloud.redpanda.com'
+    url: '{dataplane_api_url}'
     variables:
-      dataplane.api.subdomain:
-        default: "dataplane.api.subdomain"
+      dataplane_api_url:
+        default: https://{dataplane_api_url}
         description: |-
-          Find the Data Plane API base URL of a cluster by calling the Get Cluster endpoint of the Control Plane API. The dataplane_api.url value is returned in the response body. The subdomain is unique to each cluster.<br><br>
-          Example (Dedicated): "https://api-a4cb21.ck09mi9c4vs17hng9gig.fmc.prd.cloud.redpanda.com"<br>
-          Example (BYOC): "https://api-a4cb21.ck09mi9c4vs17hng9gig.byoc.prd.cloud.redpanda.com"
+          Find the Data Plane API base URL of a cluster by calling the Get Cluster endpoint of the Control Plane API. The dataplane_api.url field is returned in the response body.<br><br>
+          					Example (Dedicated): "https://api-a4cb21.ck09mi9c4vs17hng9gig.fmc.prd.cloud.redpanda.com"<br>
+          					Example (BYOC): "https://api-a4cb21.ck09mi9c4vs17hng9gig.byoc.prd.cloud.redpanda.com"
 tags:
   - description: Manage Redpanda access control lists (ACLs). See [Redpanda Cloud Authorization](https://docs.redpanda.com/redpanda-cloud/security/authorization/cloud-authorization/) for more information.
     name: Redpanda ACLs
