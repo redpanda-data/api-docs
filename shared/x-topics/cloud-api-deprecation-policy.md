@@ -48,7 +48,6 @@ Redpanda communicates deprecation notices through the following:
 * Updates to Cloud API documentation
 * [What's New in Redpanda Cloud](https://docs.redpanda.com/redpanda-cloud/get-started/whats-new-cloud)
 * Announcements in the #cloudapi [Community Slack](https://redpandacommunity.slack.com/) channel and in individual customer channels
-* Emails to "Sign up for updates" recipients (sign up on the [Control Plane API](/api/ROOT/cloud-controlplane-api) and [Data Plane APIs](/api/ROOT/cloud-dataplane-api) reference documentation)
 
 ## Versioning policy
 

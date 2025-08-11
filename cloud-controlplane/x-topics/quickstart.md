@@ -65,6 +65,7 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 1. Open **API Explorer**.
 
 1. On the **Choose an operation** dropdown, select **Create resource group**.
+
 1. Click **Get token**. You may be prompted to log in to the Redpanda Cloud UI. After you log in, the browser automatically redirects you back to the Create resource group endpoint in the API Explorer.
 
 1. Prepare your Create resource group request.
