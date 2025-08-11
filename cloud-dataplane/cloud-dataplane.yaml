@@ -4976,12 +4976,12 @@ security:
   - auth0: []
 servers:
   - description: Data Plane API
-    url: 'https://{dataplane_api_url}.cloud.redpanda.com'
+    url: 'https://{dataplane.api.subdomain}.cloud.redpanda.com'
     variables:
-      dataplane_api_url:
-        default: "dataplane_api.url"
+      dataplane.api.subdomain:
+        default: "dataplane.api.subdomain"
         description: |-
-          Find the Data Plane API base URL of a cluster by calling the Get Cluster endpoint of the Control Plane API. The dataplane_api.url field is returned in the response body.<br><br>
+          Find the Data Plane API base URL of a cluster by calling the Get Cluster endpoint of the Control Plane API. The dataplane_api.url value is returned in the response body. The subdomain is unique to each cluster.<br><br>
           Example (Dedicated): "https://api-a4cb21.ck09mi9c4vs17hng9gig.fmc.prd.cloud.redpanda.com"<br>
           Example (BYOC): "https://api-a4cb21.ck09mi9c4vs17hng9gig.byoc.prd.cloud.redpanda.com"
 tags:

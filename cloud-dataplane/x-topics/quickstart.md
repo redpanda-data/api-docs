@@ -20,11 +20,18 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 
 > **Warning:** API requests from this page are executed against your actual environment and data, not a sandbox.
 
-1. In the page header, click **API Explorer**.
-1. If you don't already have the data plane API URL for your target cluster, make a Get Cluster (BYOC, Dedicated) or Get Serverless Cluster (Serverless) request with the Control Plane API. The response contains the data plane API URL. Copy the value of `dataplane_api.url` from the response body, and enter it in the URL field.
+1. Open **API Explorer**.
+
+1. If you don't already have the data plane API URL for your target cluster, make a Get Cluster (BYOC, Dedicated) or Get Serverless Cluster (Serverless) request with the Control Plane API. The response contains the data plane API URL.
+
+   From the `dataplane_api.url` value in the response, extract only the subdomain (the part between `https://` and `.cloud.redpanda.com`). Enter this value in the Data Plane API URL field.
+
 1. On the **Choose an operation** dropdown, select **Create topic**.
+
 1. Click **Get token**. You may be prompted to log in to the Redpanda Cloud UI. After you log in, the browser automatically redirects you back to the Create resource group endpoint in the API Explorer.
+
 1. Enter a name for your topic and click **Send request**.
+
 1. Confirm that your topic is successfully created by making a List topics request.
 
 ## Next steps
