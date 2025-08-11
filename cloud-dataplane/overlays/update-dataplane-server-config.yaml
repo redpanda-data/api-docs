@@ -13,7 +13,7 @@ actions:
   - target: "$.servers[0].variables"
     update:
       dataplane_api_subdomain:
-        default: "dataplane.api.subdomain"
+        default: "{dataplane.api.subdomain}"
         description: |-
           From the `dataplane_api.url` value in the Control Plane API response, extract the subdomain (the part between `https://` and `.cloud.redpanda.com`). Enter this value in the Data Plane API URL field.
           
