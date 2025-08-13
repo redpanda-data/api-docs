@@ -1,6 +1,6 @@
 The following steps describe how to authenticate with the Data Plane APIs and create a new topic. For more information on the Data Plane APIs, see the [Cloud API Overview](#topic-cloud-api-overview).
 
-> **Note:** Redpanda Cloud uses a control plane and data plane architecture. To view the available endpoints for managing your clusters, networks, and resource groups, see the [Control Plane API Reference](/cloud-controlplane).
+> **Note:** Redpanda Cloud uses a control plane and data plane architecture. To view the available endpoints for managing your clusters, networks, and resource groups, see the [Control Plane API Reference](/api/doc/cloud-controlplane).
 
 ## Requirements
 
@@ -40,7 +40,7 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 
 ## Next steps
 
-The quickest ways to produce to and consume from the topic are to use [`rpk`](https://docs.redpanda.com/redpanda-cloud/manage/rpk/rpk-install/) or the [Redpanda HTTP Proxy](../http-proxy) (BYOC and Dedicated clusters only).
+The quickest ways to produce to and consume from the topic are to use [`rpk`](https://docs.redpanda.com/redpanda-cloud/manage/rpk/rpk-install/) or the [Redpanda HTTP Proxy](/api/doc/http-proxy) (BYOC and Dedicated clusters only).
 
 For example, to use `rpk` to produce to a topic named `test-topic`, run:
 

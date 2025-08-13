@@ -1,7 +1,7 @@
 The following steps describe how to authenticate with the Control API and create a new Redpanda cluster. For more information on the Control Plane API, see the [Cloud API Overview](#topic-cloud-api-overview).
 
 > **Note:** Redpanda Cloud uses a control plane and data plane architecture. 
-To view the available endpoints for managing resources within your clusters, such as topics, users, access control lists (ACLs), and connectors, see the [Data Plane API Reference](/cloud-dataplane).
+To view the available endpoints for managing resources within your clusters, such as topics, users, access control lists (ACLs), and connectors, see the [Data Plane API Reference](/api/doc/cloud-dataplane).
 
 ## Requirements
 
