@@ -24,7 +24,7 @@ Users with administrative privileges in a Redpanda Cloud organization can create
 
 > **Note:** Service accounts have administrative privileges by default. Cloud user roles are not applied for the API.
 
-1. On the [Service account](https://cloud.redpanda.com/organization-iam?tab=service-accounts) tab in the Organization IAM page of the Redpanda Cloud UI, click **Create service account**. Enter a name and description.
+1. In the Redpanda Cloud UI, go to [Organization IAM](https://cloud.redpanda.com/organization-iam), and select the **Service account** tab. Click **Create service account** and enter a name and description.
 
 2. Copy and store the Client ID and Client Secret. These credentials cannot be viewed again after you close the dialog. 
 

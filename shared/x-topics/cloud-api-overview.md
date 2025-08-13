@@ -6,19 +6,17 @@ To use the Cloud API:
 
 - You must have a Redpanda Cloud account.
 - You can only use one organization for authentication. See Authentication for steps to authenticate API requests.
-- Serverless: To try the Cloud API with Serverless, [sign up for a free Standard trial](https://redpanda.com/cloud/serverless).
+- Serverless: To try the Cloud API with Serverless, [sign up for a free Standard trial](https://www.redpanda.com/try-redpanda).
 
 ## Cloud API architecture
 
-Redpanda Cloud uses a control plane and data plane architecture. The **control plane** is where most cluster management, operations, and maintenance takes place. The control plane enforces rules in the data plane. The **data plane** is where your cluster lives. The term _data plane_ is used interchangeably with _cluster_. For BYOC customers, the data plane is in your VPC. To learn more about the Redpanda Cloud platform, see the [Cloud Overview](https://docs.redpanda.com/docs/cloud/cloud-overview/).
+Redpanda Cloud uses a control plane and data plane architecture. The **control plane** is where most cluster management, operations, and maintenance takes place. The control plane enforces rules in the data plane. The **data plane** is where your cluster lives. The term _data plane_ is used interchangeably with _cluster_. For BYOC customers, the data plane is in your VPC. To learn more about the Redpanda Cloud platform, see the [Cloud Overview](https://docs.redpanda.com/redpanda-cloud/get-started/cloud-overview/).
 
-The **Control Plane API** allows you to interact with the control plane. You use the Control Plane API to manage cloud resources for your organization, like clusters, resource groups, and networks. The Control Plane API does not interact directly with Redpanda clusters, although some of the actions performed through the API can eventually make their way to a cluster. See [Use the Control Plane API](https://docs.redpanda.com/docs/manage/api/controlplane/) for steps to create and delete clusters.
+The **Control Plane API** allows you to interact with the control plane. You use the Control Plane API to manage cloud resources for your organization, like clusters, resource groups, and networks. The Control Plane API does not interact directly with Redpanda clusters, although some of the actions performed through the API can eventually make their way to a cluster. See [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/) for steps to create and delete clusters.
 
-The **Data Plane APIs** are a collection of APIs through which you can perform actions directly against a Redpanda cluster. These APIs expose more high-level operations on the data plane by acting as a wrapper around the other APIs supported by Redpanda (Kafka API, Admin API, or Schema Registry API). See [Use the Data Plane APIs](https://docs.redpanda.com/docs/manage/api/cloud-dataplane-api/) for steps to create an access-control list (ACL), topic, or connector.
+The **Data Plane APIs** are a collection of APIs through which you can perform actions directly against a Redpanda cluster. These APIs expose more high-level operations on the data plane by acting as a wrapper around the other APIs supported by Redpanda (Kafka API, Admin API, or Schema Registry API). See [Use the Data Plane APIs](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-dataplane-api/) for steps to create an access-control list (ACL), topic, or connector.
 
-See also:
-
-- [Redpanda API and SDK Reference documentation](https://docs.redpanda.com/reference/api-reference/)
+See also: [Redpanda API and SDK Reference documentation](https://docs.redpanda.com/redpanda-cloud/reference/api-reference/)
 
 ## Base URLs
 
@@ -48,7 +46,8 @@ The current Control Plane API version is **v1**.
 > - End-of-support date: November 28, 2025
 > - Retirement date: May 28, 2026
 >
-> See Deprecation Policy for more information.
+>
+> See [Deprecation Policy](/topic/topic-cloud-api-deprecation-policy) for more information.
 
 ### Data Plane APIs URL
 
@@ -68,13 +67,9 @@ The current Data Plane API version is **v1**.
 > - End-of-support date: November 28, 2025
 > - Retirement date: May 28, 2026
 >
-> See Deprecation Policy for more information.
+> See [Deprecation Policy](/topic/topic-cloud-api-deprecation-policy) for more information.
 
 ## Pagination
 
 When an endpoint returns a list containing more items than can be returned in a single response, the response object includes a `next_page_token`. You can pass the token value as a parameter in the next request. When the full list has been returned, `next_page_token` is an empty string.
-
-## Versioning and deprecation
-
-The Cloud API Deprecation Policy outlines the process for phasing out an API version or specific features within an API. See Deprecation Policy for details.
 

@@ -1,7 +1,7 @@
-The following steps describe how to authenticate with the Control API and create a new Redpanda cluster. For more information on the Control Plane API, see the Cloud API Overview.
+The following steps describe how to authenticate with the Control API and create a new Redpanda cluster. For more information on the Control Plane API, see the [Cloud API Overview](/topic/topic-cloud-api-overview).
 
 > **Note:** Redpanda Cloud uses a control plane and data plane architecture. 
-To see the available endpoints for managing resources within your clusters, such as topics, users, access control lists (ACLs), and connectors, see the Data Plane API Reference.
+To view the available endpoints for managing resources within your clusters, such as topics, users, access control lists (ACLs), and connectors, see the [Data Plane API Reference](../cloud-dataplane).
 
 ## Requirements
 
@@ -14,17 +14,19 @@ To use the Control Plane API:
 
 ### Authenticate to the API from API Explorer
 
-To make API requests in your browser, you must obtain an access token. You can do so by clicking **Get token** on the API endpoint you want to call.
+The API Explorer lets you interact with the API directly from the documentation. You can quickly explore available endpoints and try requests without setting up your own test environment.
+
+To make Cloud API requests in your browser, you must obtain an access token. You can do so by clicking **Get token** on the API endpoint you want to call.
 
 If you successfully retrieve an access token, it is valid for one hour. You can use the same token in requests to both Control Plane and Data Plane API endpoints, for as long as the token is valid.
 
-## Create a new cluster
-
 > **Warning:** API requests from the API Explorer are executed against your actual environment and data, not a sandbox.
+
+## Create a new cluster
 
 ### BYOC or Dedicated
 
-1. Open **API Explorer**.
+1. In the subheader, open **API Explorer**.
 
 1. On the **Choose an operation** dropdown, select **Create resource group**.
 
@@ -62,7 +64,7 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 
 ### Serverless
 
-1. Open **API Explorer**.
+1. In the subheader, open **API Explorer**.
 
 1. On the **Choose an operation** dropdown, select **Create resource group**.
 
@@ -90,7 +92,7 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 1. Select an operation, for example **Create topic** or **List users**. 
 1. In the URL field, add the data plane API URL. You can now make Data Plane API requests to your target cluster.
 
-See also: [Data Plane API Quickstart](https://docs.redpanda.com/api/doc/cloud-dataplane/topic/topic-quickstart)
+See also: [Data Plane API Quickstart](../cloud-dataplane/topic/topic-quickstart)
 
 ## Suggested reading
 
