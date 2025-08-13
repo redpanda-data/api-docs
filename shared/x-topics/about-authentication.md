@@ -1,4 +1,4 @@
-The Redpanda Cloud API uses OAuth 2.0 for authentication. The authentication method depends on whether you access the API in the browser using the API Explorer, or programmatically.
+The Redpanda Cloud API uses OAuth 2.0 for authentication. The authentication method depends on whether you access the API in the browser using the API Explorer or programmatically.
 
 You only need to authenticate once to the Cloud API. That is, after you obtain an access token, you can use the same token in requests to both Control Plane and Data Plane API endpoints, for as long as the token is valid.
 
@@ -12,7 +12,7 @@ When using the API Explorer in your browser, Redpanda Cloud uses the [OAuth 2.0 
 
 ## Authenticate programmatic requests
 
-For programmatic access (using a CLI, SDKs, and applications), the Cloud API uses the Client Credentials Flow as defined in [OAuth 2.0 RFC 6749, section 4.4](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4).
+For programmatic access (using a CLI, SDKs, and applications), the Cloud API uses the Client Credentials Flow, as defined in [OAuth 2.0 RFC 6749, section 4.4](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4).
  
 You must first create a **service account** through which you can authenticate requests to the Cloud API. The service account is associated with your Redpanda Cloud organization. The service account acts as an OAuth 2.0 client that provides its credentials (client ID and client secret) to the API authentication server. The authentication server grants an access token in return. You can then include the access token in each request to the API.
 
