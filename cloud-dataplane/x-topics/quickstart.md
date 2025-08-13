@@ -1,6 +1,6 @@
-The following steps describe how to authenticate with the Data Plane APIs and create a new topic. For more information on the Data Plane APIs, see the [Cloud API Overview](/topic/topic-cloud-api-overview).
+The following steps describe how to authenticate with the Data Plane APIs and create a new topic. For more information on the Data Plane APIs, see the [Cloud API Overview](#topic-cloud-api-overview).
 
-> **Note:** Redpanda Cloud uses a control plane and data plane architecture. To view the available endpoints for managing your clusters, networks, and resource groups, see the [Control Plane API Reference](../cloud-controlplane).
+> **Note:** Redpanda Cloud uses a control plane and data plane architecture. To view the available endpoints for managing your clusters, networks, and resource groups, see the [Control Plane API Reference](/cloud-controlplane).
 
 ## Requirements
 

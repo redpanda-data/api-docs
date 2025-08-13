@@ -1,7 +1,7 @@
-The following steps describe how to authenticate with the Control API and create a new Redpanda cluster. For more information on the Control Plane API, see the [Cloud API Overview](/topic/topic-cloud-api-overview).
+The following steps describe how to authenticate with the Control API and create a new Redpanda cluster. For more information on the Control Plane API, see the [Cloud API Overview](#topic-cloud-api-overview).
 
 > **Note:** Redpanda Cloud uses a control plane and data plane architecture. 
-To view the available endpoints for managing resources within your clusters, such as topics, users, access control lists (ACLs), and connectors, see the [Data Plane API Reference](../cloud-dataplane).
+To view the available endpoints for managing resources within your clusters, such as topics, users, access control lists (ACLs), and connectors, see the [Data Plane API Reference](/cloud-dataplane).
 
 ## Requirements
 
@@ -92,7 +92,7 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 1. Select an operation, for example **Create topic** or **List users**. 
 1. In the URL field, add the data plane API URL. You can now make Data Plane API requests to your target cluster.
 
-See also: [Data Plane API Quickstart](../cloud-dataplane/topic/topic-quickstart)
+See also: [Data Plane API Quickstart](/cloud-dataplane/topic/topic-quickstart)
 
 ## Suggested reading
 

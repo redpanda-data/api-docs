@@ -47,7 +47,7 @@ The current Control Plane API version is **v1**.
 > - Retirement date: May 28, 2026
 >
 >
-> See [Deprecation Policy](/topic/topic-cloud-api-deprecation-policy) for more information.
+> See [Deprecation Policy](#topic-cloud-api-deprecation-policy) for more information.
 
 ### Data Plane APIs URL
 
@@ -67,7 +67,8 @@ The current Data Plane API version is **v1**.
 > - End-of-support date: November 28, 2025
 > - Retirement date: May 28, 2026
 >
-> See [Deprecation Policy](/topic/topic-cloud-api-deprecation-policy) for more information.
+>
+> See [Deprecation Policy](#topic-cloud-api-deprecation-policy) for more information.
 
 ## Pagination
 
