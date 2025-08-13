@@ -17,4 +17,4 @@ actions:
         description: |-
           From the `dataplane_api.url` value in the Control Plane API response, extract the subdomain (the part between `https://` and `.cloud.redpanda.com`). Enter this value in the Data Plane API URL field.
           
-          Example: If the URL is `https://api-a4cb21.ck09mi9c4vs17hng9gig.fmc.prd.cloud.redpanda.com`, enter `api-a4cb21.ck09mi9c4vs17hng9gig.fmc.prd`
+          Example: If the URL is `https://api-a4cb21.ck09mi9c4vs17hng9gig.fmc.prd.cloud.redpanda.com`, enter `api-a4cb21.ck09mi9c4vs17hng9gig.fmc.prd`.
