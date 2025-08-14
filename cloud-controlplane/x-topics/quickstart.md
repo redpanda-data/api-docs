@@ -1,4 +1,4 @@
-The following steps describe how to authenticate with the Control API and create a new Redpanda cluster. For more information on the Control Plane API, see the [Cloud API Overview](#topic-cloud-api-overview).
+The following steps describe how to authenticate with the Control Plane API and create a new Redpanda cluster. For more information on the Control Plane API, see the [Cloud API Overview](#topic-cloud-api-overview).
 
 > **Note:** Redpanda Cloud uses a control plane and data plane architecture. 
 To view the available endpoints for managing resources within your clusters, such as topics, users, access control lists (ACLs), and connectors, see the [Data Plane API Reference](/api/doc/cloud-dataplane).
@@ -28,7 +28,7 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 
 1. In the subheader, open **API Explorer**.
 
-1. On the **Choose an operation** dropdown, select **Create resource group**.
+1. In the **Choose an operation** dropdown, select **Create resource group**.
 
 1. Click **Get token**. You may be prompted to log in to the Redpanda Cloud UI. After you log in, the browser automatically redirects you back to the Create resource group endpoint in the API Explorer.
 
@@ -38,7 +38,7 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 
     1. Click **Send request**. If successful, the response returns a resource group ID. Pass this ID when you make a Create network request. 
 
-1. On the dropdown, select **Create network**.
+1. In the dropdown, select **Create network**.
 
 1. Prepare your Create network request.
 
@@ -66,7 +66,7 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 
 1. In the subheader, open **API Explorer**.
 
-1. On the **Choose an operation** dropdown, select **Create resource group**.
+1. In the **Choose an operation** dropdown, select **Create resource group**.
 
 1. Click **Get token**. You may be prompted to log in to the Redpanda Cloud UI. After you log in, the browser automatically redirects you back to the Create resource group endpoint in the API Explorer.
 
@@ -75,7 +75,7 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
     1. Under **Body**, click **+ Add** and provide a name for your resource group. A resource group is a container to organize your Redpanda Cloud resources, such as clusters and networks.
     1. Click **Send request**. If successful, the response returns a resource group ID. Pass this ID later when you make a Create Serverless cluster request.
 
-1. On the dropdown, select **Create Serverless cluster**.
+1. In the dropdown, select **Create Serverless cluster**.
 
 1. Prepare your Create Serverless cluster request.
 
@@ -86,8 +86,7 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 ## Next steps: try the Data Plane APIs
 
 1. Retrieve your cluster's data plane API URL by making a **Get cluster** (BYOC, Dedicated) or **Get Serverless cluster** (Serverless) request in the API Explorer.
-
-1. Save the value of `dataplane_api.url` from the response body.
+1. From the value of `dataplane_api.url` in the response body, save the subdomain (the part between ``https://` and `.cloud.redpanda.com`).
 1. From the **Redpanda APIs** selector, go to **Cloud Data Plane API**.
 1. Select an operation, for example **Create topic** or **List users**. 
 1. In the URL field, add the data plane API URL. You can now make Data Plane API requests to your target cluster.
