@@ -7,4 +7,11 @@ info:
 actions:
   - target: $.components.securitySchemes.auth0
     update:
-      description: The Cloud APIs use OAuth 2.0 for authentication. You must create a service account in the Cloud UI in order to request an access token. You can use the same access token to authenticate requests to both the Control Plane and Data Plane APIs.
+      description: |-
+        The Cloud APIs use OAuth 2.0 for authentication.
+        
+        **For API Explorer (browser):** Authentication is handled automatically. Click "Get token" on any endpoint to authenticate with your Redpanda Cloud account and include a bearer token for requests made in API Explorer.
+        
+        **For programmatic access (CLI, SDKs, scripts):** You must create a service account in the Redpanda Cloud UI and use the OAuth 2.0 client credentials flow to obtain an access token. See the Authentication topic for detailed instructions.
+        
+        The same access token can be used for both Control Plane and Data Plane API requests for as long as the token is valid (one hour).

@@ -4,6 +4,7 @@ Example request:
 
 ```bash
 curl https://<dataplane_api_url>/topics | jq
+```
 
 Example response:
 
