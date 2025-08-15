@@ -91,7 +91,7 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 1. Select an operation, for example **Create topic** or **List users**. 
 1. In the URL field, add the data plane API URL. You can now make Data Plane API requests to your target cluster.
 
-See also: [Data Plane API Quickstart](/cloud-dataplane/topic/topic-quickstart)
+See also: [Data Plane API Quickstart](/api/doc/cloud-dataplane/topic/topic-quickstart)
 
 ## Suggested reading
 

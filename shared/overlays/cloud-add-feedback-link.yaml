@@ -1,0 +1,15 @@
+# Overlay to add feedback link to the API specification
+# This adds a feedback button in the Control Plane and Data Plane API docs
+# for users to report issues through GitHub
+
+overlay: 1.0.0
+info:
+  title: Add Feedback Link
+  version: 1.0.0
+actions:
+  # Add x-feedbackLink to the top-level info element
+  - target: "$.info"
+    update:
+      x-feedbackLink:
+        label: "Documentation update request"
+        url: "https://github.com/redpanda-data/cloud-docs/issues/new?template=01_doc_request.yml"
