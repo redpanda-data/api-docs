@@ -4838,7 +4838,7 @@ paths:
       tags:
         - Serverless Clusters
     post:
-      description: Create a Redpanda Serverless cluster. Returns a long-running operation. See [Use the Control Plane API with Serverless](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/) for more information. Call `GET /v1/operations/{id}` to check operation state.
+      description: Create a Redpanda Serverless cluster. Returns a long-running operation. For more information, see [Use the Control Plane API with Serverless](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/). To check operation state, call `GET /v1/operations/{id}`.
       operationId: ServerlessClusterService_CreateServerlessCluster
       requestBody:
         content:
