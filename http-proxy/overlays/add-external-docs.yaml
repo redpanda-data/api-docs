@@ -1,0 +1,17 @@
+# Overlay to add description and external documentation links
+# to the HTTP Proxy API specification
+overlay: 1.0.0
+info:
+  title: Add External Documentation Links
+  version: 1.0.0
+actions:
+  # Add enhanced description to the info node
+  - target: "$.info"
+    update:
+      description: |
+        HTTP Proxy is an HTTP server that exposes operations you can perform directly on a Redpanda cluster. Use the Redpanda HTTP Proxy API to perform a subset of actions that are also available through the Kafka API, but using simpler REST operations.
+
+        See also: 
+
+        - [Use Redpanda Cloud with the HTTP Proxy API](https://docs.redpanda.com/redpanda-cloud/develop/http-proxy/)
+        - [Use Redpanda Self-Managed with the HTTP Proxy API](https://docs.redpanda.com/current/develop/http-proxy/)
