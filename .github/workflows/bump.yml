@@ -90,11 +90,13 @@ jobs:
 
           # Add doc-specific overlays (if any)
           if [ -d "${{ matrix.doc_id }}/overlays" ]; then
+            shopt -s nullglob
             for overlay_file in "${{ matrix.doc_id }}/overlays"/*.yaml; do
               if [ -f "$overlay_file" ]; then
                 OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
               fi
             done
+            shopt -u nullglob
           fi
 
           # Determine shared overlay prefix
@@ -106,11 +108,13 @@ jobs:
 
           # Add matching shared overlays
           if [ -d "shared/overlays" ]; then
+            shopt -s nullglob
             for overlay_file in shared/overlays/${OVERLAY_PREFIX}*.yaml; do
               if [ -f "$overlay_file" ]; then
                 OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
               fi
             done
+            shopt -u nullglob
           fi
 
           echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
