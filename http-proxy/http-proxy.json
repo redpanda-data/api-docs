@@ -11,7 +11,7 @@
   ],
   "paths": {"/brokers": {
         "get": {
-          "summary": "Get a list of brokers.",
+          "summary": "test diff Get a list of brokers.",
           "operationId": "get_brokers",
           "produces": ["application/vnd.kafka.v2+json"],
           "responses": {

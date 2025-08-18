@@ -24,18 +24,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get changed files
-        id: changed-files
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
-          else
-            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
-          fi
-          echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
-          echo "$CHANGED_FILES" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
       - name: Set matrix
         id: set-matrix
         run: |
