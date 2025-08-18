@@ -17,7 +17,7 @@ actions:
           $ref: ../../shared/x-topics/cloud-api-overview.md
       - title: Authentication
         content: 
-          $ref: ../../shared/x-topics/about-authentication.md
+          $ref: ../../shared/x-topics/cloud-about-authentication.md
       - title: Regions and Usage Tiers
         content: 
           $ref: ../x-topics/cloud-regions.md

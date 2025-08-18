@@ -40,41 +40,22 @@ jobs:
         id: set-matrix
         run: |
           DOCS=()
-
-          # Check for changes in API doc folders
-          if echo "$CHANGED_FILES" | grep -q "^admin/"; then
-            DOCS+=("admin")
-          fi
-          if echo "$CHANGED_FILES" | grep -q "^cloud-controlplane/"; then
-            DOCS+=("cloud-controlplane")
-          fi
-          if echo "$CHANGED_FILES" | grep -q "^cloud-dataplane/"; then
-            DOCS+=("cloud-dataplane")
-          fi
-          if echo "$CHANGED_FILES" | grep -q "^schema-registry/"; then
-            DOCS+=("schema-registry")
-          fi
-          if echo "$CHANGED_FILES" | grep -q "^http-proxy/"; then
-            DOCS+=("http-proxy")
-          fi
-          # Check for changes in shared resources that might affect all docs
-          if echo "$CHANGED_FILES" | grep -q "^shared/"; then
-            if [ ${#DOCS[@]} -eq 0 ]; then
-              # If only shared files changed and no specific doc files, include all docs
-              DOCS+=("admin" "cloud-controlplane" "cloud-dataplane" "schema-registry" "http-proxy")
+          for d in */ ; do
+            # Exclude shared and .github or any other non-doc folders
+            if [[ "$d" != "shared/" && "$d" != ".github/" && ( -f "${d%/}/${d%/}.yaml" || -f "${d%/}/${d%/}.json" ) ]]; then
+              DOCS+=("${d%/}")
             fi
-          fi
+          done
 
-          # If no files changed in any monitored directories, abort the workflow
+          # If no doc folders found, abort the workflow
           if [ ${#DOCS[@]} -eq 0 ]; then
-            echo "No relevant files were changed. Exiting workflow."
+            echo "No doc folders found. Exiting workflow."
             echo "matrix={\"doc_id\":[]}" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          # Convert bash array to JSON array for GitHub Actions matrix
           JSON_ARRAY=$(printf '"%s",' "${DOCS[@]}" | sed 's/,$//')
-          JSON_MATRIX="{\"doc_id\":[$JSON_ARRAY]}"
+          JSON_MATRIX="{\"doc_id\":[${JSON_ARRAY}]}"
           echo "matrix=$JSON_MATRIX" >> $GITHUB_OUTPUT
           echo "Created matrix: $JSON_MATRIX"
 
@@ -107,34 +88,34 @@ jobs:
         run: |
           OVERLAYS=""
 
-          # Check for doc-specific overlays
+          # Add doc-specific overlays (if any)
           if [ -d "${{ matrix.doc_id }}/overlays" ]; then
             for overlay_file in "${{ matrix.doc_id }}/overlays"/*.yaml; do
               if [ -f "$overlay_file" ]; then
-                if [ -n "$OVERLAYS" ]; then
-                  OVERLAYS="$OVERLAYS,$overlay_file"
-                else
-                  OVERLAYS="$overlay_file"
-                fi
+                OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
               fi
             done
           fi
 
-          # Check for shared overlays - only apply to cloud APIs
-          if [[ "${{ matrix.doc_id }}" == "cloud-"* ]] && [ -d "shared/overlays" ]; then
-            for overlay_file in shared/overlays/*.yaml; do
+          # Determine shared overlay prefix
+          if [[ "${{ matrix.doc_id }}" == "cloud-"* ]]; then
+            OVERLAY_PREFIX="cloud-"
+          else
+            OVERLAY_PREFIX="sm-"
+          fi
+
+          # Add matching shared overlays
+          if [ -d "shared/overlays" ]; then
+            for overlay_file in shared/overlays/${OVERLAY_PREFIX}*.yaml; do
               if [ -f "$overlay_file" ]; then
-                if [ -n "$OVERLAYS" ]; then
-                  OVERLAYS="$OVERLAYS,$overlay_file"
-                else
-                  OVERLAYS="$overlay_file"
-                fi
+                OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
               fi
             done
           fi
 
           echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
           echo "Using overlays: $OVERLAYS"
+
 
       - name: Deploy API documentation
         uses: bump-sh/github-action@v1
@@ -178,34 +159,34 @@ jobs:
         run: |
           OVERLAYS=""
 
-          # Check for doc-specific overlays
+          # Add doc-specific overlays (if any)
           if [ -d "${{ matrix.doc_id }}/overlays" ]; then
             for overlay_file in "${{ matrix.doc_id }}/overlays"/*.yaml; do
               if [ -f "$overlay_file" ]; then
-                if [ -n "$OVERLAYS" ]; then
-                  OVERLAYS="$OVERLAYS,$overlay_file"
-                else
-                  OVERLAYS="$overlay_file"
-                fi
+                OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
               fi
             done
           fi
 
-          # Check for shared overlays - only apply to cloud APIs
-          if [[ "${{ matrix.doc_id }}" == "cloud-"* ]] && [ -d "shared/overlays" ]; then
-            for overlay_file in shared/overlays/*.yaml; do
+          # Determine shared overlay prefix
+          if [[ "${{ matrix.doc_id }}" == "cloud-"* ]]; then
+            OVERLAY_PREFIX="cloud-"
+          else
+            OVERLAY_PREFIX="sm-"
+          fi
+
+          # Add matching shared overlays
+          if [ -d "shared/overlays" ]; then
+            for overlay_file in shared/overlays/${OVERLAY_PREFIX}*.yaml; do
               if [ -f "$overlay_file" ]; then
-                if [ -n "$OVERLAYS" ]; then
-                  OVERLAYS="$OVERLAYS,$overlay_file"
-                else
-                  OVERLAYS="$overlay_file"
-                fi
+                OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
               fi
             done
           fi
 
           echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
           echo "Using overlays: $OVERLAYS"
+
 
       - name: Comment pull request with API diff
         uses: bump-sh/github-action@v1
