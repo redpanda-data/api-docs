@@ -2,7 +2,11 @@
   "swagger": "2.0",
   "info": {
     "title": "Redpanda Schema Registry API",
-    "version": "1.0.6"
+    "version": "1.0.6",
+    "x-feedbackLink": {
+        "label": "Documentation update request",
+        "url": "https://github.com/redpanda-data/docs/issues/new?template=01_doc_request.yml"
+    }
   },
   "host": "localhost:18081",
   "basePath": "/",
