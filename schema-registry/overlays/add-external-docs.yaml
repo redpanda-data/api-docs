@@ -8,6 +8,9 @@ actions:
   # Add enhanced description to the info node
   - target: "$.info"
     update:
+      x-feedbackLink:
+        label: "Documentation update request"
+        url: "https://github.com/redpanda-data/docs/issues/new?template=01_doc_request.yml"
       description: |
         Manage schemas within a Redpanda cluster.
 

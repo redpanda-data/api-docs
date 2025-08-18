@@ -8,6 +8,9 @@ actions:
   # Add enhanced description to the info node
   - target: "$.info"
     update:
+      x-feedbackLink:
+        label: "Documentation update request"
+        url: "https://github.com/redpanda-data/docs/issues/new?template=01_doc_request.yml"
       description: |
         HTTP Proxy is an HTTP server that exposes operations you can perform directly on a Redpanda cluster. Use the Redpanda HTTP Proxy API to perform a subset of actions that are also available through the Kafka API, but using simpler REST operations.
 
