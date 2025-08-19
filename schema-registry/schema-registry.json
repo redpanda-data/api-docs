@@ -1,5 +1,5 @@
 {
-  "openapi": "2.0",
+  "swagger": "2.0",
   "info": {
     "title": "Redpanda Schema Registry API",
     "version": "1.0.6"
