@@ -11,5 +11,5 @@ actions:
   - target: "$.info"
     update:
       x-feedbackLink:
-        label: "Documentation update request"
+        label: "Share feedback"
         url: "https://github.com/redpanda-data/cloud-docs/issues/new?template=01_doc_request.yml"
