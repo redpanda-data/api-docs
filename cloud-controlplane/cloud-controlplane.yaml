@@ -1,7 +1,7 @@
 components:
   schemas:
     AWS.Role:
-      description: test diff Role identifies AWS role.
+      description: Role identifies AWS role.
       properties:
         arn:
           description: AWS role ARN.
