@@ -3,7 +3,7 @@ info:
   title: Redpanda Admin API
   version: 1.0.0
   description: |
-    test diff Use the Admin API to administer and manage Redpanda.
+    Use the Admin API to administer and manage Redpanda.
 
     ---
 
