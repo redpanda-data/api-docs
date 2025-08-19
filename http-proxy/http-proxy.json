@@ -1,5 +1,5 @@
 {
-  "openapi": "2.0",
+  "swagger": "2.0",
   "info": {
     "title": "Redpanda HTTP Proxy API",
     "version": "0.0.2"
@@ -11,7 +11,7 @@
   ],
   "paths": {"/brokers": {
         "get": {
-          "summary": "test diff Get a list of brokers.",
+          "summary": "Get a list of brokers.",
           "operationId": "get_brokers",
           "produces": ["application/vnd.kafka.v2+json"],
           "responses": {
