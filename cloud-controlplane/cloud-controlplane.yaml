@@ -315,12 +315,6 @@ components:
         id:
           description: ID of the cluster. ID is an output from the Create Cluster endpoint and cannot be set by the caller.
           type: string
-        internet_gateways:
-          description: InternetGateway information of the cluster.
-          items:
-            type: string
-          readOnly: true
-          type: array
         kafka_api:
           $ref: '#/components/schemas/Cluster.KafkaAPI'
         kafka_connect:
@@ -331,6 +325,12 @@ components:
           description: Unique name of the cluster.
           example: development-cluster
           type: string
+        nat_gateways:
+          description: NAT gateway information for the cluster.
+          items:
+            type: string
+          readOnly: true
+          type: array
         network_id:
           description: Network ID where cluster is placed.
           example: cjcuq79c4vs94fcufc2g
@@ -2096,12 +2096,19 @@ components:
         id:
           title: internal id of the organization
           type: string
+        mfa_enforced:
+          type: boolean
         name:
           title: display name of the organization
           type: string
         welcome_cluster_id:
           nullable: true
           type: string
+      type: object
+    OrganizationUpdate:
+      properties:
+        mfa_enforced:
+          type: boolean
       type: object
     Placement:
       description: Information about creation of new serverless clusters on the serverless region.
@@ -2656,6 +2663,17 @@ components:
           description: The unique name of the service_account.
           example: billing_admin
           type: string
+        role_bindings:
+          items:
+            $ref: '#/components/schemas/ServiceAccountCreate.RoleBinding'
+          type: array
+      type: object
+    ServiceAccountCreate.RoleBinding:
+      properties:
+        role_name:
+          type: string
+        scope:
+          $ref: '#/components/schemas/Scope'
       type: object
     ServiceAccountCredentials:
       properties:
@@ -2791,6 +2809,11 @@ components:
       enum:
         - UPDATE_CLUSTER_TYPE_CUSTOMER_CONFIG
       type: string
+    UpdateOrganizationResponse:
+      properties:
+        organization:
+          $ref: '#/components/schemas/Organization'
+      type: object
     UpdateResourceGroupBody:
       properties:
         resource_group:
@@ -3232,7 +3255,7 @@ components:
           x-client-id: dQjapNIAHhF7EQqQToRla3yEII9sUSap
       type: oauth2
 info:
-  description: 'Use the Control Plane API to manage resources in your Redpanda Cloud organization such as clusters and networks.'
+  description: The Redpanda Cloud Control Plane API allows programmatic management of Redpanda Cloud resources including clusters, networks, and resource groups.
   title: Redpanda Cloud Control Plane API
   version: v1
 openapi: 3.0.3
@@ -3309,7 +3332,6 @@ paths:
                       sasl: null
                       url: https://pandaproxy-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com:9092
                     id: cjd3r21c4vs870t0ku30
-                    internet_gateways: []
                     kafka_api:
                       all_seed_brokers: null
                       mtls: null
@@ -3319,6 +3341,7 @@ paths:
                     kafka_connect: null
                     maintenance_window_config: null
                     name: my-new-cluster
+                    nat_gateways: []
                     network_id: cjb69k1c4vs45df9bee0
                     prometheus:
                       url: https://console-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
@@ -3360,7 +3383,7 @@ paths:
       tags:
         - Clusters
     post:
-      description: Create a Redpanda cluster. Returns a long-running operation. See [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/) for more information. Call `GET /v1/operations/{id}` to check operation state. Refer to [Regions](https://docs.redpanda.com/api/doc/cloud-controlplane/topic/topic-regions-and-usage-tiers) for the list of available regions, zones, and tiers combinations for each cloud provider. For BYOC clusters, follow additional steps to [create a BYOC cluster](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-byoc-controlplane-api/#additional-steps-to-create-a-byoc-cluster).
+      description: Create a Redpanda cluster. Returns a long-running operation. For more information, see [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/). To check operation state, call `GET /v1/operations/{id}`. Refer to [Regions](https://docs.redpanda.com/api/doc/cloud-controlplane/topic/topic-regions-and-usage-tiers) for the list of available regions, zones, and tiers combinations for each cloud provider. For BYOC clusters, follow additional steps to [create a BYOC cluster](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-byoc-controlplane-api/#additional-steps-to-create-a-byoc-cluster).
       operationId: ClusterService_CreateCluster
       requestBody:
         content:
@@ -3568,7 +3591,7 @@ paths:
         - Clusters
   /v1/clusters/{id}:
     delete:
-      description: Delete a Redpanda Cluster. Returns a long-running operation. See [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/) for more information. Call `GET /v1/operations/{id}` to check operation state.
+      description: Delete a Redpanda Cluster. Returns a long-running operation. For more information, see [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/). To check operation state, call `GET /v1/operations/{id}`.
       operationId: ClusterService_DeleteCluster
       parameters:
         - in: path
@@ -3644,7 +3667,6 @@ paths:
                     sasl: null
                     url: https://pandaproxy-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com:9092
                   id: cjd3r21c4vs870t0ku30
-                  internet_gateways: []
                   kafka_api:
                     all_seed_brokers: null
                     mtls: null
@@ -3654,6 +3676,7 @@ paths:
                   kafka_connect: null
                   maintenance_window_config: null
                   name: my-new-cluster
+                  nat_gateways: []
                   network_id: cjb69k1c4vs45df9bee0
                   prometheus:
                     url: https://console-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
@@ -3701,7 +3724,7 @@ paths:
         - Clusters
   /v1/networks:
     get:
-      description: List Redpanda Networks.
+      description: List Redpanda networks.
       operationId: NetworkService_ListNetworks
       parameters:
         - description: Resource group ID.
@@ -3773,7 +3796,7 @@ paths:
       tags:
         - Networks
     post:
-      description: Create a Redpanda network. Returns a long-running operation. See [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/) for more information. Call `GET /v1/operations/{id}` to check operation state.
+      description: Create a Redpanda network. Returns a long-running operation. For more information, see [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/). To check operation state, call `GET /v1/operations/{id}`.
       operationId: NetworkService_CreateNetwork
       requestBody:
         content:
@@ -4039,7 +4062,6 @@ paths:
                             sasl: null
                             url: https://pandaproxy-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com:9092
                           id: cjb69h1c4vs42pca89s0
-                          internet_gateways: []
                           kafka_api:
                             all_seed_brokers: null
                             mtls: null
@@ -4049,6 +4071,7 @@ paths:
                           kafka_connect: null
                           maintenance_window_config: null
                           name: my-new-cluster
+                          nat_gateways: []
                           network_id: cjb69k1c4vs45df9bee0
                           prometheus:
                             url: https://console-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
@@ -4164,7 +4187,6 @@ paths:
                             sasl: null
                             url: https://pandaproxy-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com:9092
                           id: cjb69h1c4vs42pca89s0
-                          internet_gateways: []
                           kafka_api:
                             all_seed_brokers: null
                             mtls: null
@@ -4174,6 +4196,7 @@ paths:
                           kafka_connect: null
                           maintenance_window_config: null
                           name: my-new-cluster
+                          nat_gateways: []
                           network_id: cjb69k1c4vs45df9bee0
                           prometheus:
                             url: https://console-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
@@ -4263,7 +4286,7 @@ paths:
         - Organization
   /v1/organizations/current:
     get:
-      description: Get current organizarion information
+      description: Get information about the current organization.
       operationId: OrganizationService_GetCurrentOrganization
       responses:
         "200":
@@ -4287,9 +4310,41 @@ paths:
       summary: Get current organization
       tags:
         - Organization
+    patch:
+      description: Update properties of the current organization.
+      operationId: OrganizationService_UpdateOrganization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationUpdate'
+        required: true
+        x-originalParamName: organization
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateOrganizationResponse'
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Update organization
+      tags:
+        - Organization
   /v1/regions/{cloud_provider}:
     get:
-      description: List available regions on the different cloud providers
+      description: List available regions on the different cloud providers.
       operationId: RegionService_ListRegions
       parameters:
         - in: path
@@ -4437,7 +4492,7 @@ paths:
       tags:
         - Resource Groups
     post:
-      description: Create a Redpanda Resource Group.
+      description: Create a Redpanda resource group.
       operationId: ResourceGroupService_CreateResourceGroup
       requestBody:
         content:
@@ -4838,7 +4893,7 @@ paths:
       tags:
         - Serverless Clusters
     post:
-      description: Create a Redpanda Serverless cluster. Returns a long-running operation. For more information, see [Use the Control Plane API with Serverless](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/). To check operation state, call `GET /v1/operations/{id}`.
+      description: Create a Redpanda Serverless cluster. Returns a long-running operation. For more information, see [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/). To check operation state, call `GET /v1/operations/{id}`.
       operationId: ServerlessClusterService_CreateServerlessCluster
       requestBody:
         content:
@@ -4884,7 +4939,7 @@ paths:
         - Serverless Clusters
   /v1/serverless/clusters/{id}:
     delete:
-      description: Delete Redpanda Serverless cluster. Returns a long-running operation. For more information, see [Use the Control Plane API with Serverless](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/). To check operation state, call `GET /v1/operations/{id}`.
+      description: Delete Redpanda Serverless cluster. Returns a long-running operation. For more information, see [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/). To check operation state, call `GET /v1/operations/{id}`.
       operationId: ServerlessClusterService_DeleteServerlessCluster
       parameters:
         - description: ID of Serverless cluster.
@@ -5617,7 +5672,7 @@ servers:
   - description: Control Plane API
     url: https://api.redpanda.com
 tags:
-  - description: Check the state of long-running operations. See [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/) for more information.
+  - description: Check the state of long-running operations.
     name: Operations
   - description: Manage Redpanda Cloud clusters. For detailed steps and information, see [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/).
     name: Clusters
