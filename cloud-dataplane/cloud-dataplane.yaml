@@ -212,7 +212,7 @@ components:
         info:
           $ref: '#/components/schemas/ConnectCluster.Info'
         name:
-          description: Unique name of connect cluster. For Redpanda Cloud, the value is `redpanda`.
+          description: Unique name of Connect cluster. For Redpanda Cloud, the value is `redpanda`.
           type: string
         plugins:
           items:
@@ -2227,6 +2227,7 @@ components:
 info:
   title: Redpanda Cloud Data Plane API
   version: v1
+  description: 'Use the Data Plane API to manage topics, ACLs, and connectors within each cluster.'
 openapi: 3.0.3
 paths:
   /v1/acls:
@@ -2810,7 +2811,7 @@ paths:
         - Cloud Storage
   /v1/kafka-connect/clusters:
     get:
-      description: List connect clusters available for being consumed by the console's kafka-connect service.
+      description: List Connect clusters available in Console.
       operationId: KafkaConnectService_ListConnectClusters
       responses:
         "200":
@@ -2837,7 +2838,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List connect clusters
+      summary: List Connect clusters
       tags:
         - Kafka Connect
   /v1/kafka-connect/clusters/{cluster_name}:
@@ -2845,7 +2846,7 @@ paths:
       description: Get information about an available Kafka Connect cluster.
       operationId: KafkaConnectService_GetConnectCluster
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -2882,7 +2883,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get connect cluster
+      summary: Get Connect cluster
       tags:
         - Kafka Connect
   /v1/kafka-connect/clusters/{cluster_name}/connectors:
@@ -3174,7 +3175,7 @@ paths:
       description: Pause the connector and its tasks, which stops messages from processing until the connector is resumed. This call is asynchronous and may take some time to process.
       operationId: KafkaConnectService_PauseConnector
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3218,7 +3219,7 @@ paths:
       description: Triggers a connector restart. You must specify whether or not tasks are also restarted, and whether only failed connectors are restarted.
       operationId: KafkaConnectService_RestartConnector
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3269,7 +3270,7 @@ paths:
       description: Resume a paused connector and its tasks, and resumes message processing. This call is asynchronous and may take some time to process. If the connector was not paused, this operation does not do anything.
       operationId: KafkaConnectService_ResumeConnector
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3313,7 +3314,7 @@ paths:
       description: Gets the current status of the connector, including the state for each of its tasks, error information, etc.
       operationId: KafkaConnectService_GetConnectorStatus
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3358,7 +3359,7 @@ paths:
       description: Stops a connector, but does not delete it. All tasks for the connector are shut down completely. This call is asynchronous and may take some time to process.
       operationId: KafkaConnectService_StopConnector
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3402,7 +3403,7 @@ paths:
       description: Returns a list of connector topic names. If the connector is inactive, this call returns an empty list.
       operationId: KafkaConnectService_ListConnectorTopics
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3447,7 +3448,7 @@ paths:
       description: Resets the set of topic names that the connector is using.
       operationId: KafkaConnectService_ResetConnectorTopics
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3491,7 +3492,7 @@ paths:
       description: 'List Kafka Connect cluster secrets. Optional: filter based on secret name and labels.'
       operationId: SecretService_ListKafkaConnectSecrets
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3555,7 +3556,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Connect Cluster Secrets
+      summary: List Connect cluster secrets
       tags:
         - Secrets
     post:
@@ -3600,7 +3601,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Create Connect Cluster Secret
+      summary: Create Connect cluster secret
       tags:
         - Secrets
   /v1/kafka-connect/clusters/{cluster_name}/secrets/{id}:
@@ -3608,7 +3609,7 @@ paths:
       description: Delete a Kafka Connect cluster secret.
       operationId: SecretService_DeleteKafkaConnectSecret
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3650,7 +3651,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Delete Connect Cluster Secret
+      summary: Delete Connect cluster secret
       tags:
         - Secrets
     get:
@@ -3700,7 +3701,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get Connect Cluster Secret
+      summary: Get Connect cluster secret
       tags:
         - Secrets
     put:
@@ -3757,7 +3758,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Update Connect Cluster Secret
+      summary: Update Connect cluster secret
       tags:
         - Secrets
   /v1/quotas:
@@ -4012,7 +4013,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Retrieve the schema for Redpanda Connect pipeline configurations.
+      summary: Retrieve the schema for Redpanda Connect pipeline configurations
       tags:
         - Redpanda Connect Pipeline
   /v1/redpanda-connect/pipelines:
@@ -4507,7 +4508,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Roles
+      summary: List roles
       tags:
         - Security
     post:
@@ -4546,12 +4547,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Create Role
+      summary: Create role
       tags:
         - Security
   /v1/roles/{role_name}:
     delete:
-      description: Delete a Role.
+      description: Delete a role.
       operationId: SecurityService_DeleteRole
       parameters:
         - description: The role name.
@@ -4595,7 +4596,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Delete Role
+      summary: Delete role
       tags:
         - Security
     get:
@@ -4639,7 +4640,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get Role
+      summary: Get role
       tags:
         - Security
     put:
@@ -4690,7 +4691,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Update Role
+      summary: Update role
       tags:
         - Security
   /v1/roles/{role_name}/members:
@@ -4747,7 +4748,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Role Members
+      summary: List role members
       tags:
         - Security
   /v1/secret-scopes:
@@ -4779,7 +4780,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Secret Scopes
+      summary: List secret scopes
       tags:
         - Secrets
   /v1/secrets:
@@ -4845,7 +4846,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Secrets
+      summary: List secrets
       tags:
         - Secrets
     post:
@@ -4884,7 +4885,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Create Secret
+      summary: Create secret
       tags:
         - Secrets
   /v1/secrets/{id}:
@@ -4928,7 +4929,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Delete Secret
+      summary: Delete secret
       tags:
         - Secrets
     get:
@@ -4972,7 +4973,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get Secret
+      summary: Get secret
       tags:
         - Secrets
     put:
@@ -5023,7 +5024,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Update Secret
+      summary: Update secret
       tags:
         - Secrets
   /v1/topics:
@@ -5072,7 +5073,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Topics
+      summary: List topics
       tags:
         - Topics
     post:
@@ -5119,7 +5120,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Create Topic
+      summary: Create topic
       tags:
         - Topics
   /v1/topics-partitions:
@@ -5164,7 +5165,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Add Topic Partitions
+      summary: Add topic partitions
       tags:
         - Topics
     put:
@@ -5208,7 +5209,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Set Topic Partitions
+      summary: Set topic partitions
       tags:
         - Topics
   /v1/topics/{topic_name}:
@@ -5252,7 +5253,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Delete Topic
+      summary: Delete topic
       tags:
         - Topics
   /v1/topics/{topic_name}/configurations:
@@ -5297,7 +5298,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get Topic Configurations
+      summary: Get topic configurations
       tags:
         - Topics
     patch:
@@ -5350,7 +5351,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Update Topic Configuration
+      summary: Update topic configuration
       tags:
         - Topics
     put:
@@ -5403,7 +5404,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Set Topic Configurations
+      summary: Set topic configurations
       tags:
         - Topics
   /v1/topics/{topic_name}/partitions:
@@ -5455,7 +5456,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Add Topic Partitions
+      summary: Add topic partitions
       tags:
         - Topics
     put:
@@ -5506,7 +5507,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Set Topic Partitions
+      summary: Set topic partitions
       tags:
         - Topics
   /v1/transforms:
@@ -5582,7 +5583,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Transforms
+      summary: List transforms
       tags:
         - WASM Transforms
     put:
@@ -5610,7 +5611,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransformMetadata'
           description: Created
-      summary: Deploy Transform
+      summary: Deploy transform
       tags:
         - WASM Transforms
   /v1/transforms/{name}:
@@ -5657,7 +5658,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Delete Transform
+      summary: Delete transform
       tags:
         - WASM Transforms
     get:
@@ -5716,7 +5717,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get Transform
+      summary: Get transform
       tags:
         - WASM Transforms
   /v1/users:
@@ -5777,7 +5778,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Users
+      summary: List users
       tags:
         - Redpanda Users
     post:
@@ -5847,7 +5848,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Create User
+      summary: Create user
       tags:
         - Redpanda Users
   /v1/users/{name}:
@@ -5900,7 +5901,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Delete User
+      summary: Delete user
       tags:
         - Redpanda Users
   /v1/users/{user.name}:
@@ -5984,7 +5985,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Update User
+      summary: Update user
       tags:
         - Redpanda Users
 security:
@@ -6018,5 +6019,5 @@ tags:
     name: Security
   - description: Manage Redpanda topics.
     name: Topics
-  - description: Manage Redpanda users. To manage access, see the Data Plane [ACL endpoints](https://docs.redpanda.com/api/cloud-dataplane-api/#get-/v1/acls).
+  - description: Manage Redpanda users. To manage access, see the Data Plane [ACL endpoints](https://docs.redpanda.com/api/doc/cloud-dataplane/group/endpoint-redpanda-users).
     name: Redpanda Users
