@@ -1999,6 +1999,9 @@ components:
         - TYPE_DELETE_SERVERLESS_CLUSTER
         - TYPE_CREATE_CLUSTER_WITH_DEPENDENCIES
         - TYPE_DELETE_CLUSTER_WITH_DEPENDENCIES
+        - TYPE_CREATE_SERVERLESS_PRIVATE_LINK
+        - TYPE_UPDATE_SERVERLESS_PRIVATE_LINK
+        - TYPE_DELETE_SERVERLESS_PRIVATE_LINK
       type: string
     OperationMetadata:
       description: Metadata of the long-running Operation. Contains in-progress information.
@@ -3255,7 +3258,7 @@ components:
           x-client-id: dQjapNIAHhF7EQqQToRla3yEII9sUSap
       type: oauth2
 info:
-  description: 'Use the Control Plane API to manage resources in your Redpanda Cloud organization such as clusters and networks.'
+  description: The Redpanda Cloud Control Plane API allows programmatic management of Redpanda Cloud resources including clusters, networks, and resource groups.
   title: Redpanda Cloud Control Plane API
   version: v1
 openapi: 3.0.3
@@ -3961,6 +3964,9 @@ paths:
                 - TYPE_DELETE_SERVERLESS_CLUSTER
                 - TYPE_CREATE_CLUSTER_WITH_DEPENDENCIES
                 - TYPE_DELETE_CLUSTER_WITH_DEPENDENCIES
+                - TYPE_CREATE_SERVERLESS_PRIVATE_LINK
+                - TYPE_UPDATE_SERVERLESS_PRIVATE_LINK
+                - TYPE_DELETE_SERVERLESS_PRIVATE_LINK
               type: string
             type: array
         - in: query
