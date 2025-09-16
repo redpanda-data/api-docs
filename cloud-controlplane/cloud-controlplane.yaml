@@ -3258,7 +3258,7 @@ components:
           x-client-id: dQjapNIAHhF7EQqQToRla3yEII9sUSap
       type: oauth2
 info:
-  description: The Redpanda Cloud Control Plane API allows programmatic management of Redpanda Cloud resources including clusters, networks, and resource groups.
+  description: 'Use the Control Plane API to manage resources in your Redpanda Cloud organization such as clusters and networks.'
   title: Redpanda Cloud Control Plane API
   version: v1
 openapi: 3.0.3
@@ -5690,7 +5690,7 @@ tags:
     name: Resource Groups
   - description: Manage [Redpanda Serverless](https://docs.redpanda.com/redpanda-cloud/get-started/cloud-overview/#redpanda-cloud-cluster-types) clusters. For detailed steps, see [Use the Control Plane API with Serverless](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/).
     name: Serverless Clusters
-  - description: Manage Redpanda Serverless Private Links. For detailed steps and information, see [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/).
+  - description: Manage Redpanda Serverless Private Links.
     name: Serverless Private Links
   - description: See available Redpanda Serverless regions.
     name: Serverless Regions
