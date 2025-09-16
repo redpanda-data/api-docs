@@ -212,7 +212,7 @@ components:
         info:
           $ref: '#/components/schemas/ConnectCluster.Info'
         name:
-          description: Unique name of Connect cluster. For Redpanda Cloud, the value is `redpanda`.
+          description: Unique name of connect cluster. For Redpanda Cloud, the value is `redpanda`.
           type: string
         plugins:
           items:
@@ -2227,7 +2227,6 @@ components:
 info:
   title: Redpanda Cloud Data Plane API
   version: v1
-  description: 'Use the Data Plane API to manage topics, ACLs, and connectors within each cluster.'
 openapi: 3.0.3
 paths:
   /v1/acls:
@@ -2891,7 +2890,7 @@ paths:
       description: List connectors managed by the Kafka Connect service.
       operationId: KafkaConnectService_ListConnectors
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -2940,7 +2939,7 @@ paths:
       description: Create a connector with the specified configuration.
       operationId: KafkaConnectService_CreateConnector
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -2986,7 +2985,7 @@ paths:
       description: Delete a connector. This operation force stops all tasks and also deletes the connector configuration.
       operationId: KafkaConnectService_DeleteConnector
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3029,7 +3028,7 @@ paths:
       description: Get information about a connector in a specific cluster.
       operationId: KafkaConnectService_GetConnector
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3074,7 +3073,7 @@ paths:
       description: Get the configuration for the connector.
       operationId: KafkaConnectService_GetConnectorConfig
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3112,7 +3111,7 @@ paths:
       description: Update the configuration for an existing connector with the specified name, or create a new connector using the given configuration. Returns information about the connector after the change has been made.
       operationId: KafkaConnectService_UpsertConnector
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3492,7 +3491,7 @@ paths:
       description: 'List Kafka Connect cluster secrets. Optional: filter based on secret name and labels.'
       operationId: SecretService_ListKafkaConnectSecrets
       parameters:
-        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3609,7 +3608,7 @@ paths:
       description: Delete a Kafka Connect cluster secret.
       operationId: SecretService_DeleteKafkaConnectSecret
       parameters:
-        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -4015,7 +4014,7 @@ paths:
           description: An unexpected error response.
       summary: Retrieve the schema for Redpanda Connect pipeline configurations
       tags:
-        - Redpanda Connect Pipeline
+        - Redpanda Connect Pipelines
   /v1/redpanda-connect/pipelines:
     get:
       description: 'List Redpanda Connect pipelines. Optional: filter based on pipeline name.'
@@ -4071,7 +4070,7 @@ paths:
           description: An unexpected error response.
       summary: List Redpanda Connect pipelines
       tags:
-        - Redpanda Connect Pipeline
+        - Redpanda Connect Pipelines
     post:
       description: Create a new Redpanda Connect pipeline.
       operationId: PipelineService_CreatePipeline
@@ -4109,7 +4108,7 @@ paths:
           description: An unexpected error response.
       summary: Create Redpanda Connect pipeline
       tags:
-        - Redpanda Connect Pipeline
+        - Redpanda Connect Pipelines
   /v1/redpanda-connect/pipelines-by-secrets:
     get:
       description: Get Redpanda Connect pipelines by secrets.
@@ -4141,7 +4140,7 @@ paths:
           description: An unexpected error response.
       summary: Get Redpanda Connect pipelines by secrets
       tags:
-        - Redpanda Connect Pipeline
+        - Redpanda Connect Pipelines
   /v1/redpanda-connect/pipelines-for-secret:
     get:
       description: Get Redpanda Connect pipelines for a given secret.
@@ -4180,7 +4179,7 @@ paths:
           description: An unexpected error response.
       summary: Get Redpanda Connect pipelines for secret
       tags:
-        - Redpanda Connect Pipeline
+        - Redpanda Connect Pipelines
   /v1/redpanda-connect/pipelines/{id}:
     delete:
       description: Delete a Redpanda Connect pipeline.
@@ -4224,7 +4223,7 @@ paths:
           description: An unexpected error response.
       summary: Delete a Redpanda Connect pipeline
       tags:
-        - Redpanda Connect Pipeline
+        - Redpanda Connect Pipelines
     get:
       description: Get a specific Redpanda Connect pipeline.
       operationId: PipelineService_GetPipeline
@@ -4268,7 +4267,7 @@ paths:
           description: An unexpected error response.
       summary: Get Redpanda Connect pipeline
       tags:
-        - Redpanda Connect Pipeline
+        - Redpanda Connect Pipelines
     put:
       description: Update the [configuration](https://docs.redpanda.com/redpanda-cloud/develop/connect/configuration/about) of a Redpanda Connect pipeline.
       operationId: PipelineService_UpdatePipeline
@@ -4320,7 +4319,7 @@ paths:
           description: An unexpected error response.
       summary: Update a Redpanda Connect pipeline
       tags:
-        - Redpanda Connect Pipeline
+        - Redpanda Connect Pipelines
   /v1/redpanda-connect/pipelines/{id}/start:
     put:
       description: Start a stopped Redpanda Connect pipeline.
@@ -4365,7 +4364,7 @@ paths:
           description: An unexpected error response.
       summary: Start a Redpanda Connect pipeline
       tags:
-        - Redpanda Connect Pipeline
+        - Redpanda Connect Pipelines
   /v1/redpanda-connect/pipelines/{id}/stop:
     put:
       description: Stop a running Redpanda Connect pipeline.
@@ -4410,7 +4409,7 @@ paths:
           description: An unexpected error response.
       summary: Stops a Redpanda Connect pipeline
       tags:
-        - Redpanda Connect Pipeline
+        - Redpanda Connect Pipelines
   /v1/redpanda-connect/pipelines:lint-config:
     post:
       description: Validates a supplied Redpanda Connect pipeline YAML and returns a list of linting hints. If no problems are found, the list is empty.
@@ -4449,7 +4448,7 @@ paths:
           description: An unexpected error response.
       summary: Lint a Redpanda Connect pipeline configuration
       tags:
-        - Redpanda Connect Pipeline
+        - Redpanda Connect Pipelines
   /v1/roles:
     get:
       description: 'List roles. Optional: filter based on role name and principal.'
@@ -5585,7 +5584,7 @@ paths:
           description: An unexpected error response.
       summary: List transforms
       tags:
-        - WASM Transforms
+        - Wasm Transforms
     put:
       description: Initiate deployment of a new Wasm transform. This endpoint uses multipart/form-data encoding. Following deployment, a brief period is required before the Wasm transform becomes operational. Monitor the partition statuses to check whether the transform is active. This usually takes around 3s, but no longer than 10s.
       operationId: TransformService_DeployTransform
@@ -5611,9 +5610,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransformMetadata'
           description: Created
-      summary: Deploy transform
+      summary: Deploy Transform
       tags:
-        - WASM Transforms
+        - Wasm Transforms
   /v1/transforms/{name}:
     delete:
       description: Delete a Wasm transform with the requested name.
@@ -5660,7 +5659,7 @@ paths:
           description: An unexpected error response.
       summary: Delete transform
       tags:
-        - WASM Transforms
+        - Wasm Transforms
     get:
       description: Get a specific Wasm transform.
       operationId: TransformService_GetTransform
@@ -5719,7 +5718,7 @@ paths:
           description: An unexpected error response.
       summary: Get transform
       tags:
-        - WASM Transforms
+        - Wasm Transforms
   /v1/users:
     get:
       description: 'List users. Optional: filter based on username.'
@@ -6006,11 +6005,11 @@ tags:
   - description: 'Manage Redpanda topics stored in object storage. See: [Mountable Topics](https://docs.redpanda.com/redpanda-cloud/manage/mountable-topics/)'
     name: Cloud Storage
   - description: Manage Wasm transforms in Redpanda.
-    name: WASM Transforms
+    name: Wasm Transforms
   - description: Manage [connectors](https://docs.redpanda.com/redpanda-cloud/develop/managed-connectors/) and interact with the Kafka Connect API.
     name: Kafka Connect
   - description: Create and manage [Redpanda Connect](https://docs.redpanda.com/redpanda-cloud/develop/connect/about) pipelines and their configurations.
-    name: Redpanda Connect Pipeline
+    name: Redpanda Connect Pipelines
   - description: Manage client throughput limits. See [Redpanda Client Throughput Limits](https://docs.redpanda.com/current/manage/cluster-maintenance/manage-throughput/#client-throughput-limits) for more information.
     name: Quotas
   - description: Manage [secrets](https://docs.redpanda.com/redpanda-cloud/security/secrets) for Redpanda Cloud.
@@ -6019,5 +6018,5 @@ tags:
     name: Security
   - description: Manage Redpanda topics.
     name: Topics
-  - description: Manage Redpanda users. To manage access, see the Data Plane [ACL endpoints](https://docs.redpanda.com/api/doc/cloud-dataplane/group/endpoint-redpanda-users).
+  - description: Manage Redpanda users. For more information, see [Role-Based Access Control](https://docs.redpanda.com/redpanda-cloud/security/authorization/rbac/).
     name: Redpanda Users

@@ -1999,6 +1999,9 @@ components:
         - TYPE_DELETE_SERVERLESS_CLUSTER
         - TYPE_CREATE_CLUSTER_WITH_DEPENDENCIES
         - TYPE_DELETE_CLUSTER_WITH_DEPENDENCIES
+        - TYPE_CREATE_SERVERLESS_PRIVATE_LINK
+        - TYPE_UPDATE_SERVERLESS_PRIVATE_LINK
+        - TYPE_DELETE_SERVERLESS_PRIVATE_LINK
       type: string
     OperationMetadata:
       description: Metadata of the long-running Operation. Contains in-progress information.
@@ -3255,7 +3258,7 @@ components:
           x-client-id: dQjapNIAHhF7EQqQToRla3yEII9sUSap
       type: oauth2
 info:
-  description: 'Use the Control Plane API to manage resources in your Redpanda Cloud organization such as clusters and networks.'
+  description: The Redpanda Cloud Control Plane API allows programmatic management of Redpanda Cloud resources including clusters, networks, and resource groups.
   title: Redpanda Cloud Control Plane API
   version: v1
 openapi: 3.0.3
@@ -3961,6 +3964,9 @@ paths:
                 - TYPE_DELETE_SERVERLESS_CLUSTER
                 - TYPE_CREATE_CLUSTER_WITH_DEPENDENCIES
                 - TYPE_DELETE_CLUSTER_WITH_DEPENDENCIES
+                - TYPE_CREATE_SERVERLESS_PRIVATE_LINK
+                - TYPE_UPDATE_SERVERLESS_PRIVATE_LINK
+                - TYPE_DELETE_SERVERLESS_PRIVATE_LINK
               type: string
             type: array
         - in: query
@@ -5684,7 +5690,8 @@ tags:
     name: Resource Groups
   - description: Manage [Redpanda Serverless](https://docs.redpanda.com/redpanda-cloud/get-started/cloud-overview/#redpanda-cloud-cluster-types) clusters. For detailed steps, see [Use the Control Plane API with Serverless](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/).
     name: Serverless Clusters
-  - name: ServerlessPrivateLinkService
+  - description: Manage Redpanda Serverless Private Links. For detailed steps and information, see [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/).
+    name: Serverless Private Links
   - description: See available Redpanda Serverless regions.
     name: Serverless Regions
   - description: See information about the organization the current user belongs to.
