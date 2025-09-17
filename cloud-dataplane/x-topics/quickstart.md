@@ -24,8 +24,7 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 
 1. In the subheader of this page, open [**API Explorer**](/api/doc/cloud-dataplane/explorer).
 
-1. If you don't already have the data plane API URL for your target cluster, make a [Get Cluster](/api/doc/cloud-controlplane/explorer/operation/operation-clusterservice_getcluster) (BYOC, Dedicated) or [Get Serverless Cluster](/api/doc/cloud-controlplane/explorer/operation/operation-serverlessclusterservice_createserverlesscluster) (Serverless) request with the Control Plane API. The response contains the data plane API URL.
-
+1. If you don't already have the data plane API URL for your target cluster, make a [Get Cluster](/api/doc/cloud-controlplane/explorer/operation/operation-clusterservice_getcluster) (BYOC, Dedicated) or [Get Serverless Cluster](/api/doc/cloud-controlplane/explorer/operation/operation-serverlessclusterservice_getserverlesscluster) (Serverless) request with the Control Plane API. The response contains the data plane API URL.
    From the `dataplane_api.url` value in the response, extract only the subdomain (the part between `https://` and `.cloud.redpanda.com`). Enter this value in the Data Plane API URL field.
 
 1. In the **Choose an operation** dropdown, select **Create topic**.
