@@ -37,15 +37,16 @@ If you successfully retrieve an access token, it is valid for one hour.
     1. Under **Body**, click **Add** and provide a name for your resource group. A resource group is a container to organize your Redpanda Cloud resources, such as clusters and networks.
 
     1. In the request panel, click **Send request**. If successful, the response returns a resource group ID. Copy the ID and use it later when you make a Create network request.
-       ```
-       {
-         "resource_group": {
-           "id": "d61b4c7f-95da-4d62-a237-9fd9f20a0c19",
-           "name": "test-resource-group",
-           ...
-         }
-       }
-       ```
+
+        ```
+        {
+            "resource_group": {
+                "id": "d61b4c7f-95da-4d62-a237-9fd9f20a0c19",
+                "name": "test-resource-group",
+                ...
+            }
+        }
+        ```
 
 1. In the operation dropdown, select **Create network**.
 
@@ -54,41 +55,44 @@ If you successfully retrieve an access token, it is valid for one hour.
     1. Include the ID of the resource group you created in the previous step. 
     
     1. Click **Send request**. Note that this endpoint returns a long-running operation. The response returns a network ID in `metadata.network_id`. Copy the ID and pass it later when you call the Create cluster endpoint. To check the operation state, make a [**Get operation**](/api/doc/cloud-controlplane/explorer/operation/operation-operationservice_getoperation) request with the `operation.id`.
-       ```
-       {
-         "operation": {
-           "id": "d3505t2rmm68sqlgj4u0",
-           "metadata": {
-             "@type": "type.googleapis.com/redpanda.api.controlplane.v1.CreateNetworkMetadata",
-             "network_id": "d3505ta2691o0l3484ng"
-           },
-           "state": "STATE_IN_PROGRESS",
-           ...
-         }
-       }
-       ```
+
+
+        ```
+        {
+            "operation": {
+                "id": "d3505t2rmm68sqlgj4u0",
+                "metadata": {
+                    "@type": "type.googleapis.com/redpanda.api.controlplane.v1.CreateNetworkMetadata",
+                    "network_id": "d3505ta2691o0l3484ng"
+                },
+                "state": "STATE_IN_PROGRESS",
+                ...
+            }
+        }
+        ```
 
 1. When the Create network operation is complete, make a [Create cluster](/api/doc/cloud-controlplane/explorer/operation/operation-clusterservice_createcluster) request. Use the resource group and network IDs you just created. Note that this endpoint also returns a long-running operation.
 
 1. For BYOC, run `rpk cloud byoc <cloud-provider> apply` in the shell, passing the `metadata.cluster_id` from the Create cluster response as a flag:
-   **AWS:**
-   ```bash
-   rpk cloud byoc aws apply --redpanda-id=<metadata.cluster_id>
-   ```
 
-   **Azure:**
-   ```bash
-   rpk cloud byoc azure apply --redpanda-id=<metadata.cluster_id> --subscription-id=<redpanda-cluster-azure-subscription-id>
-   ```
+    **AWS:**
+    ```bash
+    rpk cloud byoc aws apply --redpanda-id=<metadata.cluster_id>
+    ```
 
-   **GCP:**
-   ```bash
-   rpk cloud byoc gcp apply --redpanda-id=<metadata.cluster_id> --project-id=<gcp-project-id>
-   ```
+    **Azure:**
+    ```bash
+    rpk cloud byoc azure apply --redpanda-id=<metadata.cluster_id> --subscription-id=<redpanda-cluster-azure-subscription-id>
+    ```
+
+    **GCP:**
+    ```bash
+    rpk cloud byoc gcp apply --redpanda-id=<metadata.cluster_id> --project-id=<gcp-project-id>
+    ```
 
 ### Serverless
 
-1. In the subheader of this page, open [**API Explorer**](/api/doc/cloud-controlplane/explorer)
+1. In the subheader of this page, open [**API Explorer**](/api/doc/cloud-controlplane/explorer).
 
 1. In the **Choose an operation** dropdown, select **Create resource group**.
 
@@ -99,15 +103,16 @@ If you successfully retrieve an access token, it is valid for one hour.
     1. Under **Body**, click **Add** and provide a name for your resource group. A resource group is a container to organize your Redpanda Cloud resources, such as clusters and networks.
     
     1. In the request panel, click **Send request**. If successful, the response returns a resource group ID. Copy the ID and use it later when you make a Create Serverless cluster request.
-       ```
-       {
-         "resource_group": {
-           "id": "d61b4c7f-95da-4d62-a237-9fd9f20a0c19",
-           "name": "test-resource-group",
-           ...
-         }
-       }
-       ```
+
+        ```
+        {
+            "resource_group": {
+                "id": "d61b4c7f-95da-4d62-a237-9fd9f20a0c19",
+                "name": "test-resource-group",
+                ...
+            }
+        }
+        ```
 
 1. In the operation dropdown, scroll to **Serverless Clusters** and select [**Create Serverless cluster**](/api/doc/cloud-controlplane/explorer/operation/operation-serverlessclusterservice_createserverlesscluster).
 
