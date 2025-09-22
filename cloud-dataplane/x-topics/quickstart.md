@@ -1,6 +1,6 @@
-The following steps describe how to authenticate with the Data Plane APIs and create a new topic. For more information on the Data Plane APIs, see the [Cloud API Overview](#topic-cloud-api-overview).
+The following steps describe how to authenticate with the Data Plane APIs and create a new topic.
 
-> **Note:** Redpanda Cloud uses a control plane and data plane architecture. To view the available endpoints for managing your clusters, networks, and resource groups, see the [Control Plane API Reference](/api/doc/cloud-controlplane).
+> **Note:** Redpanda Cloud uses a control plane and data plane architecture. To view the available endpoints for managing your clusters, networks, and resource groups, see the [Control Plane API Reference](/api/doc/cloud-controlplane). For more information on the Data Plane APIs, see the [Cloud API Overview](#topic-cloud-api-overview).
 
 ## Requirements
 
@@ -22,11 +22,11 @@ If you successfully retrieve an access token, it is valid for one hour. You can 
 
 ## Create a topic
 
-1. In the subheader, open **API Explorer**.
+1. In the subheader of this page, open [**API Explorer**](/api/doc/cloud-dataplane/explorer).
 
-1. If you don't already have the data plane API URL for your target cluster, make a Get Cluster (BYOC, Dedicated) or Get Serverless Cluster (Serverless) request with the Control Plane API. The response contains the data plane API URL.
+1. If you don't already have the data plane API URL for your target cluster, make a [Get Cluster](/api/doc/cloud-controlplane/explorer/operation/operation-clusterservice_getcluster) (BYOC, Dedicated) or [Get Serverless Cluster](/api/doc/cloud-controlplane/explorer/operation/operation-serverlessclusterservice_getserverlesscluster) (Serverless) request with the Control Plane API. The response contains the data plane API URL.
 
-   From the `dataplane_api.url` value in the response, extract only the subdomain (the part between `https://` and `.cloud.redpanda.com`). Enter this value in the Data Plane API URL field.
+    From the `dataplane_api.url` value in the response, extract only the subdomain (the part between `https://` and `.cloud.redpanda.com`). Enter this value in the Data Plane API URL field.
 
 1. In the **Choose an operation** dropdown, select **Create topic**.
 
