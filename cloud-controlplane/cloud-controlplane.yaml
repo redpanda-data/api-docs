@@ -107,7 +107,8 @@ components:
             type: string
           type: array
         connect_console:
-          description: Whether Console is connected in Redpanda AWS Private Link Service.
+          description: Whether Console is connected in Redpanda AWS Private Link Service. The default is true if not set.
+          nullable: true
           type: boolean
         enabled:
           description: Whether Redpanda AWS Private Link Endpoint Service is enabled.
@@ -221,7 +222,8 @@ components:
             type: string
           type: array
         connect_console:
-          description: Whether Console is connected in Redpanda Azure Private Link Service.
+          description: Whether Console is connected in Redpanda Azure Private Link Service. The default is true if not set.
+          nullable: true
           type: boolean
         enabled:
           description: Enabled controls if Azure Private Link Endpoint Service is enabled.
@@ -265,6 +267,8 @@ components:
     Cluster:
       description: Resource describing a Cluster.
       properties:
+        api_gateway_access:
+          $ref: '#/components/schemas/NetworkAccessMode'
         aws_private_link:
           $ref: '#/components/schemas/AWSPrivateLink'
         azure_private_link:
@@ -504,6 +508,8 @@ components:
     ClusterCreate:
       description: Resource describing a Create Cluster.
       properties:
+        api_gateway_access:
+          $ref: '#/components/schemas/NetworkAccessMode'
         aws_private_link:
           $ref: '#/components/schemas/AWSPrivateLinkSpec'
         azure_private_link:
@@ -646,6 +652,8 @@ components:
     ClusterUpdate:
       description: Resource describing an Update Cluster.
       properties:
+        api_gateway_access:
+          $ref: '#/components/schemas/NetworkAccessMode'
         aws_private_link:
           $ref: '#/components/schemas/AWSPrivateLinkSpec'
         azure_private_link:
@@ -1943,6 +1951,12 @@ components:
         - STATE_READY
         - STATE_DELETING
         - STATE_FAILED
+      type: string
+    NetworkAccessMode:
+      description: Network access mode for an endpoint.
+      enum:
+        - NETWORK_ACCESS_MODE_PRIVATE
+        - NETWORK_ACCESS_MODE_PUBLIC
       type: string
     NetworkCreate:
       description: Redpanda Cloud network properties.
@@ -3258,7 +3272,7 @@ components:
           x-client-id: dQjapNIAHhF7EQqQToRla3yEII9sUSap
       type: oauth2
 info:
-  description: Use the Control Plane API to manage resources in your Redpanda Cloud organization such as clusters and networks.
+  description: The Redpanda Cloud Control Plane API allows programmatic management of Redpanda Cloud resources including clusters, networks, and resource groups.
   title: Redpanda Cloud Control Plane API
   version: v1
 openapi: 3.0.3
@@ -3316,7 +3330,8 @@ paths:
             application/json:
               example:
                 clusters:
-                  - cloud_provider: CLOUD_PROVIDER_GCP
+                  - api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
+                    cloud_provider: CLOUD_PROVIDER_GCP
                     cloud_provider_tags: {}
                     cloud_storage: null
                     cluster_configuration: null
@@ -3500,6 +3515,8 @@ paths:
             schema:
               description: Resource describing an Update Cluster.
               properties:
+                api_gateway_access:
+                  $ref: '#/components/schemas/NetworkAccessMode'
                 aws_private_link:
                   $ref: '#/components/schemas/AWSPrivateLinkSpec'
                 azure_private_link:
@@ -3651,6 +3668,7 @@ paths:
             application/json:
               example:
                 cluster:
+                  api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
                   cloud_provider: CLOUD_PROVIDER_GCP
                   cloud_provider_tags: {}
                   cloud_storage: null
@@ -4049,6 +4067,7 @@ paths:
                       response:
                         '@type': type.googleapis.com/redpanda.api.controlplane.v1.CreateClusterResponse
                         cluster:
+                          api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
                           cloud_provider: CLOUD_PROVIDER_GCP
                           cloud_provider_tags: {}
                           cloud_storage: null
@@ -4174,6 +4193,7 @@ paths:
                       response:
                         '@type': type.googleapis.com/redpanda.api.controlplane.v1.CreateClusterResponse
                         cluster:
+                          api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
                           cloud_provider: CLOUD_PROVIDER_GCP
                           cloud_provider_tags: {}
                           cloud_storage: null
@@ -5690,7 +5710,7 @@ tags:
     name: Resource Groups
   - description: Manage [Redpanda Serverless](https://docs.redpanda.com/redpanda-cloud/get-started/cloud-overview/#redpanda-cloud-cluster-types) clusters. For detailed steps, see [Use the Control Plane API with Serverless](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/).
     name: Serverless Clusters
-  - description: Manage Redpanda Serverless private links.
+  - description: Manage Redpanda Serverless Private Links. For detailed steps and information, see [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/).
     name: Serverless Private Links
   - description: See available Redpanda Serverless regions.
     name: Serverless Regions

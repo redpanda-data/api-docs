@@ -212,7 +212,7 @@ components:
         info:
           $ref: '#/components/schemas/ConnectCluster.Info'
         name:
-          description: Unique name of Connect cluster. For Redpanda Cloud, the value is `redpanda`.
+          description: Unique name of connect cluster. For Redpanda Cloud, the value is `redpanda`.
           type: string
         plugins:
           items:
@@ -1792,6 +1792,8 @@ components:
       enum:
         - SCOPE_REDPANDA_CONNECT
         - SCOPE_REDPANDA_CLUSTER
+        - SCOPE_MCP_SERVER
+        - SCOPE_AI_AGENT
       type: string
     Secret:
       description: Defines the secret resource.
@@ -2227,7 +2229,6 @@ components:
 info:
   title: Redpanda Cloud Data Plane API
   version: v1
-  description: Use the Data Plane API to manage topics, ACLs, and connectors within each cluster.
 openapi: 3.0.3
 paths:
   /v1/acls:
@@ -3492,7 +3493,7 @@ paths:
       description: 'List Kafka Connect cluster secrets. Optional: filter based on secret name and labels.'
       operationId: SecretService_ListKafkaConnectSecrets
       parameters:
-        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3516,6 +3517,8 @@ paths:
               enum:
                 - SCOPE_REDPANDA_CONNECT
                 - SCOPE_REDPANDA_CLUSTER
+                - SCOPE_MCP_SERVER
+                - SCOPE_AI_AGENT
               type: string
             type: array
         - description: |-
@@ -3609,7 +3612,7 @@ paths:
       description: Delete a Kafka Connect cluster secret.
       operationId: SecretService_DeleteKafkaConnectSecret
       parameters:
-        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -4806,6 +4809,8 @@ paths:
               enum:
                 - SCOPE_REDPANDA_CONNECT
                 - SCOPE_REDPANDA_CLUSTER
+                - SCOPE_MCP_SERVER
+                - SCOPE_AI_AGENT
               type: string
             type: array
         - description: |-
@@ -5611,7 +5616,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransformMetadata'
           description: Created
-      summary: Deploy transform
+      summary: Deploy Transform
       tags:
         - Wasm Transforms
   /v1/transforms/{name}:
