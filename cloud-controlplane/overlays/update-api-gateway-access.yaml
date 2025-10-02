@@ -1,0 +1,11 @@
+# This overlay updates the Cluster object in response examples to only use a 
+# user-facing value for the api_gateway_access field.
+overlay: 1.0.0
+info:
+  title: Update API Gateway Access Values in Response Examples
+  version: 1.0.0
+
+actions:
+  # Target api_gateway_access fields that are descendants of any example field within responses
+  - target: "$..responses..example..api_gateway_access[?(@ == 'NETWORK_ACCESS_MODE_UNSPECIFIED')]"
+    update: "NETWORK_ACCESS_MODE_PUBLIC"
