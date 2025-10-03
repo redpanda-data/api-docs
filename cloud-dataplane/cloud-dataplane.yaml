@@ -1792,6 +1792,8 @@ components:
       enum:
         - SCOPE_REDPANDA_CONNECT
         - SCOPE_REDPANDA_CLUSTER
+        - SCOPE_MCP_SERVER
+        - SCOPE_AI_AGENT
       type: string
     Secret:
       description: Defines the secret resource.
@@ -2227,7 +2229,6 @@ components:
 info:
   title: Redpanda Cloud Data Plane API
   version: v1
-  description: Use the Data Plane API to manage topics, ACLs, and connectors within each cluster.
 openapi: 3.0.3
 paths:
   /v1/acls:
@@ -3516,6 +3517,8 @@ paths:
               enum:
                 - SCOPE_REDPANDA_CONNECT
                 - SCOPE_REDPANDA_CLUSTER
+                - SCOPE_MCP_SERVER
+                - SCOPE_AI_AGENT
               type: string
             type: array
         - description: |-
@@ -4806,6 +4809,8 @@ paths:
               enum:
                 - SCOPE_REDPANDA_CONNECT
                 - SCOPE_REDPANDA_CLUSTER
+                - SCOPE_MCP_SERVER
+                - SCOPE_AI_AGENT
               type: string
             type: array
         - description: |-
