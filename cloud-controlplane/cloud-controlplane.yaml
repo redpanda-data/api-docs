@@ -24,8 +24,8 @@ components:
       properties:
         allowed_principals:
           description: The ARN of the principals that can access the Redpanda AWS PrivateLink Endpoint Service. To grant permissions to all principals, use an asterisk (*).
-          example:
-            - arn:aws:iam::account-number-without-hyphens:user/username or arn:aws:iam::account-number-without-hyphens:root
+          example: |
+            - `arn:aws:iam::account-number-without-hyphens:user/username` or `arn:aws:iam::account-number-without-hyphens:root`
           items:
             type: string
           type: array

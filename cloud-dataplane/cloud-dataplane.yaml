@@ -683,7 +683,7 @@ components:
             { "reason": "API_DISABLED"
               "domain": "googleapis.com"
               "metadata": {
-                "resource": "projects/123",
+                "resource": "projects/1234",
                 "service": "pubsub.googleapis.com"
               }
             }

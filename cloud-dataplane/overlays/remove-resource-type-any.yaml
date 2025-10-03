@@ -1,0 +1,24 @@
+# This overlay removes the RESOURCE_TYPE_ANY value as an available option for the 
+# resource_type field in the CreateACLRequest schema.
+overlay: 1.0.0
+info:
+  title: Remove RESOURCE_TYPE_ANY from Create ACL Request Body
+  version: 1.0.0
+
+actions:
+  # Replace the $ref with an inline enum that excludes RESOURCE_TYPE_ANY
+  - target: "$.components.schemas.CreateACLRequest.properties.resource_type"
+    update:
+      description: |-
+        The type of resource (topic, consumer group, etc.) this
+        ACL targets.
+      enum:
+        - "RESOURCE_TYPE_TOPIC"
+        - "RESOURCE_TYPE_GROUP"
+        - "RESOURCE_TYPE_CLUSTER"
+        - "RESOURCE_TYPE_TRANSACTIONAL_ID"
+        - "RESOURCE_TYPE_DELEGATION_TOKEN"
+        - "RESOURCE_TYPE_USER"
+        - "RESOURCE_TYPE_REGISTRY"
+        - "RESOURCE_TYPE_SUBJECT"
+      type: "string"
