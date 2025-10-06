@@ -7,5 +7,6 @@ info:
 
 actions:
   # Target api_gateway_access fields that are descendants of any example field within responses
-  - target: "$..responses..example..api_gateway_access[?(@ == 'NETWORK_ACCESS_MODE_UNSPECIFIED')]"
-    update: "NETWORK_ACCESS_MODE_PUBLIC"
+  - target: "$..responses..example*[?(@.api_gateway_access == 'NETWORK_ACCESS_MODE_UNSPECIFIED')]"
+    update:
+      api_gateway_access: "NETWORK_ACCESS_MODE_PUBLIC"
