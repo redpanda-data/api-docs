@@ -7,7 +7,7 @@ info:
 
 actions:
   # Replace the $ref with an inline enum that excludes RESOURCE_TYPE_ANY
-  - target: "$.components.schemas.CreateACLRequest.properties.resource_type.$ref"
+  - target: "$.components.schemas.CreateACLRequest.properties.resource_type"
     update:
       description: |-
         The type of resource (topic, consumer group, etc.) this
