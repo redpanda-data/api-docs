@@ -63,7 +63,7 @@ jobs:
         run: |
           npx doc-tools install-test-dependencies
 
-      - name: Generate RPCN Connector docs
+      - name: Generate Admin API OpenAPI spec
         id: generate
         run: |
           npx doc-tools generate bundle-openapi --tag "${TAG}" --use-admin-major-version --surface admin --out-admin admin/admin-v2.yaml
