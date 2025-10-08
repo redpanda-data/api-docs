@@ -13,6 +13,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 concurrency:
   group: openapi-${{ github.event.client_payload.tag || inputs.tag || github.run_id }}
@@ -79,6 +80,6 @@ jobs:
             This PR adds the latest OpenAPI spec for version **${{ env.TAG }}** of the Redpanda Admin API:
 
             ```
-            npx doc-tools generate bundle-openapi --tag ${{ env.TAG }} --use-admin-major-version --surface admin --out-admin admin/admin.yaml
+            npx doc-tools generate bundle-openapi --tag ${{ env.TAG }} --use-admin-major-version --surface admin --out-admin admin/admin-v2.yaml
             ```
           labels: auto-docs

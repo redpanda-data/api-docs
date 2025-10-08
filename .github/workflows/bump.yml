@@ -2,12 +2,9 @@ name: Check and deploy API documentation
 
 on:
   push:
-    branches:
-      - main
-
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 permissions:
   contents: read
@@ -30,12 +27,15 @@ jobs:
           DOCS=()
           for d in */ ; do
             # Exclude shared and .github or any other non-doc folders
-            if [[ "$d" != "shared/" && "$d" != ".github/" && ( -f "${d%/}/${d%/}.yaml" || -f "${d%/}/${d%/}.json" ) ]]; then
-              DOCS+=("${d%/}")
+            if [[ "$d" == "shared/" || "$d" == ".github/" ]]; then
+              continue
+            fi
+            base="${d%/}"
+            if [[ -f "${base}/${base}.yaml" || -f "${base}/${base}.yml" || -f "${base}/${base}.json" ]]; then
+              DOCS+=("${base}")
             fi
           done
 
-          # If no doc folders found, abort the workflow
           if [ ${#DOCS[@]} -eq 0 ]; then
             echo "No doc folders found. Exiting workflow."
             echo "matrix={\"doc_id\":[]}" >> $GITHUB_OUTPUT
@@ -53,21 +53,30 @@ jobs:
     name: Deploy API documentation on Bump.sh
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{fromJson(needs.determine-doc-ids.outputs.matrix)}}
+      matrix: ${{ fromJson(needs.determine-doc-ids.outputs.matrix) }}
       fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Determine file format
+      # Figure out the file path for non-admin docs
+      - name: Determine file format (non-admin)
         id: format
         run: |
-          if [ -f "${{ matrix.doc_id }}/${{ matrix.doc_id }}.yaml" ]; then
-            echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}.yaml" >> $GITHUB_OUTPUT
-          elif [ -f "${{ matrix.doc_id }}/${{ matrix.doc_id }}.json" ]; then
-            echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}.json" >> $GITHUB_OUTPUT
+          base="${{ matrix.doc_id }}"
+          if [ "$base" = "admin" ]; then
+            # Not used for admin; we deploy v1/v2 explicitly below
+            echo "file_path=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          if [ -f "${base}/${base}.yaml" ]; then
+            echo "file_path=${base}/${base}.yaml" >> $GITHUB_OUTPUT
+          elif [ -f "${base}/${base}.yml" ]; then
+            echo "file_path=${base}/${base}.yml" >> $GITHUB_OUTPUT
+          elif [ -f "${base}/${base}.json" ]; then
+            echo "file_path=${base}/${base}.json" >> $GITHUB_OUTPUT
           else
-            echo "No API definition file found for ${{ matrix.doc_id }}"
+            echo "No API definition file found for ${base}"
             exit 1
           fi
 
@@ -75,32 +84,27 @@ jobs:
         id: overlays
         run: |
           OVERLAYS=""
+          DOC_ID="${{ matrix.doc_id }}"
 
-          # Add doc-specific overlays (if any)
-          if [ -d "${{ matrix.doc_id }}/overlays" ]; then
+          # Doc-specific overlays
+          if [ -d "${DOC_ID}/overlays" ]; then
             shopt -s nullglob
-            for overlay_file in "${{ matrix.doc_id }}/overlays"/*.yaml; do
-              if [ -f "$overlay_file" ]; then
-                OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
-              fi
+            for overlay_file in "${DOC_ID}/overlays"/*.yaml; do
+              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
             done
             shopt -u nullglob
           fi
 
-          # Determine shared overlay prefix
-          if [[ "${{ matrix.doc_id }}" == "cloud-"* ]]; then
-            OVERLAY_PREFIX="cloud-"
+          # Shared overlays
+          if [[ "$DOC_ID" == cloud-* ]]; then
+            PREFIX="cloud-"
           else
-            OVERLAY_PREFIX="sm-"
+            PREFIX="sm-"
           fi
-
-          # Add matching shared overlays
           if [ -d "shared/overlays" ]; then
             shopt -s nullglob
-            for overlay_file in shared/overlays/${OVERLAY_PREFIX}*.yaml; do
-              if [ -f "$overlay_file" ]; then
-                OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
-              fi
+            for overlay_file in shared/overlays/${PREFIX}*.yaml; do
+              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
             done
             shopt -u nullglob
           fi
@@ -108,39 +112,42 @@ jobs:
           echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
           echo "Using overlays: $OVERLAYS"
 
+      # ---- Admin v1 explicit deploy (only when matrix.doc_id == admin) ----
       - name: Deploy API documentation (admin v1)
-        if: ${{ steps.format.outputs.file_path == 'admin/admin.yaml' }}
+        if: ${{ matrix.doc_id == 'admin' && hashFiles('admin/admin.yaml') != '' }}
         uses: bump-sh/github-action@v1
         with:
           hub: redpanda
-          doc: ${{ matrix.doc_id }}
-          token: ${{secrets.BUMP_TOKEN}}
-          file: ${{ steps.format.outputs.file_path }}
+          doc: admin
+          token: ${{ secrets.BUMP_TOKEN }}
+          file: admin/admin.yaml
           overlay: ${{ steps.overlays.outputs.overlay_paths }}
           branch: v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # ---- Admin v2 explicit deploy (only when matrix.doc_id == admin) ----
       - name: Deploy API documentation (admin v2)
-        if: ${{ steps.format.outputs.file_path == 'admin/admin-v2.yaml' }}
+        if: ${{ matrix.doc_id == 'admin' && hashFiles('admin/admin-v2.yaml') != '' }}
         uses: bump-sh/github-action@v1
         with:
           hub: redpanda
-          doc: ${{ matrix.doc_id }}
-          token: ${{secrets.BUMP_TOKEN}}
-          file: ${{ steps.format.outputs.file_path }}
+          doc: admin
+          token: ${{ secrets.BUMP_TOKEN }}
+          file: admin/admin-v2.yaml
           overlay: ${{ steps.overlays.outputs.overlay_paths }}
           branch: v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # ---- Other docs (non-admin) ----
       - name: Deploy API documentation (other files)
-        if: ${{ steps.format.outputs.file_path != 'admin/admin.yaml' && steps.format.outputs.file_path != 'admin/admin-v2.yaml' }}
+        if: ${{ matrix.doc_id != 'admin' }}
         uses: bump-sh/github-action@v1
         with:
           hub: redpanda
           doc: ${{ matrix.doc_id }}
-          token: ${{secrets.BUMP_TOKEN}}
+          token: ${{ secrets.BUMP_TOKEN }}
           file: ${{ steps.format.outputs.file_path }}
           overlay: ${{ steps.overlays.outputs.overlay_paths }}
         env:
@@ -152,23 +159,29 @@ jobs:
     name: Check diff
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{fromJson(needs.determine-doc-ids.outputs.matrix)}}
+      matrix: ${{ fromJson(needs.determine-doc-ids.outputs.matrix) }}
       fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Determine file format
+      # For non-admin docs, resolve file path
+      - name: Determine file format (non-admin)
         id: format
         run: |
-          if [ -f "${{ matrix.doc_id }}/${{ matrix.doc_id }}.yaml" ]; then
-            echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}.yaml" >> $GITHUB_OUTPUT
-          elif [ -f "${{ matrix.doc_id }}/${{ matrix.doc_id }}.json" ]; then
-            echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}.json" >> $GITHUB_OUTPUT
-          elif [ -f "${{ matrix.doc_id }}/${{ matrix.doc_id }}-api.json" ]; then
-            echo "file_path=${{ matrix.doc_id }}/${{ matrix.doc_id }}-api.json" >> $GITHUB_OUTPUT
+          base="${{ matrix.doc_id }}"
+          if [ "$base" = "admin" ]; then
+            echo "file_path=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          if [ -f "${base}/${base}.yaml" ]; then
+            echo "file_path=${base}/${base}.yaml" >> $GITHUB_OUTPUT
+          elif [ -f "${base}/${base}.yml" ]; then
+            echo "file_path=${base}/${base}.yml" >> $GITHUB_OUTPUT
+          elif [ -f "${base}/${base}.json" ]; then
+            echo "file_path=${base}/${base}.json" >> $GITHUB_OUTPUT
           else
-            echo "No API definition file found for ${{ matrix.doc_id }}"
+            echo "No API definition file found for ${base}"
             exit 1
           fi
 
@@ -176,32 +189,25 @@ jobs:
         id: overlays
         run: |
           OVERLAYS=""
+          DOC_ID="${{ matrix.doc_id }}"
 
-          # Add doc-specific overlays (if any)
-          if [ -d "${{ matrix.doc_id }}/overlays" ]; then
+          if [ -d "${DOC_ID}/overlays" ]; then
             shopt -s nullglob
-            for overlay_file in "${{ matrix.doc_id }}/overlays"/*.yaml; do
-              if [ -f "$overlay_file" ]; then
-                OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
-              fi
+            for overlay_file in "${DOC_ID}/overlays"/*.yaml; do
+              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
             done
             shopt -u nullglob
           fi
 
-          # Determine shared overlay prefix
-          if [[ "${{ matrix.doc_id }}" == "cloud-"* ]]; then
-            OVERLAY_PREFIX="cloud-"
+          if [[ "$DOC_ID" == cloud-* ]]; then
+            PREFIX="cloud-"
           else
-            OVERLAY_PREFIX="sm-"
+            PREFIX="sm-"
           fi
-
-          # Add matching shared overlays
           if [ -d "shared/overlays" ]; then
             shopt -s nullglob
-            for overlay_file in shared/overlays/${OVERLAY_PREFIX}*.yaml; do
-              if [ -f "$overlay_file" ]; then
-                OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
-              fi
+            for overlay_file in shared/overlays/${PREFIX}*.yaml; do
+              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
             done
             shopt -u nullglob
           fi
@@ -209,41 +215,44 @@ jobs:
           echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
           echo "Using overlays: $OVERLAYS"
 
-      - name: Comment pull request with API diff (admin v1)
-        if: ${{ steps.format.outputs.file_path == 'admin/admin.yaml' }}
+      # ---- Admin v1 explicit diff ----
+      - name: Comment PR with API diff (admin v1)
+        if: ${{ matrix.doc_id == 'admin' && hashFiles('admin/admin.yaml') != '' }}
         uses: bump-sh/github-action@v1
         with:
           hub: redpanda
-          doc: ${{ matrix.doc_id }}
-          token: ${{secrets.BUMP_TOKEN}}
-          file: ${{ steps.format.outputs.file_path }}
+          doc: admin
+          token: ${{ secrets.BUMP_TOKEN }}
+          file: admin/admin.yaml
           overlay: ${{ steps.overlays.outputs.overlay_paths }}
           command: diff
           branch: v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Comment pull request with API diff (admin v2)
-        if: ${{ steps.format.outputs.file_path == 'admin/admin-v2.yaml' }}
+      # ---- Admin v2 explicit diff ----
+      - name: Comment PR with API diff (admin v2)
+        if: ${{ matrix.doc_id == 'admin' && hashFiles('admin/admin-v2.yaml') != '' }}
         uses: bump-sh/github-action@v1
         with:
           hub: redpanda
-          doc: ${{ matrix.doc_id }}
-          token: ${{secrets.BUMP_TOKEN}}
-          file: ${{ steps.format.outputs.file_path }}
+          doc: admin
+          token: ${{ secrets.BUMP_TOKEN }}
+          file: admin/admin-v2.yaml
           overlay: ${{ steps.overlays.outputs.overlay_paths }}
           command: diff
           branch: v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Comment pull request with API diff (other files)
-        if: ${{ steps.format.outputs.file_path != 'admin/admin.yaml' && steps.format.outputs.file_path != 'admin/admin-v2.yaml' }}
+      # ---- Other docs (non-admin) ----
+      - name: Comment PR with API diff (other files)
+        if: ${{ matrix.doc_id != 'admin' }}
         uses: bump-sh/github-action@v1
         with:
           hub: redpanda
           doc: ${{ matrix.doc_id }}
-          token: ${{secrets.BUMP_TOKEN}}
+          token: ${{ secrets.BUMP_TOKEN }}
           file: ${{ steps.format.outputs.file_path }}
           overlay: ${{ steps.overlays.outputs.overlay_paths }}
           command: diff
