@@ -108,8 +108,34 @@ jobs:
           echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
           echo "Using overlays: $OVERLAYS"
 
+      - name: Deploy API documentation (admin v1)
+        if: ${{ steps.format.outputs.file_path == 'admin/admin.yaml' }}
+        uses: bump-sh/github-action@v1
+        with:
+          hub: redpanda
+          doc: ${{ matrix.doc_id }}
+          token: ${{secrets.BUMP_TOKEN}}
+          file: ${{ steps.format.outputs.file_path }}
+          overlay: ${{ steps.overlays.outputs.overlay_paths }}
+          branch: v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Deploy API documentation
+      - name: Deploy API documentation (admin v2)
+        if: ${{ steps.format.outputs.file_path == 'admin/admin-v2.yaml' }}
+        uses: bump-sh/github-action@v1
+        with:
+          hub: redpanda
+          doc: ${{ matrix.doc_id }}
+          token: ${{secrets.BUMP_TOKEN}}
+          file: ${{ steps.format.outputs.file_path }}
+          overlay: ${{ steps.overlays.outputs.overlay_paths }}
+          branch: v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy API documentation (other files)
+        if: ${{ steps.format.outputs.file_path != 'admin/admin.yaml' && steps.format.outputs.file_path != 'admin/admin-v2.yaml' }}
         uses: bump-sh/github-action@v1
         with:
           hub: redpanda
@@ -183,8 +209,36 @@ jobs:
           echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
           echo "Using overlays: $OVERLAYS"
 
+      - name: Comment pull request with API diff (admin v1)
+        if: ${{ steps.format.outputs.file_path == 'admin/admin.yaml' }}
+        uses: bump-sh/github-action@v1
+        with:
+          hub: redpanda
+          doc: ${{ matrix.doc_id }}
+          token: ${{secrets.BUMP_TOKEN}}
+          file: ${{ steps.format.outputs.file_path }}
+          overlay: ${{ steps.overlays.outputs.overlay_paths }}
+          command: diff
+          branch: v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Comment pull request with API diff
+      - name: Comment pull request with API diff (admin v2)
+        if: ${{ steps.format.outputs.file_path == 'admin/admin-v2.yaml' }}
+        uses: bump-sh/github-action@v1
+        with:
+          hub: redpanda
+          doc: ${{ matrix.doc_id }}
+          token: ${{secrets.BUMP_TOKEN}}
+          file: ${{ steps.format.outputs.file_path }}
+          overlay: ${{ steps.overlays.outputs.overlay_paths }}
+          command: diff
+          branch: v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment pull request with API diff (other files)
+        if: ${{ steps.format.outputs.file_path != 'admin/admin.yaml' && steps.format.outputs.file_path != 'admin/admin-v2.yaml' }}
         uses: bump-sh/github-action@v1
         with:
           hub: redpanda
