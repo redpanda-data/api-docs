@@ -5,6 +5,8 @@ info:
   title: Remove RESOURCE_TYPE_ANY from Create ACL Request Body
   version: 1.0.0
 
+# Note that we will have to manually update this enum if the Cloud team adds
+# new resource types in the future.
 actions:
   - target: "$.components.schemas"
     update:
