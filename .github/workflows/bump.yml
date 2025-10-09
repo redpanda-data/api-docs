@@ -80,11 +80,17 @@ jobs:
             exit 1
           fi
 
-      - name: Determine overlays
+      - name: Determine overlays (non-admin)
         id: overlays
         run: |
           OVERLAYS=""
           DOC_ID="${{ matrix.doc_id }}"
+
+          # Skip overlay determination for admin - handled separately
+          if [ "$DOC_ID" = "admin" ]; then
+            echo "overlay_paths=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
 
           # Doc-specific overlays
           if [ -d "${DOC_ID}/overlays" ]; then
@@ -112,6 +118,72 @@ jobs:
           echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
           echo "Using overlays: $OVERLAYS"
 
+      - name: Determine admin v1 overlays
+        id: admin-v1-overlays
+        run: |
+          OVERLAYS=""
+          DOC_ID="${{ matrix.doc_id }}"
+
+          # Only run for admin
+          if [ "$DOC_ID" != "admin" ]; then
+            echo "overlay_paths=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Admin v1-specific overlays
+          if [ -d "admin/v1-overlays" ]; then
+            shopt -s nullglob
+            for overlay_file in admin/v1-overlays/*.yaml; do
+              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
+            done
+            shopt -u nullglob
+          fi
+
+          # Shared overlays for self-managed (admin is sm)
+          if [ -d "shared/overlays" ]; then
+            shopt -s nullglob
+            for overlay_file in shared/overlays/sm-*.yaml; do
+              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
+            done
+            shopt -u nullglob
+          fi
+
+          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          echo "Using v1 overlays: $OVERLAYS"
+
+      - name: Determine admin v2 overlays
+        id: admin-v2-overlays
+        run: |
+          OVERLAYS=""
+          DOC_ID="${{ matrix.doc_id }}"
+
+          # Only run for admin
+          if [ "$DOC_ID" != "admin" ]; then
+            echo "overlay_paths=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Admin v2-specific overlays
+          if [ -d "admin/v2-overlays" ]; then
+            shopt -s nullglob
+            for overlay_file in admin/v2-overlays/*.yaml; do
+              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
+            done
+            shopt -u nullglob
+          fi
+
+          # Shared overlays for self-managed (admin is sm)
+          if [ -d "shared/overlays" ]; then
+            shopt -s nullglob
+            for overlay_file in shared/overlays/sm-*.yaml; do
+              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
+            done
+            shopt -u nullglob
+          fi
+
+          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          echo "Using v2 overlays: $OVERLAYS"
+
       # ---- Admin v1 explicit deploy (only when matrix.doc_id == admin) ----
       - name: Deploy API documentation (admin v1)
         if: ${{ matrix.doc_id == 'admin' && hashFiles('admin/admin.yaml') != '' }}
@@ -121,7 +193,7 @@ jobs:
           doc: admin
           token: ${{ secrets.BUMP_TOKEN }}
           file: admin/admin.yaml
-          overlay: ${{ steps.overlays.outputs.overlay_paths }}
+          overlay: ${{ steps.admin-v1-overlays.outputs.overlay_paths }}
           branch: v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -135,7 +207,7 @@ jobs:
           doc: admin
           token: ${{ secrets.BUMP_TOKEN }}
           file: admin/admin-v2.yaml
-          overlay: ${{ steps.overlays.outputs.overlay_paths }}
+          overlay: ${{ steps.admin-v2-overlays.outputs.overlay_paths }}
           branch: v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
