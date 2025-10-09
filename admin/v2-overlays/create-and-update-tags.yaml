@@ -24,38 +24,3 @@ actions:
     update: "Shadow Links"
 
 
-  # # Rename BrokerService endpoint tags
-  # - target: "$.paths['/redpanda.core.admin.v2.BrokerService/GetBroker'].post.tags"
-  #   update:
-  #     - "Brokers"
-  
-  # - target: "$.paths['/redpanda.core.admin.v2.BrokerService/ListBrokers'].post.tags"
-  #   update:
-  #     - "Brokers"
-      
-  # - target: "$.paths['/redpanda.core.admin.v2.BrokerService/ListKafkaConnections'].post.tags"
-  #   update:
-  #     - "Brokers"
-
-  # # Rename ShadowLinkService endpoint tags
-  # - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/CreateShadowLink'].post.tags"
-  #   update:
-  #     - "Shadow Links"
-      
-  # - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/UpdateShadowLink'].post.tags"
-  #   update:
-  #     - "Shadow Links"
-      
-  # - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/DeleteShadowLink'].post.tags"
-  #   update:
-  #     - "Shadow Links"
-      
-  # - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/ListShadowLinks'].post.tags"
-  #   update:
-  #     - "Shadow Links"
-      
-  # - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/GetShadowLink'].post.tags"
-  #   update:
-  #     - "Shadow Links"
-
-
