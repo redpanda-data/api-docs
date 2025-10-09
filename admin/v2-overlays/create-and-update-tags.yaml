@@ -22,5 +22,3 @@ actions:
   # Rename ShadowLinkService endpoint tags
   - target: "$.paths.*.*.tags[?(@ == 'ShadowLinkService')]"
     update: "Shadow Links"
-
-
