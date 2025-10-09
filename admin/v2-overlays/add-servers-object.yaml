@@ -3,7 +3,7 @@
 overlay: 1.0.0
 info:
   title: Admin API v2 Servers
-  version: v1
+  version: 1.0.0
 
 actions:
   - target: "$"

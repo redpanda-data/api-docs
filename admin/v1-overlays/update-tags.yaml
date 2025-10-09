@@ -2,7 +2,7 @@
 overlay: 1.0.0
 info:
   title: Redpanda Admin API Tags
-  version: v1
+  version: 1.0.0
 
 actions:
   - target: $.tags[?(@.name=="Mount and unmount topics")]
