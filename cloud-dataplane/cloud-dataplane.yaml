@@ -212,7 +212,7 @@ components:
         info:
           $ref: '#/components/schemas/ConnectCluster.Info'
         name:
-          description: Unique name of Connect cluster. For Redpanda Cloud, the value is `redpanda`.
+          description: Unique name of connect cluster. For Redpanda Cloud, the value is `redpanda`.
           type: string
         plugins:
           items:
@@ -683,7 +683,7 @@ components:
             { "reason": "API_DISABLED"
               "domain": "googleapis.com"
               "metadata": {
-                "resource": "projects/1234",
+                "resource": "projects/123",
                 "service": "pubsub.googleapis.com"
               }
             }
@@ -2081,8 +2081,6 @@ components:
           description: The secret data. Must be Base64-encoded.
           format: byte
           type: string
-      required:
-        - secret_data
       type: object
     UpdateSecretResponse:
       description: UpdateSecretResponse is the response of UpdateSecret.
@@ -3493,7 +3491,7 @@ paths:
       description: 'List Kafka Connect cluster secrets. Optional: filter based on secret name and labels.'
       operationId: SecretService_ListKafkaConnectSecrets
       parameters:
-        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3612,7 +3610,7 @@ paths:
       description: Delete a Kafka Connect cluster secret.
       operationId: SecretService_DeleteKafkaConnectSecret
       parameters:
-        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -5616,7 +5614,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransformMetadata'
           description: Created
-      summary: Deploy transform
+      summary: Deploy Transform
       tags:
         - Wasm Transforms
   /v1/transforms/{name}:

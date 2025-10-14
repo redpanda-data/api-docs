@@ -2520,8 +2520,9 @@ components:
     ServerlessCluster:
       description: Resource describing a ServerlessCluster.
       properties:
-        console:
-          $ref: '#/components/schemas/ServerlessCluster.Console'
+        console_private_url:
+          readOnly: true
+          type: string
         console_url:
           readOnly: true
           type: string
@@ -2540,6 +2541,8 @@ components:
           description: Unique name of the Serverless cluster.
           example: development-ServerlessCluster
           type: string
+        network:
+          $ref: '#/components/schemas/ServerlessCluster.NetworkingConfig'
         planned_deletion:
           $ref: '#/components/schemas/PlannedDeletion'
         private_link:
@@ -2562,11 +2565,15 @@ components:
           type: string
       title: ServerlessCluster
       type: object
-    ServerlessCluster.Console:
-      type: object
     ServerlessCluster.DataplaneAPI:
       description: Cluster's Data Plane API properties.
       properties:
+        private_url:
+          description: |-
+            private_url is the private url of the dataplane api if private networking
+            is enabled for this cluster.
+          readOnly: true
+          type: string
         url:
           readOnly: true
           type: string
@@ -2574,13 +2581,31 @@ components:
     ServerlessCluster.KafkaAPI:
       description: Cluster's Kafka API properties.
       properties:
-        seed_brokers:
-          description: Kafka API seed brokers (also known as bootstrap servers).
+        private_seed_brokers:
           items:
             type: string
           readOnly: true
+          title: Kafka API seed brokers (also known as bootstrap servers). Private addresses
+          type: array
+        seed_brokers:
+          items:
+            type: string
+          readOnly: true
+          title: Kafka API seed brokers (also known as bootstrap servers). Implicitly public
           type: array
       type: object
+    ServerlessCluster.NetworkingConfig:
+      properties:
+        private:
+          $ref: '#/components/schemas/ServerlessCluster.NetworkingConfig.State'
+        public:
+          $ref: '#/components/schemas/ServerlessCluster.NetworkingConfig.State'
+      type: object
+    ServerlessCluster.NetworkingConfig.State:
+      enum:
+        - STATE_DISABLED
+        - STATE_ENABLED
+      type: string
     ServerlessCluster.PrivateLink:
       properties:
         id:
@@ -2591,6 +2616,10 @@ components:
     ServerlessCluster.SchemaRegistryStatus:
       description: Cluster's Schema Registry properties.
       properties:
+        private_url:
+          readOnly: true
+          title: Private url for the schema registry
+          type: string
         url:
           readOnly: true
           type: string
