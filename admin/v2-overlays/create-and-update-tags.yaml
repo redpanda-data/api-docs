@@ -1,0 +1,24 @@
+# This overlay extends the Redpanda Admin API specification by creating an
+# end-user facing list of tags and applying them to the relevant endpoints.
+overlay: 1.0.0
+info:
+  title: Redpanda Admin API v2 Tags
+  version: 1.0.0
+
+actions:
+  # Add tags object to the root level
+  - target: "$"
+    update:
+      tags:
+        - name: Brokers
+          description: See details about brokers in a Redpanda cluster, including client connections.
+        - name: Shadow Links
+          description: Manage shadow links for disaster recovery and migration.
+  
+  # Rename BrokerService endpoint tags
+  - target: "$.paths.*.*.tags[?(@ == 'BrokerService')]"
+    update: "Brokers"
+  
+  # Rename ShadowLinkService endpoint tags
+  - target: "$.paths.*.*.tags[?(@ == 'ShadowLinkService')]"
+    update: "Shadow Links"
