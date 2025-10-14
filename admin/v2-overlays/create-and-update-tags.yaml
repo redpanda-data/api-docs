@@ -13,7 +13,7 @@ actions:
         - name: Brokers
           description: See details about brokers in a Redpanda cluster, including client connections.
         - name: Shadow Links
-          description: Manage shadow links for migration and disaster recovery.
+          description: Manage shadow links for disaster recovery and migration.
   
   # Rename BrokerService endpoint tags
   - target: "$.paths.*.*.tags[?(@ == 'BrokerService')]"
