@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Redpanda Schema Registry API",
-    "version": "1.1.0"
+    "version": "1.1.1"
   },
   "host": "localhost:8081",
   "basePath": "/",
@@ -232,6 +232,13 @@
             "schema": {
               "$ref": "#/definitions/mode"
             }
+          },
+          {
+            "name": "force",
+            "description": "If true, override the emptiness check when setting the global mode to IMPORT",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "produces": [
@@ -329,6 +336,13 @@
             "schema": {
               "$ref": "#/definitions/mode"
             }
+          },
+          {
+            "name": "force",
+            "description": "If true, override the emptiness check when setting a subject's mode to IMPORT",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "produces": [
@@ -1576,7 +1590,8 @@
           "type": "string",
           "enum": [
             "READWRITE",
-            "READONLY"
+            "READONLY",
+            "IMPORT"
           ]
         }
       }
