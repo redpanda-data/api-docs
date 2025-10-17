@@ -735,6 +735,32 @@ components:
           title: shadow_link
       title: GetShadowLinkResponse
       type: object
+    redpanda.core.admin.v2.GetShadowTopicRequest:
+      additionalProperties: false
+      description: Request to get a shadow topic
+      properties:
+        name:
+          description: The name of the shadow topic to get
+          title: name
+          type: string
+        shadowLinkName:
+          description: The name of the shadow link the topic is contained in
+          title: shadow_link_name
+          type: string
+      required:
+        - shadowLinkName
+        - name
+      title: GetShadowTopicRequest
+      type: object
+    redpanda.core.admin.v2.GetShadowTopicResponse:
+      additionalProperties: false
+      description: Response of to getting a shadow topic
+      properties:
+        shadowTopic:
+          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowTopic"
+          title: shadow_topic
+      title: GetShadowTopicResponse
+      type: object
     redpanda.core.admin.v2.InFlightRequests:
       additionalProperties: false
       properties:
@@ -1060,6 +1086,28 @@ components:
           type: array
       title: ListShadowLinksResponse
       type: object
+    redpanda.core.admin.v2.ListShadowTopicsRequest:
+      additionalProperties: false
+      description: Request to list all shadow topics in a shadow link
+      properties:
+        shadowLinkName:
+          title: shadow_link_name
+          type: string
+      required:
+        - shadowLinkName
+      title: ListShadowTopicsRequest
+      type: object
+    redpanda.core.admin.v2.ListShadowTopicsResponse:
+      additionalProperties: false
+      description: Response to listing all shadow topics in a shadow link
+      properties:
+        shadowTopics:
+          items:
+            $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowTopic"
+          title: shadow_topics
+          type: array
+      title: ListShadowTopicsResponse
+      type: object
     redpanda.core.admin.v2.NameFilter:
       additionalProperties: false
       description: A filter based on the name of a resource
@@ -1346,11 +1394,11 @@ components:
       additionalProperties: false
       description: Status of the shadow link
       properties:
-        shadowTopicStatuses:
+        shadowTopics:
           description: Status of shadow topics
           items:
-            $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowTopicStatus"
-          title: shadow_topic_statuses
+            $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowTopic"
+          title: shadow_topics
           type: array
         state:
           $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLinkState"
@@ -1392,6 +1440,36 @@ components:
           title: state
       title: ShadowLinkTaskStatus
       type: object
+    redpanda.core.admin.v2.ShadowTopic:
+      additionalProperties: false
+      description: A ShadowTopic resource contained by the ShadowLink
+      properties:
+        name:
+          description: Name of the shadow topic
+          readOnly: true
+          title: name
+          type: string
+        sourceTopicId:
+          description: The topic ID of the source topic
+          readOnly: true
+          title: source_topic_id
+          type: string
+        sourceTopicName:
+          description: The name of the source topic
+          title: source_topic_name
+          type: string
+        status:
+          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowTopicStatus"
+          description: The status of the shadow topic
+          readOnly: true
+          title: status
+        topicId:
+          description: The topic ID of the shadow topic
+          readOnly: true
+          title: topic_id
+          type: string
+      title: ShadowTopic
+      type: object
     redpanda.core.admin.v2.ShadowTopicState:
       description: State of a shadow topic
       enum:
@@ -1409,10 +1487,6 @@ components:
       additionalProperties: false
       description: Status of a ShadowTopic
       properties:
-        name:
-          description: Name of the shadow topic
-          title: name
-          type: string
         partitionInformation:
           description: List of partition information for the shadow topic
           items:
@@ -1423,10 +1497,6 @@ components:
           $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowTopicState"
           description: State of the shadow topic
           title: state
-        topicId:
-          description: Topic ID of the shadow topic
-          title: topic_id
-          type: string
       title: ShadowTopicStatus
       type: object
     redpanda.core.admin.v2.Source:
@@ -1634,6 +1704,10 @@ components:
           type:
             - integer
             - string
+        sourceLastUpdatedTimestamp:
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          description: Timestamp of the last time the source partition information was updated
+          title: source_last_updated_timestamp
       title: TopicPartitionInformation
       type: object
     redpanda.core.admin.v2.UpdateShadowLinkRequest:
@@ -1717,7 +1791,7 @@ info:
   title: Redpanda Admin API
   version: v2.0.0
   x-admin-api-major: v2.0.0
-  x-generated-at: 2025-10-16T19:48:31.182Z
+  x-generated-at: 2025-10-17T17:24:43.019Z
   x-generator: redpanda-docs-openapi-bundler
   x-redpanda-core-version: dev
 openapi: 3.1.0
@@ -1973,6 +2047,46 @@ paths:
       summary: GetShadowLink
       tags:
         - ShadowLinkService
+  /redpanda.core.admin.v2.ShadowLinkService/GetShadowTopic:
+    post:
+      description: |-
+        This operation returns information about a Shadow Topic on a Shadow Link.
+         A Shadow Topic is a resource created automatically by a Shadow Link.  The
+         Shadow Topic 'shadows' a topic on a source cluster, mirroring the data
+         and properties of that topic.
+      operationId: redpanda.core.admin.v2.ShadowLinkService.GetShadowTopic
+      parameters:
+        - in: header
+          name: Connect-Protocol-Version
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - in: header
+          name: Connect-Timeout-Ms
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/redpanda.core.admin.v2.GetShadowTopicRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/redpanda.core.admin.v2.GetShadowTopicResponse"
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+          description: Error
+      summary: This operation returns information about a Shadow Topic on a Shadow Link.  A Shadow Topic is a resource created automatically by a Shadow Link.  The  Shadow Topic 'shadows' a topic on a source cluster, mirroring the data  and properties of that topic.
+      tags:
+        - ShadowLinkService
   /redpanda.core.admin.v2.ShadowLinkService/ListShadowLinks:
     post:
       operationId: redpanda.core.admin.v2.ShadowLinkService.ListShadowLinks
@@ -2006,6 +2120,44 @@ paths:
                 $ref: "#/components/schemas/connect.error"
           description: Error
       summary: ListShadowLinks
+      tags:
+        - ShadowLinkService
+  /redpanda.core.admin.v2.ShadowLinkService/ListShadowTopics:
+    post:
+      description: |-
+        This operation returns a list of all Shadow Topics on a Shadow Link and
+         their status
+      operationId: redpanda.core.admin.v2.ShadowLinkService.ListShadowTopics
+      parameters:
+        - in: header
+          name: Connect-Protocol-Version
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - in: header
+          name: Connect-Timeout-Ms
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/redpanda.core.admin.v2.ListShadowTopicsRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/redpanda.core.admin.v2.ListShadowTopicsResponse"
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+          description: Error
+      summary: This operation returns a list of all Shadow Topics on a Shadow Link and  their status
       tags:
         - ShadowLinkService
   /redpanda.core.admin.v2.ShadowLinkService/UpdateShadowLink:
