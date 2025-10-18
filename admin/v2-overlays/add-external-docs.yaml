@@ -9,6 +9,6 @@ actions:
   - target: "$.info"
     update:
       description: |
-        Manage and administer Redpanda clusters using the Redpanda Admin API v2. Admin API v2 allows you to perform various operations introduced in Redpanda v25.3.
+        Available with Redpanda v25.3 and later. Manage and administer Redpanda clusters using the Redpanda Admin API v2.
 
         See: [Manage Redpanda Using the Admin API](https://docs.redpanda.com/redpanda-cloud/manage/use-admin-api)
