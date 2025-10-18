@@ -2570,7 +2570,7 @@ components:
       properties:
         private_url:
           description: |-
-            private_url is the private url of the dataplane api if private networking
+            The private URL of the data plane API, if private networking
             is enabled for this cluster.
           readOnly: true
           type: string
@@ -2618,7 +2618,7 @@ components:
       properties:
         private_url:
           readOnly: true
-          title: Private url for the schema registry
+          title: Private URL for the schema registry
           type: string
         url:
           readOnly: true
