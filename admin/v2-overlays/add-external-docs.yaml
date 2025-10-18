@@ -1,0 +1,14 @@
+# Overlay to add description and external documentation links
+# to the Admin API v2 specification
+overlay: 1.0.0
+info:
+  title: Add External Documentation Links
+  version: 1.0.0
+actions:
+  # Add enhanced description to the info node
+  - target: "$.info"
+    update:
+      description: |
+        Available with Redpanda v25.3 and later. Manage and administer Redpanda clusters using the Redpanda Admin API v2.
+
+        See: [Manage Redpanda Using the Admin API](https://docs.redpanda.com/redpanda-cloud/manage/use-admin-api)
