@@ -1303,42 +1303,49 @@ components:
           type: string
         connectionTimeoutMs:
           description: |-
-            Connection timeout
+            Connection timeout.
              If 0 is provided, defaults to 1 second
           format: int32
           title: connection_timeout_ms
           type: integer
         fetchMaxBytes:
           description: |-
-            Fetch max bytes
-             If 0 is provided, defaults to 1MiB
+            Fetch max bytes.
+             If 0 is provided, defaults to 20 MiB
           format: int32
           title: fetch_max_bytes
           type: integer
         fetchMinBytes:
           description: |-
-            Fetch min bytes
-             If 0 is provided, defaults to 1 byte
+            Fetch min bytes.
+             If 0 is provided, defaults to 5 MiB
           format: int32
           title: fetch_min_bytes
           type: integer
+        fetchPartitionMaxBytes:
+          description: |-
+            Fetch partition max bytes.
+             If 0 is provided, defaults to 1 MiB
+          format: int32
+          title: fetch_partition_max_bytes
+          type: integer
         fetchWaitMaxMs:
           description: |-
-            Fetch request timeout
-             If 0 is provided, defaults to 100ms
+            Fetch request timeout.
+             If 0 is provided, defaults to 500ms
           format: int32
           title: fetch_wait_max_ms
           type: integer
         metadataMaxAgeMs:
           description: |-
-            Max metadata age
+            Max metadata age.
              If 0 is provided, defaults to 10 seconds
           format: int32
           title: metadata_max_age_ms
           type: integer
         retryBackoffMs:
           description: |-
-            Retry base backoff
+            Retry base backoff.
              If 0 is provided, defaults to 100ms
           format: int32
           title: retry_backoff_ms
@@ -1569,6 +1576,10 @@ components:
       additionalProperties: false
       allOf:
         - properties:
+            doNotSetSniHostname:
+              description: If true, the SNI hostname will not be provided when TLS is used
+              title: do_not_set_sni_hostname
+              type: boolean
             enabled:
               description: Whether or not TLS is enabled
               title: enabled
@@ -1791,7 +1802,7 @@ info:
   title: Redpanda Admin API
   version: v2.0.0
   x-admin-api-major: v2.0.0
-  x-generated-at: 2025-10-17T17:24:43.019Z
+  x-generated-at: 2025-10-20T20:00:08.441Z
   x-generator: redpanda-docs-openapi-bundler
   x-redpanda-core-version: dev
 openapi: 3.1.0
