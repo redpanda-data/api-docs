@@ -5,6 +5,8 @@ info:
   description: |
     Use the Admin API to administer and manage Redpanda.
 
+    See [Manage Redpanda Using the Admin API](https://docs.redpanda.com/redpanda-cloud/manage/use-admin-api).
+
     ---
 
 servers:
