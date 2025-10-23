@@ -592,6 +592,11 @@ components:
       additionalProperties: false
       description: Options for syncing consumer offsets
       properties:
+        effectiveInterval:
+          $ref: "#/components/schemas/google.protobuf.Duration"
+          description: The effective interval for the task
+          readOnly: true
+          title: effective_interval
         enabled:
           description: Whether it's enabled
           title: enabled
@@ -976,6 +981,9 @@ components:
       type: object
     redpanda.core.admin.v2.ListKafkaConnectionsRequest:
       additionalProperties: false
+      description: |-
+        ListKafkaConnectionsRequest return information about the broker's Kafka
+         connections.
       properties:
         filter:
           description: |-
@@ -998,7 +1006,7 @@ components:
 
              Example filters:
              - `state = KAFKA_CONNECTION_STATE_OPEN`
-             - `idle_duration > 30s AND request_count_total > 100`
+             - `idle_duration > 30s AND total_request_statistics.request_count > 100`
              - `authentication_info.user_principal = "my-producer"`
              - `recent_request_statistics.produce_bytes > 1000 AND
              client_software_name = "kgo"`
@@ -1007,13 +1015,6 @@ components:
              Reference: https://google.aip.dev/160
           title: filter
           type: string
-        nodeId:
-          description: |-
-            The node ID for the broker. If set to -1, the broker handling the RPC
-             request returns information about itself.
-          format: int32
-          title: node_id
-          type: integer
         orderBy:
           description: |-
             Field-based ordering specification following AIP-132 syntax.
@@ -1041,6 +1042,9 @@ components:
       type: object
     redpanda.core.admin.v2.ListKafkaConnectionsResponse:
       additionalProperties: false
+      description: |-
+        ListKafkaConnectionsResponse is the response from the ListKafkaConnections
+         RPC.
       properties:
         connections:
           description: |-
@@ -1192,6 +1196,37 @@ components:
             - string
       title: RequestStatistics
       type: object
+    redpanda.core.admin.v2.SchemaRegistrySyncOptions:
+      additionalProperties: false
+      description: Options for how the Schema Registry is synced.
+      oneOf:
+        - properties:
+            shadowSchemaRegistryTopic:
+              $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncOptions.ShadowSchemaRegistryTopic"
+              title: shadow_schema_registry_topic
+          required:
+            - shadowSchemaRegistryTopic
+          title: shadow_schema_registry_topic
+      title: SchemaRegistrySyncOptions
+      type: object
+    redpanda.core.admin.v2.SchemaRegistrySyncOptions.ShadowSchemaRegistryTopic:
+      additionalProperties: false
+      description: |-
+        Shadow the entire source cluster's Schema Registry byte-for-byte.
+         If set, the Shadow Link will attempt to add the `_schemas`
+         topic to the list of Shadow Topics as long as:
+         1. The `_schemas` topic exists on the source cluster
+         2. The `_schemas` topic does not exist on the shadow cluster, or it is
+         empty.
+         If either of the above conditions are _not_ met, then the `_schemas`
+         topic will _not_ be shadowed by this cluster. Unsetting this flag will
+         _not_ remove the `_schemas` topic from shadowing if it has already been
+         added.  Once made a shadow topic, the
+         `_schemas` topic will be replicated byte-for-byte.  To stop shadowing the
+         `_schemas` topic, unset this field, then either fail-over the topic or
+         delete it.
+      title: ShadowSchemaRegistryTopic
+      type: object
     redpanda.core.admin.v2.ScramConfig:
       additionalProperties: false
       description: SCRAM settings
@@ -1241,6 +1276,11 @@ components:
             $ref: "#/components/schemas/redpanda.core.admin.v2.ACLFilter"
           title: acl_filters
           type: array
+        effectiveInterval:
+          $ref: "#/components/schemas/google.protobuf.Duration"
+          description: The effective interval for the task
+          readOnly: true
+          title: effective_interval
         enabled:
           description: Whether or not it's enabled
           title: enabled
@@ -1307,6 +1347,48 @@ components:
              If 0 is provided, defaults to 1 second
           format: int32
           title: connection_timeout_ms
+          type: integer
+        effectiveConnectionTimeoutMs:
+          description: The effective connection timeout in milliseconds
+          format: int32
+          readOnly: true
+          title: effective_connection_timeout_ms
+          type: integer
+        effectiveFetchMaxBytes:
+          description: The effective fetch max bytes
+          format: int32
+          readOnly: true
+          title: effective_fetch_max_bytes
+          type: integer
+        effectiveFetchMinBytes:
+          description: The effective fetch min bytes
+          format: int32
+          readOnly: true
+          title: effective_fetch_min_bytes
+          type: integer
+        effectiveFetchPartitionMaxBytes:
+          description: The effective fetch partition max bytes
+          format: int32
+          readOnly: true
+          title: effective_fetch_partition_max_bytes
+          type: integer
+        effectiveFetchWaitMaxMs:
+          description: The effective fetch wait max in milliseconds
+          format: int32
+          readOnly: true
+          title: effective_fetch_wait_max_ms
+          type: integer
+        effectiveMetadataMaxAgeMs:
+          description: The effective metadata max age in milliseconds
+          format: int32
+          readOnly: true
+          title: effective_metadata_max_age_ms
+          type: integer
+        effectiveRetryBackoffMs:
+          description: The effective retry backoff in milliseconds
+          format: int32
+          readOnly: true
+          title: effective_retry_backoff_ms
           type: integer
         fetchMaxBytes:
           description: |-
@@ -1379,6 +1461,10 @@ components:
           $ref: "#/components/schemas/redpanda.core.admin.v2.ConsumerOffsetSyncOptions"
           description: Consumer offset sync options
           title: consumer_offset_sync_options
+        schemaRegistrySyncOptions:
+          $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncOptions"
+          description: Schema Registry sync options
+          title: schema_registry_sync_options
         securitySyncOptions:
           $ref: "#/components/schemas/redpanda.core.admin.v2.SecuritySettingsSyncOptions"
           description: Security settings sync options
@@ -1617,71 +1703,119 @@ components:
       type: string
     redpanda.core.admin.v2.TopicMetadataSyncOptions:
       additionalProperties: false
+      allOf:
+        - properties:
+            autoCreateShadowTopicFilters:
+              description: |-
+                List of filters that indicate which topics should be automatically
+                 created as shadow topics on the shadow cluster.  This only controls
+                 automatic creation of shadow topics and does not effect the state of the
+                 mirror topic once it is created.
+                 Literal filters for __consumer_offsets, _redpanda.audit_log and _schemas
+                 will be rejected as well as prefix filters to match topics prefixed with
+                 _redpanda or __redpanda.
+                 Wildcard `*` is permitted only for literal filters and will _not_ match
+                 any topics that start with _redpanda or __redpanda.  If users wish to
+                 shadow topics that start with _redpanda or __redpanda, they should
+                 provide a literal filter for those topics.
+              items:
+                $ref: "#/components/schemas/redpanda.core.admin.v2.NameFilter"
+              title: auto_create_shadow_topic_filters
+              type: array
+            effectiveInterval:
+              $ref: "#/components/schemas/google.protobuf.Duration"
+              description: The effective interval for the task
+              readOnly: true
+              title: effective_interval
+            excludeDefault:
+              description: |-
+                If false, then the following topic properties will be synced by default:
+                 - `compression.type`
+                 - `retention.bytes`
+                 - `retention.ms`
+                 - `delete.retention.ms`
+                 - Replication Factor
+                 - `min.compaction.lag.ms`
+                 - `max.compaction.lag.ms`
+
+                 If this is true, then only the properties listed in
+                 `synced_shadow_topic_properties` will be synced.
+              title: exclude_default
+              type: boolean
+            interval:
+              $ref: "#/components/schemas/google.protobuf.Duration"
+              description: |-
+                How often to sync metadata
+                 If 0 provided, defaults to 30 seconds
+              title: interval
+            syncedShadowTopicProperties:
+              description: |-
+                List of topic properties that should be synced from the source topic.
+                 The following properties will always be replicated
+                 - Partition count
+                 - `max.message.bytes`
+                 - `cleanup.policy`
+                 - `timestamp.type`
+
+                 The following properties are not allowed to be replicated and adding them
+                 to this list will result in an error:
+                 - `redpanda.remote.readreplica`
+                 - `redpanda.remote.recovery`
+                 - `redpanda.remote.allowgaps`
+                 - `redpanda.virtual.cluster.id`
+                 - `redpanda.leaders.preference`
+                 - `redpanda.cloud_topic.enabled`
+
+                 This list is a list of properties in addition to the default properties
+                 that will be synced.  See `exclude_default`.
+              items:
+                type: string
+              title: synced_shadow_topic_properties
+              type: array
+        - oneOf:
+            - properties:
+                earliest:
+                  $ref: "#/components/schemas/redpanda.core.admin.v2.TopicMetadataSyncOptions.EarliestOffset"
+                  description: |-
+                    Enables data replication from the earliest offset
+                     on the source topic/partition.
+                  title: earliest
+              required:
+                - earliest
+              title: earliest
+            - properties:
+                latest:
+                  $ref: "#/components/schemas/redpanda.core.admin.v2.TopicMetadataSyncOptions.LatestOffset"
+                  description: |-
+                    Enables data replication from the latest offset
+                     on the source topic/partition.
+                  title: latest
+              required:
+                - latest
+              title: latest
+            - properties:
+                timestamp:
+                  $ref: "#/components/schemas/google.protobuf.Timestamp"
+                  description: |-
+                    Enables data replication from the first offset on the
+                     source topic/partition where the record's timestamp is
+                     at or after the specified timestamp.
+                  title: timestamp
+              required:
+                - timestamp
+              title: timestamp
       description: Options for syncing topic metadata
-      properties:
-        autoCreateShadowTopicFilters:
-          description: |-
-            List of filters that indicate which topics should be automatically
-             created as shadow topics on the shadow cluster.  This only controls
-             automatic creation of shadow topics and does not effect the state of the
-             mirror topic once it is created.
-             Literal filters for __consumer_offsets and _redpanda.audit_log will be
-             rejected as well as prefix filters to match topics prefixed with
-             _redpanda or __redpanda.
-             Wildcard `*` is permitted only for literal filters and will _not_ match
-             any topics that start with _redpanda or __redpanda.  If users wish to
-             shadow topics that start with _redpanda or __redpanda, they should
-             provide a literal filter for those topics.
-          items:
-            $ref: "#/components/schemas/redpanda.core.admin.v2.NameFilter"
-          title: auto_create_shadow_topic_filters
-          type: array
-        excludeDefault:
-          description: |-
-            If false, then the following topic properties will be synced by default:
-             - `compression.type`
-             - `retention.bytes`
-             - `retention.ms`
-             - `delete.retention.ms`
-             - Replication Factor
-             - `min.compaction.lag.ms`
-             - `max.compaction.lag.ms`
-
-             If this is true, then only the properties listed in
-             `synced_shadow_topic_properties` will be synced.
-          title: exclude_default
-          type: boolean
-        interval:
-          $ref: "#/components/schemas/google.protobuf.Duration"
-          description: |-
-            How often to sync metadata
-             If 0 provided, defaults to 30 seconds
-          title: interval
-        syncedShadowTopicProperties:
-          description: |-
-            List of topic properties that should be synced from the source topic.
-             The following properties will always be replicated
-             - Partition count
-             - `max.message.bytes`
-             - `cleanup.policy`
-             - `timestamp.type`
-
-             The following properties are not allowed to be replicated and adding them
-             to this list will result in an error:
-             - `redpanda.remote.readreplica`
-             - `redpanda.remote.recovery`
-             - `redpanda.remote.allowgaps`
-             - `redpanda.virtual.cluster.id`
-             - `redpanda.leaders.preference`
-             - `redpanda.cloud_topic.enabled`
-
-             This list is a list of properties in addition to the default properties
-             that will be synced.  See `exclude_default`.
-          items:
-            type: string
-          title: synced_shadow_topic_properties
-          type: array
       title: TopicMetadataSyncOptions
+      type: object
+    redpanda.core.admin.v2.TopicMetadataSyncOptions.EarliestOffset:
+      additionalProperties: false
+      description: Start at the earliest offset in the partition.
+      title: EarliestOffset
+      type: object
+    redpanda.core.admin.v2.TopicMetadataSyncOptions.LatestOffset:
+      additionalProperties: false
+      description: Start at the latest offset in the partition.
+      title: LatestOffset
       type: object
     redpanda.core.admin.v2.TopicPartitionInformation:
       additionalProperties: false
@@ -1802,7 +1936,7 @@ info:
   title: Redpanda Admin API
   version: v2.0.0
   x-admin-api-major: v2.0.0
-  x-generated-at: 2025-10-20T20:00:08.441Z
+  x-generated-at: 2025-10-23T22:59:00.628Z
   x-generator: redpanda-docs-openapi-bundler
   x-redpanda-core-version: dev
 openapi: 3.1.0
@@ -1879,12 +2013,12 @@ paths:
       summary: ListBrokers returns information about all brokers in the cluster.
       tags:
         - BrokerService
-  /redpanda.core.admin.v2.BrokerService/ListKafkaConnections:
+  /redpanda.core.admin.v2.ClusterService/ListKafkaConnections:
     post:
       description: |-
-        ListKafkaConnections returns information about the broker's Kafka
-         connections.
-      operationId: redpanda.core.admin.v2.BrokerService.ListKafkaConnections
+        ListKafkaConnections returns information about the cluster's Kafka
+         connections, collected and ordered across all brokers.
+      operationId: redpanda.core.admin.v2.ClusterService.ListKafkaConnections
       parameters:
         - in: header
           name: Connect-Protocol-Version
@@ -1914,9 +2048,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/connect.error"
           description: Error
-      summary: ListKafkaConnections returns information about the broker's Kafka  connections.
+      summary: ListKafkaConnections returns information about the cluster's Kafka  connections, collected and ordered across all brokers.
       tags:
-        - BrokerService
+        - ClusterService
   /redpanda.core.admin.v2.ShadowLinkService/CreateShadowLink:
     post:
       operationId: redpanda.core.admin.v2.ShadowLinkService.CreateShadowLink

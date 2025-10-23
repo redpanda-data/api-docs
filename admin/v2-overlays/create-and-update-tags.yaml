@@ -3,7 +3,7 @@
 overlay: 1.0.0
 info:
   title: Redpanda Admin API v2 Tags
-  version: 2.0.0
+  version: 2.1.0
 
 actions:
   # Add tags object to the root level
@@ -12,8 +12,11 @@ actions:
       tags:
       - name: BrokerService
         description: |-
-          The BrokerService gives information about individual brokers within a Redpanda cluster, including client connections. 
+          BrokerService provides information about individual brokers within a Redpanda cluster. 
       - name: ShadowLinkService
         description: |-
-          Manage shadow links between clusters for disaster recovery.
+          Use ShadowLinkService to manage shadow links between clusters for disaster recovery.
           Shadow links replicate topics from a source cluster to a shadow cluster.
+      - name: ClusterService
+        description: |-
+          ClusterService provides information about the Redpanda cluster as a whole, such as its configuration, status, and client connections.
