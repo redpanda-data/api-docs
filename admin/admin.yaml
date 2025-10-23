@@ -3,7 +3,7 @@ info:
   title: Redpanda Admin API
   version: 1.0.0
   description: |
-    Use the Admin API to manage and administer Redpanda clusters. To view new ConnectRPC endpoints available in Redpanda v25.3 and later, select "v2" from the version selector on this page.
+    Use the Admin API to manage and administer Redpanda clusters. To view ConnectRPC endpoints available in Redpanda v25.3 and later, select "v2" from the version selector on this page.
 
     If authentication is enabled, you must have superuser privileges.
 
