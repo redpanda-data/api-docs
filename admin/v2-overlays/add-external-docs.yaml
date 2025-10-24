@@ -1,0 +1,21 @@
+# Overlay to add description and external documentation links
+# to the Admin API v2 specification
+overlay: 1.0.0
+info:
+  title: Add External Documentation Links
+  version: 1.0.1
+actions:
+  # Add enhanced description to the info node
+  - target: "$.info"
+    update:
+      description: |
+        Admin API ConnectRPC endpoints available with Redpanda v25.3 and later. Use the Admin API to manage and administer Redpanda clusters. To view legacy (RESTful) endpoints currently available on all supported versions of Redpanda, select "v1" from the version selector on this page.
+
+        If authentication is enabled for the API, you must have superuser privileges to access all endpoints.
+
+        See also:
+
+        - [Manage Redpanda Using the Admin API](https://docs.redpanda.com/25.3/manage/use-admin-api)
+        - [Configure Authentication](https://docs.redpanda.com/current/manage/security/authentication/)
+
+        ---
