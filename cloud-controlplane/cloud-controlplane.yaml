@@ -2181,20 +2181,6 @@ components:
           title: status is the status of the Azure PE
           type: string
       type: object
-    PrivateLink.State:
-      description: |2-
-         - STATE_DISABLED: Private link is being created.
-         - STATE_LINKING: Private link is being created.
-         - STATE_READY: Private link is ready to use.
-         - STATE_UNLINKING: Private link is being deleted.
-         - STATE_FAILED: Private link is in an error state.
-      enum:
-        - STATE_DISABLED
-        - STATE_LINKING
-        - STATE_READY
-        - STATE_UNLINKING
-        - STATE_FAILED
-      type: string
     PrivateLinkAuthMode:
       description: |-
         Private link authentication mode.
@@ -2541,12 +2527,14 @@ components:
           description: Unique name of the Serverless cluster.
           example: development-ServerlessCluster
           type: string
-        network:
-          $ref: '#/components/schemas/ServerlessCluster.NetworkingConfig'
+        networking_config:
+          $ref: '#/components/schemas/ServerlessNetworkingConfig'
         planned_deletion:
           $ref: '#/components/schemas/PlannedDeletion'
-        private_link:
-          $ref: '#/components/schemas/ServerlessCluster.PrivateLink'
+        private_link_id:
+          nullable: true
+          readOnly: true
+          type: string
         resource_group_id:
           description: Resource group ID of the cluster.
           example: a0b40af9-0250-48ca-9417-783ed127ce42
@@ -2570,7 +2558,7 @@ components:
       properties:
         private_url:
           description: |-
-            The private URL of the data plane API, if private networking
+            private_url is the private url of the dataplane api if private networking
             is enabled for this cluster.
           readOnly: true
           type: string
@@ -2594,31 +2582,12 @@ components:
           title: Kafka API seed brokers (also known as bootstrap servers). Implicitly public
           type: array
       type: object
-    ServerlessCluster.NetworkingConfig:
-      properties:
-        private:
-          $ref: '#/components/schemas/ServerlessCluster.NetworkingConfig.State'
-        public:
-          $ref: '#/components/schemas/ServerlessCluster.NetworkingConfig.State'
-      type: object
-    ServerlessCluster.NetworkingConfig.State:
-      enum:
-        - STATE_DISABLED
-        - STATE_ENABLED
-      type: string
-    ServerlessCluster.PrivateLink:
-      properties:
-        id:
-          type: string
-        state:
-          $ref: '#/components/schemas/PrivateLink.State'
-      type: object
     ServerlessCluster.SchemaRegistryStatus:
       description: Cluster's Schema Registry properties.
       properties:
         private_url:
           readOnly: true
-          title: Private URL for the schema registry
+          title: Private url for the schema registry
           type: string
         url:
           readOnly: true
@@ -2663,6 +2632,28 @@ components:
         - serverless_region
       title: ServerlessClusterCreate
       type: object
+    ServerlessClusterUpdate:
+      description: Resource describing an Update Serverless Cluster.
+      properties:
+        id:
+          description: ID of the vcluster.
+          type: string
+      required:
+        - id
+      title: ServerlessClusterUpdate
+      type: object
+    ServerlessNetworkingConfig:
+      properties:
+        private:
+          $ref: '#/components/schemas/ServerlessNetworkingConfig.State'
+        public:
+          $ref: '#/components/schemas/ServerlessNetworkingConfig.State'
+      type: object
+    ServerlessNetworkingConfig.State:
+      enum:
+        - STATE_DISABLED
+        - STATE_ENABLED
+      type: string
     ServerlessRegion:
       description: Resource describing a ServerlessRegion.
       properties:
@@ -2879,6 +2870,15 @@ components:
         resource_group:
           $ref: '#/components/schemas/ResourceGroup'
       title: UpdateResourceGroupResponse is the response of UpdateResourceGroup
+      type: object
+    UpdateServerlessClusterBody:
+      description: UpdateServerlessClusterRequest is the request of UpdateServerlessCluster.
+      type: object
+    UpdateServerlessClusterOperation:
+      description: UpdateServerlessClusterOperation is the response of the update cluster rpc.
+      properties:
+        operation:
+          $ref: '#/components/schemas/v1.Operation'
       type: object
     UpdateServiceAccountBody:
       properties:
@@ -5071,6 +5071,51 @@ paths:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
       summary: Get Serverless cluster
+      tags:
+        - Serverless Clusters
+    patch:
+      description: Update a Redpanda serverless cluster.
+      operationId: ServerlessClusterService_UpdateServerlessCluster
+      parameters:
+        - description: ID of the virtual cluster.
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateServerlessClusterBody'
+        required: true
+        x-originalParamName: body
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerlessClusterUpdate'
+          description: Accepted
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Update serverless cluster
       tags:
         - Serverless Clusters
   /v1/serverless/region:
