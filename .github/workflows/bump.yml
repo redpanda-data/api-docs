@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  id-token: write
 
 jobs:
   determine-doc-ids:
@@ -16,6 +17,18 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.RP_AWS_CRED_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.RP_AWS_CRED_ACCOUNT_ID }}:role/${{ vars.RP_AWS_CRED_BASE_ROLE_NAME }}${{ github.event.repository.name }}
+
+      - uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,sdlc/prod/github/bump_api_key
+          parse-json-secrets: true
+  
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -191,7 +204,7 @@ jobs:
         with:
           hub: redpanda
           doc: admin
-          token: ${{ secrets.BUMP_TOKEN }}
+          token: ${{ env.BUMP_API_KEY }}
           file: admin/admin.yaml
           overlay: ${{ steps.admin-v1-overlays.outputs.overlay_paths }}
           branch: v1
@@ -205,7 +218,7 @@ jobs:
         with:
           hub: redpanda
           doc: admin
-          token: ${{ secrets.BUMP_TOKEN }}
+          token: ${{ env.BUMP_API_KEY }}
           file: admin/admin-v2.yaml
           overlay: ${{ steps.admin-v2-overlays.outputs.overlay_paths }}
           branch: v2
@@ -219,7 +232,7 @@ jobs:
         with:
           hub: redpanda
           doc: ${{ matrix.doc_id }}
-          token: ${{ secrets.BUMP_TOKEN }}
+          token: ${{ env.BUMP_API_KEY }}
           file: ${{ steps.format.outputs.file_path }}
           overlay: ${{ steps.overlays.outputs.overlay_paths }}
         env:
@@ -294,7 +307,7 @@ jobs:
         with:
           hub: redpanda
           doc: admin
-          token: ${{ secrets.BUMP_TOKEN }}
+          token: ${{ env.BUMP_API_KEY }}
           file: admin/admin.yaml
           overlay: ${{ steps.overlays.outputs.overlay_paths }}
           command: diff
@@ -309,7 +322,7 @@ jobs:
         with:
           hub: redpanda
           doc: admin
-          token: ${{ secrets.BUMP_TOKEN }}
+          token: ${{ env.BUMP_API_KEY }}
           file: admin/admin-v2.yaml
           overlay: ${{ steps.overlays.outputs.overlay_paths }}
           command: diff
@@ -324,7 +337,7 @@ jobs:
         with:
           hub: redpanda
           doc: ${{ matrix.doc_id }}
-          token: ${{ secrets.BUMP_TOKEN }}
+          token: ${{ env.BUMP_API_KEY }}
           file: ${{ steps.format.outputs.file_path }}
           overlay: ${{ steps.overlays.outputs.overlay_paths }}
           command: diff
