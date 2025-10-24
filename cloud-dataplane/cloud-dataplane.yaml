@@ -212,7 +212,7 @@ components:
         info:
           $ref: '#/components/schemas/ConnectCluster.Info'
         name:
-          description: Unique name of Connect cluster. For Redpanda Cloud, the value is `redpanda`.
+          description: Unique name of connect cluster. For Redpanda Cloud, the value is `redpanda`.
           type: string
         plugins:
           items:
@@ -1396,6 +1396,8 @@ components:
           type: string
         resources:
           $ref: '#/components/schemas/Resources'
+        service_account:
+          $ref: '#/components/schemas/ServiceAccount'
         state:
           $ref: '#/components/schemas/Pipeline.State'
         status:
@@ -1455,6 +1457,8 @@ components:
           type: string
         resources:
           $ref: '#/components/schemas/Resources'
+        service_account:
+          $ref: '#/components/schemas/ServiceAccount'
         tags:
           additionalProperties:
             type: string
@@ -1477,6 +1481,8 @@ components:
           type: string
         resources:
           $ref: '#/components/schemas/Resources'
+        service_account:
+          $ref: '#/components/schemas/ServiceAccount'
         tags:
           additionalProperties:
             type: string
@@ -1812,6 +1818,13 @@ components:
             $ref: '#/components/schemas/Scope'
           title: Secret scopes
           type: array
+      type: object
+    ServiceAccount:
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
       type: object
     SetConfiguration:
       properties:
@@ -3491,7 +3504,7 @@ paths:
       description: 'List Kafka Connect cluster secrets. Optional: filter based on secret name and labels.'
       operationId: SecretService_ListKafkaConnectSecrets
       parameters:
-        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -3610,7 +3623,7 @@ paths:
       description: Delete a Kafka Connect cluster secret.
       operationId: SecretService_DeleteKafkaConnectSecret
       parameters:
-        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -5596,7 +5609,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              example: '{"name":"redact-orders","input_topic_name":"orders","output_topic_names":["orders-redacted"],"environment_variables":[{"key":"LOGGER_LEVEL","value":"DEBUG"}]}'
+              example: '{"name":"redact-orders", "input_topic_name":"orders", "output_topic_names":["orders-redacted"], "environment_variables":[{"key":"LOGGER_LEVEL", "value":"DEBUG"}]}'
               properties:
                 metadata:
                   $ref: '#/components/schemas/DeployTransformRequest'
@@ -5614,7 +5627,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransformMetadata'
           description: Created
-      summary: Deploy transform
+      summary: Deploy Transform
       tags:
         - Wasm Transforms
   /v1/transforms/{name}:
