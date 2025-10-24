@@ -1931,12 +1931,27 @@ components:
         - ACL_RESOURCE_SR_ANY
       title: ACLResource
       type: string
+    redpanda.core.common.TopicPartition:
+      additionalProperties: false
+      description: A single topic partition within the kafka namespace.
+      properties:
+        partition:
+          description: The topic's partition, must be non-negative.
+          format: int32
+          title: partition
+          type: integer
+        topic:
+          description: The topic's name.
+          title: topic
+          type: string
+      title: TopicPartition
+      type: object
 info:
   description: Redpanda Admin API specification
   title: Redpanda Admin API
   version: v2.0.0
   x-admin-api-major: v2.0.0
-  x-generated-at: 2025-10-23T22:59:00.628Z
+  x-generated-at: 2025-10-24T04:43:59.546Z
   x-generator: redpanda-docs-openapi-bundler
   x-redpanda-core-version: dev
 openapi: 3.1.0
