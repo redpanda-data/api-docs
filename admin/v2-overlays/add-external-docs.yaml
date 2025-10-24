@@ -11,7 +11,7 @@ actions:
       description: |
         Admin API ConnectRPC endpoints available with Redpanda v25.3 and later. Use the Admin API to manage and administer Redpanda clusters. To view legacy (RESTful) endpoints currently available on all supported versions of Redpanda, select "v1" from the version selector on this page.
 
-        If authentication is enabled, you must have superuser privileges.
+        If authentication is enabled for the API, you must have superuser privileges to access all endpoints.
 
         See also:
 

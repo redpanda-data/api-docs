@@ -5,8 +5,6 @@ info:
   description: |
     Use the Admin API to manage and administer Redpanda clusters. To view ConnectRPC endpoints available in Redpanda v25.3 and later, select "v2" from the version selector on this page.
 
-    If authentication is enabled, you must have superuser privileges.
-
     See also:
 
     - [Manage Redpanda Using the Admin API](https://docs.redpanda.com/25.3/manage/use-admin-api)
