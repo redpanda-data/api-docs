@@ -1533,6 +1533,11 @@ components:
           description: Reason for task being in state
           title: reason
           type: string
+        shard:
+          description: The shard the task is running on
+          format: int32
+          title: shard
+          type: integer
         state:
           $ref: "#/components/schemas/redpanda.core.admin.v2.TaskState"
           description: State of the task
@@ -1949,7 +1954,7 @@ info:
   title: Redpanda Admin API
   version: v2.0.0
   x-admin-api-major: v2.0.0
-  x-generated-at: 2025-10-31T18:42:29.261Z
+  x-generated-at: 2025-10-31T19:53:30.907Z
   x-generator: redpanda-docs-openapi-bundler
   x-redpanda-core-version: kb/proto/docs/openapi-summaries
 openapi: 3.1.0
