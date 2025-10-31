@@ -1949,14 +1949,14 @@ info:
   title: Redpanda Admin API
   version: v2.0.0
   x-admin-api-major: v2.0.0
-  x-generated-at: 2025-10-31T18:09:25.295Z
+  x-generated-at: 2025-10-31T18:42:29.261Z
   x-generator: redpanda-docs-openapi-bundler
-  x-redpanda-core-version: dev
+  x-redpanda-core-version: kb/proto/docs/openapi-summaries
 openapi: 3.1.0
 paths:
   /redpanda.core.admin.v2.BrokerService/GetBroker:
     post:
-      description: GetBroker returns information about a single broker in the cluster.
+      description: Returns information about a single broker in the cluster.
       operationId: redpanda.core.admin.v2.BrokerService.GetBroker
       parameters:
         - in: header
@@ -1987,12 +1987,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/connect.error"
           description: Error
-      summary: GetBroker returns information about a single broker in the cluster.
+      summary: GetBroker
       tags:
         - BrokerService
   /redpanda.core.admin.v2.BrokerService/ListBrokers:
     post:
-      description: ListBrokers returns information about all brokers in the cluster.
+      description: Returns information about all brokers in the cluster.
       operationId: redpanda.core.admin.v2.BrokerService.ListBrokers
       parameters:
         - in: header
@@ -2023,14 +2023,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/connect.error"
           description: Error
-      summary: ListBrokers returns information about all brokers in the cluster.
+      summary: ListBrokers
       tags:
         - BrokerService
   /redpanda.core.admin.v2.ClusterService/ListKafkaConnections:
     post:
-      description: |-
-        ListKafkaConnections returns information about the cluster's Kafka
-         connections, collected and ordered across all brokers.
+      description: Returns information about the cluster's Kafka connections, collected and ordered across all brokers.
       operationId: redpanda.core.admin.v2.ClusterService.ListKafkaConnections
       parameters:
         - in: header
@@ -2061,11 +2059,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/connect.error"
           description: Error
-      summary: ListKafkaConnections returns information about the cluster's Kafka  connections, collected and ordered across all brokers.
+      summary: ListKafkaConnections
       tags:
         - ClusterService
   /redpanda.core.admin.v2.ShadowLinkService/CreateShadowLink:
     post:
+      description: Creates a new shadow link between clusters.
       operationId: redpanda.core.admin.v2.ShadowLinkService.CreateShadowLink
       parameters:
         - in: header
@@ -2101,6 +2100,7 @@ paths:
         - ShadowLinkService
   /redpanda.core.admin.v2.ShadowLinkService/DeleteShadowLink:
     post:
+      description: Deletes an existing shadow link.
       operationId: redpanda.core.admin.v2.ShadowLinkService.DeleteShadowLink
       parameters:
         - in: header
@@ -2136,7 +2136,7 @@ paths:
         - ShadowLinkService
   /redpanda.core.admin.v2.ShadowLinkService/FailOver:
     post:
-      description: Fails over a shadow link or a single shadow topic
+      description: Fails over a shadow link or a single shadow topic for disaster recovery.
       operationId: redpanda.core.admin.v2.ShadowLinkService.FailOver
       parameters:
         - in: header
@@ -2167,11 +2167,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/connect.error"
           description: Error
-      summary: Fails over a shadow link or a single shadow topic
+      summary: FailOver
       tags:
         - ShadowLinkService
   /redpanda.core.admin.v2.ShadowLinkService/GetShadowLink:
     post:
+      description: Gets information about a specific shadow link.
       operationId: redpanda.core.admin.v2.ShadowLinkService.GetShadowLink
       parameters:
         - in: header
@@ -2208,9 +2209,9 @@ paths:
   /redpanda.core.admin.v2.ShadowLinkService/GetShadowTopic:
     post:
       description: |-
-        This operation returns information about a Shadow Topic on a Shadow Link.
-         A Shadow Topic is a resource created automatically by a Shadow Link.  The
-         Shadow Topic 'shadows' a topic on a source cluster, mirroring the data
+        Returns information about a shadow topic on a shadow link.
+         A shadow topic is a resource created automatically by a shadow link. The
+         shadow topic 'shadows' a topic on a source cluster, mirroring the data
          and properties of that topic.
       operationId: redpanda.core.admin.v2.ShadowLinkService.GetShadowTopic
       parameters:
@@ -2242,11 +2243,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/connect.error"
           description: Error
-      summary: This operation returns information about a Shadow Topic on a Shadow Link.  A Shadow Topic is a resource created automatically by a Shadow Link.  The  Shadow Topic 'shadows' a topic on a source cluster, mirroring the data  and properties of that topic.
+      summary: GetShadowTopic
       tags:
         - ShadowLinkService
   /redpanda.core.admin.v2.ShadowLinkService/ListShadowLinks:
     post:
+      description: Lists all shadow links in the cluster.
       operationId: redpanda.core.admin.v2.ShadowLinkService.ListShadowLinks
       parameters:
         - in: header
@@ -2283,8 +2285,8 @@ paths:
   /redpanda.core.admin.v2.ShadowLinkService/ListShadowTopics:
     post:
       description: |-
-        This operation returns a list of all Shadow Topics on a Shadow Link and
-         their status
+        Returns a list of all shadow topics on a shadow link and
+         their status.
       operationId: redpanda.core.admin.v2.ShadowLinkService.ListShadowTopics
       parameters:
         - in: header
@@ -2315,11 +2317,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/connect.error"
           description: Error
-      summary: This operation returns a list of all Shadow Topics on a Shadow Link and  their status
+      summary: ListShadowTopics
       tags:
         - ShadowLinkService
   /redpanda.core.admin.v2.ShadowLinkService/UpdateShadowLink:
     post:
+      description: Updates an existing shadow link configuration.
       operationId: redpanda.core.admin.v2.ShadowLinkService.UpdateShadowLink
       parameters:
         - in: header
