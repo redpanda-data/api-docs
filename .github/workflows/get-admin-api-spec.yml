@@ -1,0 +1,85 @@
+name: Bundle Admin OpenAPI Spec
+
+on:
+  repository_dispatch:
+    types: [redpanda-openapi-bundle]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Redpanda tag to bundle (such as v24.3.2)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: openapi-${{ github.event.client_payload.tag || inputs.tag || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.client_payload.tag || inputs.tag }}
+    steps:
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.RP_AWS_CRED_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.RP_AWS_CRED_ACCOUNT_ID }}:role/${{ vars.RP_AWS_CRED_BASE_ROLE_NAME }}${{ github.event.repository.name }}
+
+      - uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,sdlc/prod/github/actions_bot_token
+          parse-json-secrets: true
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.ACTIONS_BOT_TOKEN }}
+
+      - name: Set up Node.js (with npm cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Validate tag
+        run: |
+          if [ -z "${TAG}" ]; then
+            echo "ERROR: No tag provided. Pass client_payload.tag on repository_dispatch or use workflow_dispatch input."
+            exit 1
+          fi
+          echo "Using tag: ${TAG}"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install tools
+        run: |
+          npx doc-tools install-test-dependencies
+
+      - name: Generate Admin API OpenAPI spec
+        id: generate
+        run: |
+          npx doc-tools generate bundle-openapi --tag "${TAG}" --use-admin-major-version --surface admin --out-admin admin/admin-v2.yaml
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ env.ACTIONS_BOT_TOKEN }}
+          base: main
+          branch: auto-docs/admin-api
+          title: 'auto-docs: Update Admin API docs for ${{ env.TAG }}'
+          commit-message: 'docs: Update Admin API docs for ${{ env.TAG }}'
+          body: |
+            This PR adds the latest OpenAPI spec for version **${{ env.TAG }}** of the Redpanda Admin API:
+
+            ```
+            npx doc-tools generate bundle-openapi --tag ${{ env.TAG }} --use-admin-major-version --surface admin --out-admin admin/admin-v2.yaml
+            ```
+          labels: auto-docs
