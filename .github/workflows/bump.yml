@@ -39,13 +39,13 @@ jobs:
 
           if [ ${#DOCS[@]} -eq 0 ]; then
             echo "No doc folders found. Exiting workflow."
-            echo "matrix={\"doc_id\":[]}" >> $GITHUB_OUTPUT
+            echo "matrix={\"doc_id\":[]}" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           JSON_ARRAY=$(printf '"%s",' "${DOCS[@]}" | sed 's/,$//')
           JSON_MATRIX="{\"doc_id\":[${JSON_ARRAY}]}"
-          echo "matrix=$JSON_MATRIX" >> $GITHUB_OUTPUT
+          echo "matrix=$JSON_MATRIX" >> "$GITHUB_OUTPUT"
           echo "Created matrix: $JSON_MATRIX"
 
   deploy-doc:
@@ -78,11 +78,11 @@ jobs:
         run: |
           base="${{ matrix.doc_id }}"
           if [ -f "${base}/${base}.yaml" ]; then
-            echo "file_path=${base}/${base}.yaml" >> $GITHUB_OUTPUT
+            echo "file_path=${base}/${base}.yaml" >> "$GITHUB_OUTPUT"
           elif [ -f "${base}/${base}.yml" ]; then
-            echo "file_path=${base}/${base}.yml" >> $GITHUB_OUTPUT
+            echo "file_path=${base}/${base}.yml" >> "$GITHUB_OUTPUT"
           elif [ -f "${base}/${base}.json" ]; then
-            echo "file_path=${base}/${base}.json" >> $GITHUB_OUTPUT
+            echo "file_path=${base}/${base}.json" >> "$GITHUB_OUTPUT"
           else
             echo "No API definition file found for ${base}"
             exit 1
@@ -93,7 +93,7 @@ jobs:
         if: ${{ matrix.doc_id != 'admin' }}
         run: |
           OVERLAYS=$(.github/scripts/determine-overlays.sh "${{ matrix.doc_id }}")
-          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          echo "overlay_paths=$OVERLAYS" >> "$GITHUB_OUTPUT"
           echo "Using overlays: $OVERLAYS"
 
       - name: Determine admin v1 overlays
@@ -101,7 +101,7 @@ jobs:
         if: ${{ matrix.doc_id == 'admin' }}
         run: |
           OVERLAYS=$(.github/scripts/determine-overlays.sh admin v1)
-          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          echo "overlay_paths=$OVERLAYS" >> "$GITHUB_OUTPUT"
           echo "Using v1 overlays: $OVERLAYS"
 
       - name: Determine admin v2 overlays
@@ -109,7 +109,7 @@ jobs:
         if: ${{ matrix.doc_id == 'admin' }}
         run: |
           OVERLAYS=$(.github/scripts/determine-overlays.sh admin v2)
-          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          echo "overlay_paths=$OVERLAYS" >> "$GITHUB_OUTPUT"
           echo "Using v2 overlays: $OVERLAYS"
 
       # ---- Admin v1 explicit deploy (only when matrix.doc_id == admin) ----
@@ -183,11 +183,11 @@ jobs:
         run: |
           base="${{ matrix.doc_id }}"
           if [ -f "${base}/${base}.yaml" ]; then
-            echo "file_path=${base}/${base}.yaml" >> $GITHUB_OUTPUT
+            echo "file_path=${base}/${base}.yaml" >> "$GITHUB_OUTPUT"
           elif [ -f "${base}/${base}.yml" ]; then
-            echo "file_path=${base}/${base}.yml" >> $GITHUB_OUTPUT
+            echo "file_path=${base}/${base}.yml" >> "$GITHUB_OUTPUT"
           elif [ -f "${base}/${base}.json" ]; then
-            echo "file_path=${base}/${base}.json" >> $GITHUB_OUTPUT
+            echo "file_path=${base}/${base}.json" >> "$GITHUB_OUTPUT"
           else
             echo "No API definition file found for ${base}"
             exit 1
@@ -198,7 +198,7 @@ jobs:
         if: ${{ matrix.doc_id != 'admin' }}
         run: |
           OVERLAYS=$(.github/scripts/determine-overlays.sh "${{ matrix.doc_id }}")
-          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          echo "overlay_paths=$OVERLAYS" >> "$GITHUB_OUTPUT"
           echo "Using overlays: $OVERLAYS"
 
       - name: Determine admin v1 overlays
@@ -206,7 +206,7 @@ jobs:
         if: ${{ matrix.doc_id == 'admin' }}
         run: |
           OVERLAYS=$(.github/scripts/determine-overlays.sh admin v1)
-          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          echo "overlay_paths=$OVERLAYS" >> "$GITHUB_OUTPUT"
           echo "Using v1 overlays: $OVERLAYS"
 
       - name: Determine admin v2 overlays
@@ -214,7 +214,7 @@ jobs:
         if: ${{ matrix.doc_id == 'admin' }}
         run: |
           OVERLAYS=$(.github/scripts/determine-overlays.sh admin v2)
-          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          echo "overlay_paths=$OVERLAYS" >> "$GITHUB_OUTPUT"
           echo "Using v2 overlays: $OVERLAYS"
 
       # ---- Admin v1 explicit diff ----
