@@ -17,18 +17,6 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ${{ vars.RP_AWS_CRED_REGION }}
-          role-to-assume: arn:aws:iam::${{ secrets.RP_AWS_CRED_ACCOUNT_ID }}:role/${{ vars.RP_AWS_CRED_BASE_ROLE_NAME }}${{ github.event.repository.name }}
-
-      - uses: aws-actions/aws-secretsmanager-get-secrets@v2
-        with:
-          secret-ids: |
-            ,sdlc/prod/github/bump_api_key
-          parse-json-secrets: true
-  
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -51,13 +39,13 @@ jobs:
 
           if [ ${#DOCS[@]} -eq 0 ]; then
             echo "No doc folders found. Exiting workflow."
-            echo "matrix={\"doc_id\":[]}" >> $GITHUB_OUTPUT
+            echo "matrix={\"doc_id\":[]}" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           JSON_ARRAY=$(printf '"%s",' "${DOCS[@]}" | sed 's/,$//')
           JSON_MATRIX="{\"doc_id\":[${JSON_ARRAY}]}"
-          echo "matrix=$JSON_MATRIX" >> $GITHUB_OUTPUT
+          echo "matrix=$JSON_MATRIX" >> "$GITHUB_OUTPUT"
           echo "Created matrix: $JSON_MATRIX"
 
   deploy-doc:
@@ -69,25 +57,32 @@ jobs:
       matrix: ${{ fromJson(needs.determine-doc-ids.outputs.matrix) }}
       fail-fast: false
     steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.RP_AWS_CRED_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.RP_AWS_CRED_ACCOUNT_ID }}:role/${{ vars.RP_AWS_CRED_BASE_ROLE_NAME }}${{ github.event.repository.name }}
+
+      - uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,sdlc/prod/github/bump_api_key
+          parse-json-secrets: true
+
       - name: Checkout
         uses: actions/checkout@v4
 
       # Figure out the file path for non-admin docs
       - name: Determine file format (non-admin)
         id: format
+        if: ${{ matrix.doc_id != 'admin' }}
         run: |
           base="${{ matrix.doc_id }}"
-          if [ "$base" = "admin" ]; then
-            # Not used for admin; we deploy v1/v2 explicitly below
-            echo "file_path=" >> $GITHUB_OUTPUT
-            exit 0
-          fi
           if [ -f "${base}/${base}.yaml" ]; then
-            echo "file_path=${base}/${base}.yaml" >> $GITHUB_OUTPUT
+            echo "file_path=${base}/${base}.yaml" >> "$GITHUB_OUTPUT"
           elif [ -f "${base}/${base}.yml" ]; then
-            echo "file_path=${base}/${base}.yml" >> $GITHUB_OUTPUT
+            echo "file_path=${base}/${base}.yml" >> "$GITHUB_OUTPUT"
           elif [ -f "${base}/${base}.json" ]; then
-            echo "file_path=${base}/${base}.json" >> $GITHUB_OUTPUT
+            echo "file_path=${base}/${base}.json" >> "$GITHUB_OUTPUT"
           else
             echo "No API definition file found for ${base}"
             exit 1
@@ -95,106 +90,26 @@ jobs:
 
       - name: Determine overlays (non-admin)
         id: overlays
+        if: ${{ matrix.doc_id != 'admin' }}
         run: |
-          OVERLAYS=""
-          DOC_ID="${{ matrix.doc_id }}"
-
-          # Skip overlay determination for admin - handled separately
-          if [ "$DOC_ID" = "admin" ]; then
-            echo "overlay_paths=" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          # Doc-specific overlays
-          if [ -d "${DOC_ID}/overlays" ]; then
-            shopt -s nullglob
-            for overlay_file in "${DOC_ID}/overlays"/*.yaml; do
-              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
-            done
-            shopt -u nullglob
-          fi
-
-          # Shared overlays
-          if [[ "$DOC_ID" == cloud-* ]]; then
-            PREFIX="cloud-"
-          else
-            PREFIX="sm-"
-          fi
-          if [ -d "shared/overlays" ]; then
-            shopt -s nullglob
-            for overlay_file in shared/overlays/${PREFIX}*.yaml; do
-              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
-            done
-            shopt -u nullglob
-          fi
-
-          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          OVERLAYS=$(.github/scripts/determine-overlays.sh "${{ matrix.doc_id }}")
+          echo "overlay_paths=$OVERLAYS" >> "$GITHUB_OUTPUT"
           echo "Using overlays: $OVERLAYS"
 
       - name: Determine admin v1 overlays
         id: admin-v1-overlays
+        if: ${{ matrix.doc_id == 'admin' }}
         run: |
-          OVERLAYS=""
-          DOC_ID="${{ matrix.doc_id }}"
-
-          # Only run for admin
-          if [ "$DOC_ID" != "admin" ]; then
-            echo "overlay_paths=" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          # Admin v1-specific overlays
-          if [ -d "admin/v1-overlays" ]; then
-            shopt -s nullglob
-            for overlay_file in admin/v1-overlays/*.yaml; do
-              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
-            done
-            shopt -u nullglob
-          fi
-
-          # Shared overlays for self-managed (admin is sm)
-          if [ -d "shared/overlays" ]; then
-            shopt -s nullglob
-            for overlay_file in shared/overlays/sm-*.yaml; do
-              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
-            done
-            shopt -u nullglob
-          fi
-
-          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          OVERLAYS=$(.github/scripts/determine-overlays.sh admin v1)
+          echo "overlay_paths=$OVERLAYS" >> "$GITHUB_OUTPUT"
           echo "Using v1 overlays: $OVERLAYS"
 
       - name: Determine admin v2 overlays
         id: admin-v2-overlays
+        if: ${{ matrix.doc_id == 'admin' }}
         run: |
-          OVERLAYS=""
-          DOC_ID="${{ matrix.doc_id }}"
-
-          # Only run for admin
-          if [ "$DOC_ID" != "admin" ]; then
-            echo "overlay_paths=" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          # Admin v2-specific overlays
-          if [ -d "admin/v2-overlays" ]; then
-            shopt -s nullglob
-            for overlay_file in admin/v2-overlays/*.yaml; do
-              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
-            done
-            shopt -u nullglob
-          fi
-
-          # Shared overlays for self-managed (admin is sm)
-          if [ -d "shared/overlays" ]; then
-            shopt -s nullglob
-            for overlay_file in shared/overlays/sm-*.yaml; do
-              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
-            done
-            shopt -u nullglob
-          fi
-
-          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          OVERLAYS=$(.github/scripts/determine-overlays.sh admin v2)
+          echo "overlay_paths=$OVERLAYS" >> "$GITHUB_OUTPUT"
           echo "Using v2 overlays: $OVERLAYS"
 
       # ---- Admin v1 explicit deploy (only when matrix.doc_id == admin) ----
@@ -247,58 +162,60 @@ jobs:
       matrix: ${{ fromJson(needs.determine-doc-ids.outputs.matrix) }}
       fail-fast: false
     steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.RP_AWS_CRED_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.RP_AWS_CRED_ACCOUNT_ID }}:role/${{ vars.RP_AWS_CRED_BASE_ROLE_NAME }}${{ github.event.repository.name }}
+
+      - uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,sdlc/prod/github/bump_api_key
+          parse-json-secrets: true
+
       - name: Checkout
         uses: actions/checkout@v4
 
       # For non-admin docs, resolve file path
       - name: Determine file format (non-admin)
         id: format
+        if: ${{ matrix.doc_id != 'admin' }}
         run: |
           base="${{ matrix.doc_id }}"
-          if [ "$base" = "admin" ]; then
-            echo "file_path=" >> $GITHUB_OUTPUT
-            exit 0
-          fi
           if [ -f "${base}/${base}.yaml" ]; then
-            echo "file_path=${base}/${base}.yaml" >> $GITHUB_OUTPUT
+            echo "file_path=${base}/${base}.yaml" >> "$GITHUB_OUTPUT"
           elif [ -f "${base}/${base}.yml" ]; then
-            echo "file_path=${base}/${base}.yml" >> $GITHUB_OUTPUT
+            echo "file_path=${base}/${base}.yml" >> "$GITHUB_OUTPUT"
           elif [ -f "${base}/${base}.json" ]; then
-            echo "file_path=${base}/${base}.json" >> $GITHUB_OUTPUT
+            echo "file_path=${base}/${base}.json" >> "$GITHUB_OUTPUT"
           else
             echo "No API definition file found for ${base}"
             exit 1
           fi
 
-      - name: Determine overlays
+      - name: Determine overlays (non-admin)
         id: overlays
+        if: ${{ matrix.doc_id != 'admin' }}
         run: |
-          OVERLAYS=""
-          DOC_ID="${{ matrix.doc_id }}"
-
-          if [ -d "${DOC_ID}/overlays" ]; then
-            shopt -s nullglob
-            for overlay_file in "${DOC_ID}/overlays"/*.yaml; do
-              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
-            done
-            shopt -u nullglob
-          fi
-
-          if [[ "$DOC_ID" == cloud-* ]]; then
-            PREFIX="cloud-"
-          else
-            PREFIX="sm-"
-          fi
-          if [ -d "shared/overlays" ]; then
-            shopt -s nullglob
-            for overlay_file in shared/overlays/${PREFIX}*.yaml; do
-              [ -f "$overlay_file" ] && OVERLAYS="${OVERLAYS:+$OVERLAYS,}$overlay_file"
-            done
-            shopt -u nullglob
-          fi
-
-          echo "overlay_paths=$OVERLAYS" >> $GITHUB_OUTPUT
+          OVERLAYS=$(.github/scripts/determine-overlays.sh "${{ matrix.doc_id }}")
+          echo "overlay_paths=$OVERLAYS" >> "$GITHUB_OUTPUT"
           echo "Using overlays: $OVERLAYS"
+
+      - name: Determine admin v1 overlays
+        id: admin-v1-overlays
+        if: ${{ matrix.doc_id == 'admin' }}
+        run: |
+          OVERLAYS=$(.github/scripts/determine-overlays.sh admin v1)
+          echo "overlay_paths=$OVERLAYS" >> "$GITHUB_OUTPUT"
+          echo "Using v1 overlays: $OVERLAYS"
+
+      - name: Determine admin v2 overlays
+        id: admin-v2-overlays
+        if: ${{ matrix.doc_id == 'admin' }}
+        run: |
+          OVERLAYS=$(.github/scripts/determine-overlays.sh admin v2)
+          echo "overlay_paths=$OVERLAYS" >> "$GITHUB_OUTPUT"
+          echo "Using v2 overlays: $OVERLAYS"
 
       # ---- Admin v1 explicit diff ----
       - name: Comment PR with API diff (admin v1)
@@ -309,7 +226,7 @@ jobs:
           doc: admin
           token: ${{ env.BUMP_API_KEY }}
           file: admin/admin.yaml
-          overlay: ${{ steps.overlays.outputs.overlay_paths }}
+          overlay: ${{ steps.admin-v1-overlays.outputs.overlay_paths }}
           command: diff
           branch: v1
         env:
@@ -324,7 +241,7 @@ jobs:
           doc: admin
           token: ${{ env.BUMP_API_KEY }}
           file: admin/admin-v2.yaml
-          overlay: ${{ steps.overlays.outputs.overlay_paths }}
+          overlay: ${{ steps.admin-v2-overlays.outputs.overlay_paths }}
           command: diff
           branch: v2
         env:
