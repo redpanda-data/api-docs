@@ -88,14 +88,6 @@ jobs:
             exit 1
           fi
 
-      - name: Detect admin versions
-        id: admin-versions
-        if: ${{ matrix.doc_id == 'admin' }}
-        run: |
-          VERSIONS_JSON=$(.github/scripts/detect-admin-versions.sh)
-          echo "versions=$VERSIONS_JSON" >> $GITHUB_OUTPUT
-          echo "Detected admin versions: $VERSIONS_JSON"
-
       - name: Determine overlays (non-admin)
         id: overlays
         if: ${{ matrix.doc_id != 'admin' }}
@@ -200,14 +192,6 @@ jobs:
             echo "No API definition file found for ${base}"
             exit 1
           fi
-
-      - name: Detect admin versions
-        id: admin-versions
-        if: ${{ matrix.doc_id == 'admin' }}
-        run: |
-          VERSIONS_JSON=$(.github/scripts/detect-admin-versions.sh)
-          echo "versions=$VERSIONS_JSON" >> $GITHUB_OUTPUT
-          echo "Detected admin versions: $VERSIONS_JSON"
 
       - name: Determine overlays (non-admin)
         id: overlays

@@ -37,12 +37,9 @@ else
   ERRORS=$((ERRORS + 1))
 fi
 
-if grep -q ".github/scripts/detect-admin-versions.sh" "$WORKFLOW"; then
-  echo "  ✓ detect-admin-versions.sh is called"
-else
-  echo "  ✗ detect-admin-versions.sh not called"
-  ERRORS=$((ERRORS + 1))
-fi
+# Note: detect-admin-versions.sh is kept for future use but not needed in workflow
+# since we explicitly handle v1 and v2
+echo "  ℹ detect-admin-versions.sh (available for future dynamic expansion)"
 
 # Test 4: Step output references
 echo -e "\n[TEST 4] Step output references"
