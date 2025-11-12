@@ -554,8 +554,8 @@ paths:
       summary: Get security report
       description: |
         Get a comprehensive security report for the cluster, including information about 
-        security configurations for all interfaces (Kafka, RPC, Admin, Schema Registry, 
-        HTTP Proxy), authentication methods, TLS settings, and security alerts.
+        security configurations such as authentication methods, TLS settings, and security alerts for all interfaces (Kafka, RPC, Admin, Schema Registry, 
+        HTTP Proxy).
       operationId: get_security_report
       responses:
         '200':
@@ -6193,7 +6193,7 @@ components:
         authorization_enabled:
           type: boolean
     pandaproxy_interface_security_report:
-      description: Security report for HTTP Proxy (pandaproxy) interfaces
+      description: Security report for HTTP Proxy (Pandaproxy) interfaces
       type: object
       properties:
         name:
