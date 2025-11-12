@@ -1,0 +1,51 @@
+---
+name: update-extensions
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [trigger-npm-update]
+
+jobs:
+  update-dependency:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.RP_AWS_CRED_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.RP_AWS_CRED_ACCOUNT_ID }}:role/${{ vars.RP_AWS_CRED_BASE_ROLE_NAME }}${{ github.event.repository.name }}
+
+      - uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,sdlc/prod/github/actions_bot_token
+          parse-json-secrets: true
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ env.ACTIONS_BOT_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm install
+
+      - run: npm update @redpanda-data/docs-extensions-and-macros
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ env.ACTIONS_BOT_TOKEN }}
+          commit-message: Update @redpanda-data/docs-extensions-and-macros
+          title: Update @redpanda-data/docs-extensions-and-macros
+          labels: auto-docs
+          body: |
+            This PR updates `@redpanda-data/docs-extensions-and-macros` to the latest version, which includes all recent bug fixes and improvements to the doc-tools CLI.
+          branch: update/docs-extensions-and-macros-main
+          base: main
