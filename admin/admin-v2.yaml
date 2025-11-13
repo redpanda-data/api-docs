@@ -1035,9 +1035,13 @@ components:
         pageSize:
           description: |-
             The maximum number of connections to return. If unspecified or 0, a
-             default value may be applied. Note that paging is currently not fully
-             supported, and this field only acts as a limit for the first page of data
-             returned. Subsequent pages of data cannot be requested.
+             default value may be applied. The server may return fewer connections
+             than requested due to memory constraints; the limit is set to allow
+             listing all connections for a single broker. Consider filtering by
+             node_id to view connections for specific brokers. Note that paging is
+             currently not fully supported, and this field only acts as a limit for
+             the first page of data returned. Subsequent pages of data cannot be
+             requested.
           format: int32
           title: page_size
           type: integer
@@ -1413,7 +1417,7 @@ components:
         fetchPartitionMaxBytes:
           description: |-
             Fetch partition max bytes.
-             If 0 is provided, defaults to 1 MiB
+             If 0 is provided, defaults to 5 MiB
           format: int32
           title: fetch_partition_max_bytes
           type: integer
@@ -1822,7 +1826,7 @@ components:
       title: UpdateShadowLinkResponse
       type: object
     redpanda.core.common.v1.ACLOperation:
-      description: / The ACL operation to match
+      description: The ACL operation to match
       enum:
         - ACL_OPERATION_UNSPECIFIED
         - ACL_OPERATION_ANY
@@ -1839,7 +1843,7 @@ components:
       title: ACLOperation
       type: string
     redpanda.core.common.v1.ACLPattern:
-      description: / The ACL pattern type
+      description: The ACL pattern type
       enum:
         - ACL_PATTERN_UNSPECIFIED
         - ACL_PATTERN_ANY
@@ -1849,7 +1853,7 @@ components:
       title: ACLPattern
       type: string
     redpanda.core.common.v1.ACLPermissionType:
-      description: / ACL permission types
+      description: ACL permission types
       enum:
         - ACL_PERMISSION_TYPE_UNSPECIFIED
         - ACL_PERMISSION_TYPE_ANY
@@ -1858,7 +1862,7 @@ components:
       title: ACLPermissionType
       type: string
     redpanda.core.common.v1.ACLResource:
-      description: / The ACL resource types
+      description: The ACL resource types
       enum:
         - ACL_RESOURCE_UNSPECIFIED
         - ACL_RESOURCE_ANY
@@ -1954,7 +1958,7 @@ info:
   title: Redpanda Admin API
   version: v2.0.0
   x-admin-api-major: v2.0.0
-  x-generated-at: 2025-10-31T19:53:30.907Z
+  x-generated-at: 2025-11-13T21:09:09.434Z
   x-generator: redpanda-docs-openapi-bundler
   x-redpanda-core-version: kb/proto/docs/openapi-summaries
 openapi: 3.1.0
