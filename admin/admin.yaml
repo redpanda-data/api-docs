@@ -6082,7 +6082,7 @@ components:
             - pandaproxy
             - audit_log_client
         listener_name:
-          description: The listener name of the affected interface, if provided.
+          description: The listener name of the affected interface, if provided
           type: string
         issue:
           type: string
@@ -6101,7 +6101,7 @@ components:
         - issue
         - description
     kafka_interface_security_report:
-      description: Security report for Kafka interfaces
+      description: Security report for Kafka API interface
       type: object
       properties:
         name:
@@ -6147,7 +6147,7 @@ components:
         mutual_tls_enabled:
           type: boolean
     admin_interface_security_report:
-      description: Security report for Admin API interfaces
+      description: Security report for Admin API interface
       type: object
       properties:
         name:
@@ -6170,7 +6170,7 @@ components:
         authorization_enabled:
           type: boolean
     schema_registry_interface_security_report:
-      description: Security report for Schema Registry interfaces
+      description: Security report for Schema Registry interface
       type: object
       properties:
         name:
@@ -6193,7 +6193,7 @@ components:
         authorization_enabled:
           type: boolean
     pandaproxy_interface_security_report:
-      description: Security report for HTTP Proxy (Pandaproxy) interfaces
+      description: Security report for HTTP Proxy (Pandaproxy) interface
       type: object
       properties:
         name:
@@ -6233,7 +6233,7 @@ components:
         port:
           type: integer
     client_security_report:
-      description: Security report for Kafka client interfaces
+      description: Security report for Kafka client interface
       type: object
       properties:
         kafka_listener_name:
