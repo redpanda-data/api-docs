@@ -546,7 +546,54 @@ paths:
           content:
             application/json:
               schema: 
-                $ref: '#/components/schemas/oidc_keys_cache_invalidate_error_response' 
+                $ref: '#/components/schemas/oidc_keys_cache_invalidate_error_response'
+  /v1/security/report:
+    get:
+      tags:
+        - Security
+      summary: Get security report
+      description: |
+        Get a comprehensive security report for the cluster, including information about 
+        security configurations such as authentication methods, TLS settings, and security alerts for all interfaces (Kafka, RPC, Admin, Schema Registry, 
+        HTTP Proxy).
+      operationId: get_security_report
+      responses:
+        '200':
+          description: Security report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  interfaces:
+                    type: object
+                    properties:
+                      kafka:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/kafka_interface_security_report'
+                      rpc:
+                        $ref: '#/components/schemas/rpc_interface_security_report'
+                      admin:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/admin_interface_security_report'
+                      schema_registry:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/schema_registry_interface_security_report'
+                      schema_registry_client:
+                        $ref: '#/components/schemas/client_security_report'
+                      pandaproxy:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/pandaproxy_interface_security_report'
+                      audit_log_client:
+                        $ref: '#/components/schemas/client_security_report'
+                  alerts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/security_report_alert'
   /v1/status/ready:
     get:
       tags:
@@ -6021,6 +6068,190 @@ components:
         id:
           type: integer
           format: int32
+    security_report_alert:
+      type: object
+      properties:
+        affected_interface:
+          type: string
+          enum:
+            - kafka
+            - rpc
+            - admin
+            - schema_registry
+            - schema_registry_client
+            - pandaproxy
+            - audit_log_client
+        listener_name:
+          description: The listener name of the affected interface, if provided
+          type: string
+        issue:
+          type: string
+          enum:
+            - NO_TLS
+            - NO_AUTHN
+            - NO_AUTHZ
+            - SASL_PLAIN
+            - PP_CONFIGURED_CLIENT
+            - INSECURE_MIN_TLS_VERSION
+            - TLS_RENEGOTIATION
+        description:
+          description: Human-readable description of the alert
+          type: string
+      required:
+        - issue
+        - description
+    kafka_interface_security_report:
+      description: Security report for Kafka API interface
+      type: object
+      properties:
+        name:
+          type: string
+        host:
+          type: string
+        port:
+          type: integer
+        advertised_host:
+          type: string
+        advertised_port:
+          type: integer
+        tls_enabled:
+          type: boolean
+        mutual_tls_enabled:
+          type: boolean
+        authentication_method:
+          type: string
+          enum:
+            - SASL
+            - mTLS
+            - None
+        authorization_enabled:
+          type: boolean
+        supported_sasl_mechanisms:
+          type: array
+          items:
+            type: string
+    rpc_interface_security_report:
+      description: Security report for RPC interface
+      type: object
+      properties:
+        host:
+          type: string
+        port:
+          type: integer
+        advertised_host:
+          type: string
+        advertised_port:
+          type: integer
+        tls_enabled:
+          type: boolean
+        mutual_tls_enabled:
+          type: boolean
+    admin_interface_security_report:
+      description: Security report for Admin API interface
+      type: object
+      properties:
+        name:
+          type: string
+        host:
+          type: string
+        port:
+          type: integer
+        tls_enabled:
+          type: boolean
+        mutual_tls_enabled:
+          type: boolean
+        authentication_methods:
+          type: array
+          items:
+            type: string
+            enum:
+              - BASIC
+              - OIDC
+        authorization_enabled:
+          type: boolean
+    schema_registry_interface_security_report:
+      description: Security report for Schema Registry interface
+      type: object
+      properties:
+        name:
+          type: string
+        host:
+          type: string
+        port:
+          type: integer
+        tls_enabled:
+          type: boolean
+        mutual_tls_enabled:
+          type: boolean
+        authentication_methods:
+          type: array
+          items:
+            type: string
+            enum:
+              - BASIC
+              - OIDC
+        authorization_enabled:
+          type: boolean
+    pandaproxy_interface_security_report:
+      description: Security report for HTTP Proxy (Pandaproxy) interface
+      type: object
+      properties:
+        name:
+          type: string
+        host:
+          type: string
+        port:
+          type: integer
+        advertised_host:
+          type: string
+        advertised_port:
+          type: integer
+        tls_enabled:
+          type: boolean
+        mutual_tls_enabled:
+          type: boolean
+        authentication_methods:
+          type: array
+          items:
+            type: string
+            enum:
+              - BASIC
+              - OIDC
+        authorization_enabled:
+          type: boolean
+        configured_authentication_method:
+          type: string
+          enum:
+            - None
+            - SCRAM_Configured
+            - SCRAM_Proxied
+    host_port:
+      type: object
+      properties:
+        host:
+          type: string
+        port:
+          type: integer
+    client_security_report:
+      description: Security report for Kafka client interface
+      type: object
+      properties:
+        kafka_listener_name:
+          type: string
+        brokers:
+          type: array
+          items:
+            $ref: '#/components/schemas/host_port'
+        tls_enabled:
+          type: boolean
+        mutual_tls_enabled:
+          type: boolean
+        configured_authentication_method:
+          type: string
+          enum:
+            - None
+            - SCRAM_Configured
+            - SCRAM_Ephemeral
 tags:
   - name: Authentication
     description: |
@@ -6061,6 +6292,11 @@ tags:
       Debug a Redpanda cluster.
 
       For details about debugging in the latest version of Redpanda version, see [Cluster Diagnostics](https://docs.redpanda.com/docs/manage/cluster-maintenance/cluster-diagnostics/).
+  - name: Security
+    description: |
+      Security management and reporting endpoints.
+      
+      Monitor security configurations and generate security reports.
   - name: Services
     description: Manage Redpanda services.
   - name: Unstable APIs
