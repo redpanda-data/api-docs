@@ -1,0 +1,43 @@
+# This overlay adds badges, a Bump custom extension, that indicate the 
+# Redpanda version in which each Admin API v2 endpoint was introduced.
+
+overlay: 1.0.0
+info:
+  title: Admin API v2 Endpoint Versioning
+  version: 1.0.0
+
+# 25.3 endpoints  
+actions:
+  - target: "$.paths['/redpanda.core.admin.v2.BrokerService/GetBroker'].post"
+    update:
+      x-state: "Added in v25.3"
+  - target: "$.paths['/redpanda.core.admin.v2.BrokerService/ListBrokers'].post"
+    update:
+      x-state: "Added in v25.3"
+  - target: "$.paths['/redpanda.core.admin.v2.ClusterService/ListKafkaConnections'].post"
+    update:
+      x-state: "Added in v25.3"
+  - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/CreateShadowLink'].post"
+    update:
+      x-state: "Added in v25.3"
+  - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/DeleteShadowLink'].post"
+    update:
+      x-state: "Added in v25.3"
+  - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/FailOver'].post"
+    update:
+      x-state: "Added in v25.3"
+  - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/GetShadowLink'].post"
+    update:
+      x-state: "Added in v25.3"
+  - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/GetShadowTopic'].post"
+    update:
+      x-state: "Added in v25.3"
+  - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/ListShadowLinks'].post"
+    update:
+      x-state: "Added in v25.3"
+  - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/ListShadowTopics'].post"
+    update:
+      x-state: "Added in v25.3"
+  - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/UpdateShadowLink'].post"
+    update:
+      x-state: "Added in v25.3"
