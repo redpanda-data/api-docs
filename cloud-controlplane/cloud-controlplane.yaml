@@ -20,6 +20,17 @@ components:
         - arn
       title: Instance Profile
       type: object
+    AWSPeeringSpec:
+      properties:
+        peer_owner_id:
+          title: |-
+            their aws vpn id
+            these are aws terms
+          type: string
+        peer_vpc_id:
+          type: string
+      title: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVpcPeeringConnection.html
+      type: object
     AWSPrivateLink:
       properties:
         allowed_principals:
@@ -131,6 +142,18 @@ components:
       title: Security Group
       type: object
     Anytime:
+      type: object
+    AzurePeeringSpec:
+      properties:
+        peer_resource_group:
+          type: string
+        peer_subscription_id:
+          type: string
+        peer_tenant_id:
+          type: string
+        peer_vnet_name:
+          type: string
+      title: https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-peering?tabs=peering-portal
       type: object
     AzurePrivateLink:
       properties:
@@ -264,6 +287,43 @@ components:
         - CLOUD_PROVIDER_GCP
         - CLOUD_PROVIDER_AZURE
       type: string
+    CloudProviderStatus:
+      properties:
+        aws:
+          $ref: '#/components/schemas/CloudProviderStatus.AWS'
+        azure:
+          $ref: '#/components/schemas/CloudProviderStatus.Azure'
+        gcp:
+          $ref: '#/components/schemas/CloudProviderStatus.GCP'
+      type: object
+    CloudProviderStatus.AWS:
+      properties:
+        accepter_cidr_block:
+          type: string
+        expiration_time:
+          format: date-time
+          type: string
+        status:
+          type: string
+        status_message:
+          type: string
+      type: object
+    CloudProviderStatus.Azure:
+      properties:
+        peering_level:
+          type: string
+        peering_state:
+          type: string
+        status:
+          type: string
+      type: object
+    CloudProviderStatus.GCP:
+      properties:
+        status:
+          type: string
+        status_message:
+          type: string
+      type: object
     Cluster:
       description: Resource describing a Cluster.
       properties:
@@ -834,6 +894,28 @@ components:
         operation:
           $ref: '#/components/schemas/v1.Operation'
       type: object
+    CreateNetworkPeeringBody:
+      properties:
+        network_peering:
+          properties:
+            aws:
+              $ref: '#/components/schemas/AWSPeeringSpec'
+            azure:
+              $ref: '#/components/schemas/AzurePeeringSpec'
+            cloud_provider:
+              $ref: '#/components/schemas/CloudProvider'
+            display_name:
+              type: string
+            gcp:
+              $ref: '#/components/schemas/GCPPeeringSpec'
+          type: object
+      type: object
+    CreateNetworkPeeringOperation:
+      description: CreateNetworkPeeringOperation is the response of the create network peering rpc.
+      properties:
+        operation:
+          $ref: '#/components/schemas/v1.Operation'
+      type: object
     CreateNetworkRequest:
       description: CreateNetworkRequest is the request of CreateNetwork.
       properties:
@@ -903,6 +985,32 @@ components:
       properties:
         user_invite:
           $ref: '#/components/schemas/UserInvite'
+      type: object
+    Created:
+      properties:
+        aws:
+          $ref: '#/components/schemas/Created.AWS'
+        azure:
+          $ref: '#/components/schemas/Created.Azure'
+        gcp:
+          $ref: '#/components/schemas/Created.GCP'
+      type: object
+    Created.AWS:
+      properties:
+        vpc_peering_connection_id:
+          type: string
+      type: object
+    Created.Azure:
+      properties:
+        application_id:
+          type: string
+        application_object_id:
+          type: string
+      type: object
+    Created.GCP:
+      properties:
+        vpc_network_peering_name:
+          type: string
       type: object
     CustomerManagedAWSCloudStorageBucket:
       description: AWS storage bucket properties by ARN.
@@ -1092,6 +1200,12 @@ components:
         operation:
           $ref: '#/components/schemas/v1.Operation'
       type: object
+    DeleteNetworkPeeringOperation:
+      description: DeleteNetworkPeeringOperation is the response of the delete network peering rpc.
+      properties:
+        operation:
+          $ref: '#/components/schemas/v1.Operation'
+      type: object
     DeleteNetworkResponse:
       description: DeleteNetworkResponse is the response of DeleteNetwork.
       type: object
@@ -1267,6 +1381,14 @@ components:
         - k8s_master_ipv4_range
       title: Subnet
       type: object
+    GCPPeeringSpec:
+      properties:
+        peer_project_id:
+          type: string
+        peer_vpc_name:
+          type: string
+      title: https://cloud.google.com/vpc/docs/vpc-peering
+      type: object
     GCPPrivateServiceConnect:
       properties:
         consumer_accept_list:
@@ -1387,6 +1509,18 @@ components:
       title: |-
         GetCurrentOrganizationResponse the response of the the
         GetCurrentOrganization rpc
+      type: object
+    GetNetworkPeeringRequest:
+      properties:
+        id:
+          type: string
+        network_id:
+          type: string
+      type: object
+    GetNetworkPeeringResponse:
+      properties:
+        network_peering:
+          $ref: '#/components/schemas/NetworkPeering'
       type: object
     GetNetworkResponse:
       description: GetNetworkRequest is the request of GetNetwork.
@@ -1574,6 +1708,13 @@ components:
           description: Page token to fetch the next page. The value can be used as `next_page_token` in the next call to this endpoint.
           type: string
       type: object
+    ListNetworkPeeringsResponse:
+      properties:
+        network_peerings:
+          items:
+            $ref: '#/components/schemas/NetworkPeering'
+          type: array
+      type: object
     ListNetworksRequest.Filter:
       properties:
         cloud_provider:
@@ -1692,6 +1833,9 @@ components:
       properties:
         name_contains:
           description: Name of cluster. Partial match.
+          type: string
+        private_link_id:
+          title: Private link ID of Serverless cluster
           type: string
         resource_group_id:
           description: Resource group ID of Serverless cluster.
@@ -1988,6 +2132,72 @@ components:
         - cluster_type
       title: Network details
       type: object
+    NetworkPeering:
+      properties:
+        aws:
+          $ref: '#/components/schemas/AWSPeeringSpec'
+        azure:
+          $ref: '#/components/schemas/AzurePeeringSpec'
+        cloud_provider:
+          $ref: '#/components/schemas/CloudProvider'
+        created_at:
+          format: date-time
+          type: string
+        deleted_at:
+          format: date-time
+          type: string
+        display_name:
+          description: name can be set by the caller. unique within an organization.
+          type: string
+        gcp:
+          $ref: '#/components/schemas/GCPPeeringSpec'
+        id:
+          title: id is set by the server as a xid
+          type: string
+        network_id:
+          title: xid of the redpanda network resource this peering should apply to
+          type: string
+        state:
+          $ref: '#/components/schemas/NetworkPeering.State'
+        status:
+          $ref: '#/components/schemas/NetworkPeeringStatus'
+        updated_at:
+          format: date-time
+          type: string
+      type: object
+    NetworkPeering.State:
+      description: |-
+        state is information describing the network_peering lifecycle. It is only
+        modified by the control plane.
+      enum:
+        - STATE_CREATING
+        - STATE_PENDING_ACCEPTANCE
+        - STATE_READY
+        - STATE_DELETING
+        - STATE_FAILED
+      type: string
+    NetworkPeeringCreate:
+      properties:
+        aws:
+          $ref: '#/components/schemas/AWSPeeringSpec'
+        azure:
+          $ref: '#/components/schemas/AzurePeeringSpec'
+        cloud_provider:
+          $ref: '#/components/schemas/CloudProvider'
+        display_name:
+          type: string
+        gcp:
+          $ref: '#/components/schemas/GCPPeeringSpec'
+        network_id:
+          type: string
+      type: object
+    NetworkPeeringStatus:
+      properties:
+        cloud_provider:
+          $ref: '#/components/schemas/CloudProviderStatus'
+        created:
+          $ref: '#/components/schemas/Created'
+      type: object
     NullValue:
       description: |-
         `NullValue` is a singleton enumeration to represent the null value for the
@@ -2016,6 +2226,11 @@ components:
         - TYPE_CREATE_SERVERLESS_PRIVATE_LINK
         - TYPE_UPDATE_SERVERLESS_PRIVATE_LINK
         - TYPE_DELETE_SERVERLESS_PRIVATE_LINK
+        - TYPE_CREATE_NETWORK_PEERING
+        - TYPE_DELETE_NETWORK_PEERING
+        - TYPE_CREATE_SHADOW_LINK
+        - TYPE_UPDATE_SHADOW_LINK
+        - TYPE_DELETE_SHADOW_LINK
       type: string
     OperationMetadata:
       description: Metadata of the long-running Operation. Contains in-progress information.
@@ -2181,20 +2396,6 @@ components:
           title: status is the status of the Azure PE
           type: string
       type: object
-    PrivateLink.State:
-      description: |2-
-         - STATE_DISABLED: Private link is being created.
-         - STATE_LINKING: Private link is being created.
-         - STATE_READY: Private link is ready to use.
-         - STATE_UNLINKING: Private link is being deleted.
-         - STATE_FAILED: Private link is in an error state.
-      enum:
-        - STATE_DISABLED
-        - STATE_LINKING
-        - STATE_READY
-        - STATE_UNLINKING
-        - STATE_FAILED
-      type: string
     PrivateLinkAuthMode:
       description: |-
         Private link authentication mode.
@@ -2541,12 +2742,14 @@ components:
           description: Unique name of the Serverless cluster.
           example: development-ServerlessCluster
           type: string
-        network:
-          $ref: '#/components/schemas/ServerlessCluster.NetworkingConfig'
+        networking_config:
+          $ref: '#/components/schemas/ServerlessNetworkingConfig'
         planned_deletion:
           $ref: '#/components/schemas/PlannedDeletion'
-        private_link:
-          $ref: '#/components/schemas/ServerlessCluster.PrivateLink'
+        private_link_id:
+          nullable: true
+          readOnly: true
+          type: string
         resource_group_id:
           description: Resource group ID of the cluster.
           example: a0b40af9-0250-48ca-9417-783ed127ce42
@@ -2570,7 +2773,7 @@ components:
       properties:
         private_url:
           description: |-
-            The private URL of the data plane API, if private networking
+            private_url is the private url of the dataplane api if private networking
             is enabled for this cluster.
           readOnly: true
           type: string
@@ -2594,31 +2797,12 @@ components:
           title: Kafka API seed brokers (also known as bootstrap servers). Implicitly public
           type: array
       type: object
-    ServerlessCluster.NetworkingConfig:
-      properties:
-        private:
-          $ref: '#/components/schemas/ServerlessCluster.NetworkingConfig.State'
-        public:
-          $ref: '#/components/schemas/ServerlessCluster.NetworkingConfig.State'
-      type: object
-    ServerlessCluster.NetworkingConfig.State:
-      enum:
-        - STATE_DISABLED
-        - STATE_ENABLED
-      type: string
-    ServerlessCluster.PrivateLink:
-      properties:
-        id:
-          type: string
-        state:
-          $ref: '#/components/schemas/PrivateLink.State'
-      type: object
     ServerlessCluster.SchemaRegistryStatus:
       description: Cluster's Schema Registry properties.
       properties:
         private_url:
           readOnly: true
-          title: Private URL for the schema registry
+          title: Private url for the schema registry
           type: string
         url:
           readOnly: true
@@ -2663,6 +2847,28 @@ components:
         - serverless_region
       title: ServerlessClusterCreate
       type: object
+    ServerlessClusterUpdate:
+      description: Resource describing an Update Serverless Cluster.
+      properties:
+        id:
+          description: ID of the vcluster.
+          type: string
+      required:
+        - id
+      title: ServerlessClusterUpdate
+      type: object
+    ServerlessNetworkingConfig:
+      properties:
+        private:
+          $ref: '#/components/schemas/ServerlessNetworkingConfig.State'
+        public:
+          $ref: '#/components/schemas/ServerlessNetworkingConfig.State'
+      type: object
+    ServerlessNetworkingConfig.State:
+      enum:
+        - STATE_DISABLED
+        - STATE_ENABLED
+      type: string
     ServerlessRegion:
       description: Resource describing a ServerlessRegion.
       properties:
@@ -2854,6 +3060,7 @@ components:
     UpdateClusterType:
       enum:
         - UPDATE_CLUSTER_TYPE_CUSTOMER_CONFIG
+        - UPDATE_CLUSTER_TYPE_SCALING
       type: string
     UpdateOrganizationResponse:
       properties:
@@ -2879,6 +3086,15 @@ components:
         resource_group:
           $ref: '#/components/schemas/ResourceGroup'
       title: UpdateResourceGroupResponse is the response of UpdateResourceGroup
+      type: object
+    UpdateServerlessClusterBody:
+      description: UpdateServerlessClusterRequest is the request of UpdateServerlessCluster.
+      type: object
+    UpdateServerlessClusterOperation:
+      description: UpdateServerlessClusterOperation is the response of the update cluster rpc.
+      properties:
+        operation:
+          $ref: '#/components/schemas/v1.Operation'
       type: object
     UpdateServiceAccountBody:
       properties:
@@ -3772,6 +3988,162 @@ paths:
       summary: Get cluster
       tags:
         - Clusters
+  /v1/network/{network_id}/network-peerings:
+    get:
+      description: List Redpanda network peerings.
+      operationId: NetworkPeeringService_ListNetworkPeerings
+      parameters:
+        - in: path
+          name: network_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListNetworkPeeringsResponse'
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: List network peerings
+      tags:
+        - Network Peerings
+  /v1/network/{network_id}/network-peerings/{id}:
+    delete:
+      description: Delete a Redpanda network peering.
+      operationId: NetworkPeeringService_DeleteNetworkPeering
+      parameters:
+        - in: path
+          name: network_id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteNetworkPeeringOperation'
+          description: Delete request accepted
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Delete network peering
+      tags:
+        - Network Peerings
+    get:
+      description: Get information about a Redpanda network peering.
+      operationId: NetworkPeeringService_GetNetworkPeering
+      parameters:
+        - in: path
+          name: network_id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetNetworkPeeringRequest'
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Get network peering
+      tags:
+        - Network Peerings
+  /v1/network/{network_peering.network_id}/network-peerings:
+    post:
+      description: Create a Redpanda network peering.
+      operationId: NetworkPeeringService_CreateNetworkPeering
+      parameters:
+        - in: path
+          name: network_peering.network_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNetworkPeeringBody'
+        required: true
+        x-originalParamName: body
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateNetworkPeeringOperation'
+          description: Accepted
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Create network peering
+      tags:
+        - Network Peerings
   /v1/networks:
     get:
       description: List Redpanda networks.
@@ -4014,6 +4386,11 @@ paths:
                 - TYPE_CREATE_SERVERLESS_PRIVATE_LINK
                 - TYPE_UPDATE_SERVERLESS_PRIVATE_LINK
                 - TYPE_DELETE_SERVERLESS_PRIVATE_LINK
+                - TYPE_CREATE_NETWORK_PEERING
+                - TYPE_DELETE_NETWORK_PEERING
+                - TYPE_CREATE_SHADOW_LINK
+                - TYPE_UPDATE_SHADOW_LINK
+                - TYPE_DELETE_SHADOW_LINK
               type: string
             type: array
         - in: query
@@ -4914,6 +5291,11 @@ paths:
           name: filter.serverless_region
           schema:
             type: string
+        - description: Private link ID of Serverless cluster
+          in: query
+          name: filter.private_link_id
+          schema:
+            type: string
         - description: Limit the paginated response to a number of items.
           in: query
           name: page_size
@@ -5071,6 +5453,51 @@ paths:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
       summary: Get Serverless cluster
+      tags:
+        - Serverless Clusters
+    patch:
+      description: Update a Redpanda serverless cluster.
+      operationId: ServerlessClusterService_UpdateServerlessCluster
+      parameters:
+        - description: ID of the virtual cluster.
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateServerlessClusterBody'
+        required: true
+        x-originalParamName: body
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerlessClusterUpdate'
+          description: Accepted
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Update serverless cluster
       tags:
         - Serverless Clusters
   /v1/serverless/region:
@@ -5733,6 +6160,8 @@ tags:
     name: Clusters
   - description: Manage Redpanda Cloud networks.
     name: Networks
+  - description: Manage Redpanda Cloud network peerings.
+    name: Network Peerings
   - description: Get information about available Redpanda regions.
     name: Regions
   - description: Manage Redpanda Cloud resource groups.
