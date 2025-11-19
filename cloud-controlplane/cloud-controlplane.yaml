@@ -3990,7 +3990,7 @@ paths:
         - Clusters
   /v1/network/{network_id}/network-peerings:
     get:
-      description: List Redpanda networks peerings.
+      description: List Redpanda network peerings.
       operationId: NetworkPeeringService_ListNetworkPeerings
       parameters:
         - in: path
@@ -4107,7 +4107,7 @@ paths:
         - Network Peerings
   /v1/network/{network_peering.network_id}/network-peerings:
     post:
-      description: Create a Redpanda network pering.
+      description: Create a Redpanda network peering.
       operationId: NetworkPeeringService_CreateNetworkPeering
       parameters:
         - in: path
