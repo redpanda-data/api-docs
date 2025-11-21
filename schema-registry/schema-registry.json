@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Redpanda Schema Registry API",
-    "version": "1.1.1"
+    "version": "1.1.2"
   },
   "host": "localhost:8081",
   "basePath": "/",
@@ -899,6 +899,7 @@
           {
             "name": "version",
             "in": "path",
+            "description": "The schema version to retrieve. Use an integer for a specific version or 'latest' for the most recent version.",
             "required": true,
             "type": "string"
           },
@@ -967,6 +968,7 @@
           {
             "name": "version",
             "in": "path",
+            "description": "The schema version to delete. Use an integer for a specific version or 'latest' for the most recent version.",
             "required": true,
             "type": "string"
           },
@@ -1025,6 +1027,7 @@
           {
             "name": "version",
             "in": "path",
+            "description": "The schema version to retrieve. Use an integer for a specific version or 'latest' for the most recent version.",
             "required": true,
             "type": "string"
           },
@@ -1095,6 +1098,7 @@
           {
             "name": "version",
             "in": "path",
+            "description": "The schema version to check. Use an integer for a specific version or 'latest' for the most recent version.",
             "required": true,
             "type": "string"
           }
@@ -1150,6 +1154,7 @@
           {
             "name": "version",
             "in": "path",
+            "description": "The schema version to check. Use an integer for a specific version or 'latest' for the most recent version.",
             "required": true,
             "type": "string"
           }
@@ -1209,8 +1214,9 @@
           {
             "name": "version",
             "in": "path",
+            "description": "The schema version to check compatibility against. Use an integer for a specific version or 'latest' for the most recent version.",
             "required": true,
-            "type": "integer"
+            "type": "string"
           },
           {
             "name": "schema_def",
