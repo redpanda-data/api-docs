@@ -2854,7 +2854,7 @@ components:
         client_id:
           readOnly: true
           title: |-
-            The Client ID for the Kafka RPC requests setn by this cluster to the
+            The Client ID for the Kafka RPC requests sent by this cluster to the
             source cluster
           type: string
         connection_timeout_ms:
