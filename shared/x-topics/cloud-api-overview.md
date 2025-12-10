@@ -20,7 +20,7 @@ See also: [Redpanda API and SDK Reference documentation](https://docs.redpanda.c
 
 ## Base URLs
 
-The Control Plane and Data Plane APIs are independent of each other. The Cloud API URL is distinct from the Data Plane API URLs.
+The Control Plane and Data Plane APIs are independent of each other. The Control Plane API URL is distinct from the Data Plane API URLs.
 
 ### Control Plane API URL
 
