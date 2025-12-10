@@ -506,7 +506,7 @@ components:
         info:
           $ref: '#/components/schemas/ConnectCluster.Info'
         name:
-          description: Unique name of connect cluster. For Redpanda Cloud, the value is `redpanda`.
+          description: Unique name of Connect cluster. For Redpanda Cloud, the value is `redpanda`.
           type: string
         plugins:
           items:
@@ -1475,7 +1475,7 @@ components:
         tools:
           additionalProperties:
             $ref: '#/components/schemas/Tool'
-          description: The Redpanda Connect MCP tools configuration in YAML format.
+          description: The MCP tool's configuration in YAML format.
           type: object
       required:
         - tools
@@ -1628,15 +1628,15 @@ components:
     ListMCPServersRequest.Filter:
       properties:
         display_name_contains:
-          description: Any MCP Server that partially match this name will be returned.
+          description: Filter MCP servers by display name. Any MCP servers that partially match this name are returned.
           type: string
         secret_id:
-          description: Match MCP servers that use this secret ID.
+          description: Filter MCP servers by secret ID.
           type: string
         tags[string]:
           additionalProperties:
             type: string
-          description: MCP servers that match all the provided tags will be returned.
+          description: Filter MCP servers by tags. MCP servers that match all the provided tags are returned. The query format is "filter.tags[key]=value".
           type: object
       type: object
     ListMCPServersResponse:
@@ -1646,6 +1646,7 @@ components:
             $ref: '#/components/schemas/MCPServer'
           type: array
         next_page_token:
+          description: Token to retrieve the next page of results. Include this value in the next request's `page_token` parameter. Empty if there are no more results.
           type: string
       type: object
     ListMountTasksResponse:
@@ -1958,7 +1959,7 @@ components:
         tools:
           additionalProperties:
             $ref: '#/components/schemas/Tool'
-          description: The Redpanda Connect MCP server configuration.
+          description: The MCP server configuration.
           type: object
         url:
           readOnly: true
@@ -1971,10 +1972,13 @@ components:
         - service_account
       type: object
     MCPServer.ServiceAccount:
+      description: Service account credentials used to authenticate with Redpanda Cloud.
       properties:
         client_id:
+          description: The service account client ID for authenticating with Redpanda Cloud.
           type: string
         client_secret:
+          description: The service account client secret for authenticating with Redpanda Cloud.
           type: string
       required:
         - client_id
@@ -2023,7 +2027,7 @@ components:
         tools:
           additionalProperties:
             $ref: '#/components/schemas/Tool'
-          description: The Redpanda Connect MCP server configuration.
+          description: The MCP server configuration.
           type: object
       required:
         - display_name
@@ -2036,7 +2040,7 @@ components:
           description: MCP server description.
           type: string
         display_name:
-          description: User-friendly MCP servers name.
+          description: User-friendly MCP server name.
           type: string
         resources:
           $ref: '#/components/schemas/Resources'
@@ -2052,7 +2056,7 @@ components:
         tools:
           additionalProperties:
             $ref: '#/components/schemas/Tool'
-          description: The Redpanda Connect MCP server configuration.
+          description: The MCP server configuration.
           type: object
       type: object
     MatchingACL:
@@ -4910,7 +4914,7 @@ paths:
       description: 'List Kafka Connect cluster secrets. Optional: filter based on secret name and labels.'
       operationId: SecretService_ListKafkaConnectSecrets
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -5030,7 +5034,7 @@ paths:
       description: Delete a Kafka Connect cluster secret.
       operationId: SecretService_DeleteKafkaConnectSecret
       parameters:
-        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -5569,20 +5573,20 @@ paths:
         - Redpanda Connect Pipelines
   /v1/redpanda-connect/mcp-servers:
     get:
-      description: 'List Redpanda Connect MCP Servers. Optional: filter based on MCP server name.'
+      description: 'List MCP servers and optionally filter by display name, tags, or secret ID.'
       operationId: MCPServerService_ListMCPServers
       parameters:
-        - description: Any MCP Server that partially match this name will be returned.
+        - description: Filter MCP servers by name. Any servers that partially match this name are returned.
           in: query
           name: filter.display_name_contains
           schema:
             type: string
-        - description: This is a request variable of the map type. The query format is "map_name[key]=value", e.g. If the map name is Age, the key type is string, and the value type is integer, the query parameter is expressed as Age["bob"]=18
+        - description: Filter MCP servers by tags. MCP servers that match all the provided tags are returned. The query format is "filter.tags[key]=value".
           in: query
           name: filter.tags[string]
           schema:
             type: string
-        - description: Match MCP servers that use this secret ID.
+        - description: Filter MCP servers by secret ID.
           in: query
           name: filter.secret_id
           schema:
@@ -5625,11 +5629,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List Redpanda Connect MCP Servers
+      summary: List MCP servers
       tags:
         - Redpanda Connect MCP servers
     post:
-      description: Create a new Redpanda Connect MCP Server.
+      description: Create an MCP server.
       operationId: MCPServerService_CreateMCPServer
       requestBody:
         content:
@@ -5663,15 +5667,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Create Redpanda Connect MCP Server
+      summary: Create an MCP server
       tags:
-        - Redpanda Connect MCP servers
+        - Remote MCP
   /v1/redpanda-connect/mcp-servers/{id}:
     delete:
-      description: Delete a Redpanda Connect MCP server.
+      description: Delete an MCP server.
       operationId: MCPServerService_DeleteMCPServer
       parameters:
-        - description: MCP Server ID.
+        - description: MCP server ID.
           in: path
           name: id
           required: true
@@ -5707,11 +5711,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Delete a Redpanda Connect MCP server
+      summary: Delete an MCP server
       tags:
-        - Redpanda Connect MCP servers
+        - Remote MCP
     get:
-      description: Get a specific Redpanda Connect MCP server.
+      description: Get a specific MCP server.
       operationId: MCPServerService_GetMCPServer
       parameters:
         - description: MCP server ID.
@@ -5751,11 +5755,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get Redpanda Connect MCP server
+      summary: Get an MCP server
       tags:
-        - Redpanda Connect MCP servers
+        - Remote MCP
     put:
-      description: Update the configuration of a Redpanda Connect MCP server.
+      description: Edit an MCP server.
       operationId: MCPServerService_UpdateMCPServer
       parameters:
         - description: MCP Server ID.
@@ -5803,15 +5807,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Update a Redpanda Connect MCP Server
+      summary: Edit an MCP Server
       tags:
-        - Redpanda Connect MCP servers
+        - Remote MCP
   /v1/redpanda-connect/mcp-servers/{id}:start:
     post:
-      description: Start a stopped Redpanda Connect MCP server.
+      description: Start an existing MCP server.
       operationId: MCPServerService_StartMCPServer
       parameters:
-        - description: MCP Server ID.
+        - description: MCP server ID.
           in: path
           name: id
           required: true
@@ -5848,12 +5852,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Start a Redpanda Connect MCP server
+      summary: Start an existing MCP server
       tags:
-        - Redpanda Connect MCP servers
+        - Remote MCP
   /v1/redpanda-connect/mcp-servers/{id}:stop:
     post:
-      description: Stop a running Redpanda Connect MCP server.
+      description: Stop an MCP server.
       operationId: MCPServerService_StopMCPServer
       parameters:
         - description: MCP Server ID.
@@ -5893,12 +5897,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Stops a Redpanda Connect MCP server
+      summary: Stop an MCP server
       tags:
-        - Redpanda Connect MCP servers
+        - Remote MCP
   /v1/redpanda-connect/mcp-servers:getConfigSchema:
     get:
-      description: The configuration schema includes available components and processors in this Redpanda Connect MCP Server instance.
+      description: The configuration schema includes all available Redpanda Connect components and processors in this MCP server instance.
       operationId: MCPServerService_GetMCPServerServiceConfigSchema
       responses:
         "200":
@@ -5925,12 +5929,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Retrieve the schema for Redpanda Connect MCP Servers configurations.
+      summary: Retrieve the schema for MCP server configurations
       tags:
-        - Redpanda Connect MCP servers
+        - Remote MCP
   /v1/redpanda-connect/mcp-servers:lint-config:
     post:
-      description: Validates a supplied Redpanda Connect MCP tools YAML and returns a list of linting hints. If no problems are found, the list is empty.
+      description: Validates a given MCP tool configuration and returns a list of linting hints. The request should contain a map of tool names to tool configurations, where each tool contains YAML in its `config_yaml` field. If no problems are found, the list is empty.
       operationId: MCPServerService_LintMCPConfig
       requestBody:
         content:
@@ -5964,9 +5968,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Lint a Redpanda Connect MCP tools configuration
+      summary: Lint the configuration of an MCP tool
       tags:
-        - Redpanda Connect MCP servers
+        - Remote MCP
   /v1/redpanda-connect/pipelines:
     get:
       description: 'List Redpanda Connect pipelines. Optional: filter based on pipeline name.'
@@ -7618,7 +7622,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransformMetadata'
           description: Created
-      summary: Deploy Transform
+      summary: Deploy transform
       tags:
         - Wasm Transforms
   /v1/transforms/{name}:
@@ -8018,8 +8022,8 @@ tags:
     name: Kafka Connect
   - description: Create and manage [Redpanda Connect](https://docs.redpanda.com/redpanda-cloud/develop/connect/about) pipelines and their configurations.
     name: Redpanda Connect Pipelines
-  - description: Create and manage Redpanda Connect MCP servers and their configurations.
-    name: Redpanda Connect MCP servers
+  - description: Create and manage MCP servers and their configurations.
+    name: Remote MCP
   - description: Monitoring operations for Redpanda.
     name: Monitoring
   - description: Manage client throughput limits. See [Redpanda Client Throughput Limits](https://docs.redpanda.com/current/manage/cluster-maintenance/manage-throughput/#client-throughput-limits) for more information.
