@@ -5631,7 +5631,7 @@ paths:
           description: An unexpected error response.
       summary: List MCP servers
       tags:
-        - Redpanda Connect MCP servers
+        - Remote MCP
     post:
       description: Create an MCP server.
       operationId: MCPServerService_CreateMCPServer
