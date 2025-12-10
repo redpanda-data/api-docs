@@ -1,5 +1,103 @@
 components:
   schemas:
+    ACLAccessFilter:
+      properties:
+        host:
+          title: |-
+            The host to match.  If not set, will default to match all hosts
+            with the specified `operation` and `permission_type`. Note that
+            the asterisk `*` is literal and matches hosts that are set to `*`
+          type: string
+        operation:
+          $ref: '#/components/schemas/ACLOperation'
+        permission_type:
+          $ref: '#/components/schemas/ACLPermissionType'
+        principal:
+          title: |-
+            The name of the principal, if not set will default to match
+            all principals with the specified `operation` and `permission_type`
+          type: string
+      title: Filter an ACL based on its access
+      type: object
+    ACLFilter:
+      properties:
+        access_filter:
+          $ref: '#/components/schemas/ACLAccessFilter'
+        resource_filter:
+          $ref: '#/components/schemas/ACLResourceFilter'
+      title: A filter for ACLs
+      type: object
+    ACLOperation:
+      enum:
+        - ACL_OPERATION_ANY
+        - ACL_OPERATION_READ
+        - ACL_OPERATION_WRITE
+        - ACL_OPERATION_CREATE
+        - ACL_OPERATION_REMOVE
+        - ACL_OPERATION_ALTER
+        - ACL_OPERATION_DESCRIBE
+        - ACL_OPERATION_CLUSTER_ACTION
+        - ACL_OPERATION_DESCRIBE_CONFIGS
+        - ACL_OPERATION_ALTER_CONFIGS
+        - ACL_OPERATION_IDEMPOTENT_WRITE
+      title: / The ACL operation to match
+      type: string
+    ACLPattern:
+      description: |-
+        - ACL_PATTERN_ANY: Wildcard to match any pattern
+         - ACL_PATTERN_LITERAL: Match a literal string
+         - ACL_PATTERN_PREFIXED: Match a prefix
+         - ACL_PATTERN_MATCH: Match serves as a catch-all for all the names of a topic
+        the principal is authorized to access
+      enum:
+        - ACL_PATTERN_ANY
+        - ACL_PATTERN_LITERAL
+        - ACL_PATTERN_PREFIXED
+        - ACL_PATTERN_MATCH
+      title: / The ACL pattern type
+      type: string
+    ACLPermissionType:
+      enum:
+        - ACL_PERMISSION_TYPE_ANY
+        - ACL_PERMISSION_TYPE_ALLOW
+        - ACL_PERMISSION_TYPE_DENY
+      title: / ACL permission types
+      type: string
+    ACLResource:
+      description: |-
+        - ACL_RESOURCE_ANY: Wildcard for selecting any ACL resource
+         - ACL_RESOURCE_CLUSTER: Cluster wide resource
+         - ACL_RESOURCE_GROUP: Consumer group resource
+         - ACL_RESOURCE_TOPIC: Topic resource
+         - ACL_RESOURCE_TXN_ID: Transaction ID resource
+         - ACL_RESOURCE_SR_SUBJECT: Schema Registry subject resource
+         - ACL_RESOURCE_SR_REGISTRY: Schema Registry wide resource
+         - ACL_RESOURCE_SR_ANY: Wildcard to match any SR ACL resource
+      enum:
+        - ACL_RESOURCE_ANY
+        - ACL_RESOURCE_CLUSTER
+        - ACL_RESOURCE_GROUP
+        - ACL_RESOURCE_TOPIC
+        - ACL_RESOURCE_TXN_ID
+        - ACL_RESOURCE_SR_SUBJECT
+        - ACL_RESOURCE_SR_REGISTRY
+        - ACL_RESOURCE_SR_ANY
+      title: / The ACL resource types
+      type: string
+    ACLResourceFilter:
+      properties:
+        name:
+          title: |-
+            Name, if not given will default to match all items in `resource_type`.
+            Note that asterisk `*` is literal and matches resource ACLs
+            that are named `*`
+          type: string
+        pattern_type:
+          $ref: '#/components/schemas/ACLPattern'
+        resource_type:
+          $ref: '#/components/schemas/ACLResource'
+      title: A filter to match ACLs for resources
+      type: object
     AWS.Role:
       description: Role identifies AWS role.
       properties:
@@ -54,6 +152,11 @@ components:
           $ref: '#/components/schemas/PrivateLinkAuthMode'
         status:
           $ref: '#/components/schemas/AWSPrivateLink.Status'
+        supported_regions:
+          description: List of supported regions in cross-region AWS PrivateLink.
+          items:
+            type: string
+          type: array
       type: object
     AWSPrivateLink.Status:
       properties:
@@ -130,6 +233,14 @@ components:
           $ref: '#/components/schemas/PrivateLinkAuthMode'
         schema_registry_auth_mode:
           $ref: '#/components/schemas/PrivateLinkAuthMode'
+        supported_regions:
+          description: List of AWS regions allowed in cross region configuration.
+          example:
+            - us-east-1
+            - us-west-2
+          items:
+            type: string
+          type: array
       type: object
     AWSSecurityGroup:
       description: Security Group identifies AWS security group.
@@ -142,6 +253,14 @@ components:
       title: Security Group
       type: object
     Anytime:
+      type: object
+    AuthenticationConfiguration:
+      properties:
+        scram_configuration:
+          $ref: '#/components/schemas/ScramConfig'
+      title: |-
+        Authentication config.  Currently only supporting SASL/SCRAM,
+        however made as a oneof for expansion
       type: object
     AzurePeeringSpec:
       properties:
@@ -400,7 +519,7 @@ components:
           example: cjcuq79c4vs94fcufc2g
           type: string
         prometheus:
-          $ref: '#/components/schemas/Prometheus'
+          $ref: '#/components/schemas/Cluster.Prometheus'
         read_replica_cluster_ids:
           description: IDs of clusters which may create read-only topics from this cluster.
           items:
@@ -533,6 +652,16 @@ components:
           items:
             type: string
           type: array
+      type: object
+    Cluster.Prometheus:
+      description: Prometheus metrics endpoint properties.
+      properties:
+        url:
+          description: Prometheus API URL.
+          example: https://console-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
+          readOnly: true
+          type: string
+      readOnly: true
       type: object
     Cluster.SchemaRegistryStatus:
       description: Cluster's Schema Registry properties.
@@ -854,6 +983,30 @@ components:
         - CONNECTION_TYPE_PUBLIC
         - CONNECTION_TYPE_PRIVATE
       type: string
+    ConsumerOffsetSyncOptions:
+      properties:
+        effective_interval:
+          readOnly: true
+          title: The effective interval for the task
+          type: string
+        group_filters:
+          items:
+            $ref: '#/components/schemas/NameFilter'
+          title: The filters
+          type: array
+        interval:
+          title: |-
+            Sync interval
+            If 0 provided, defaults to 30 seconds
+          type: string
+        paused:
+          title: |-
+            Allows user to pause the consumer offset sync task.  If paused, then
+            the task will enter the 'paused' state and not sync consumer offsets from
+            the source cluster
+          type: boolean
+      title: Options for syncing consumer offsets
+      type: object
     CreateClusterMetadata:
       description: Resource describing an in-progress CreateCluster Operation.
       properties:
@@ -953,6 +1106,17 @@ components:
         role_binding:
           $ref: '#/components/schemas/v1.RoleBinding'
       type: object
+    CreateRoleRequest:
+      description: CreateRoleRequest is the request of CreateRole.
+      properties:
+        role:
+          $ref: '#/components/schemas/RoleCreate'
+      type: object
+    CreateRoleResponse:
+      properties:
+        role:
+          $ref: '#/components/schemas/v1.Role'
+      type: object
     CreateServerlessClusterOperation:
       description: CreateServerlessClusterOperation is the response of the create serverless_cluster rpc.
       properties:
@@ -975,6 +1139,12 @@ components:
       properties:
         service_account:
           $ref: '#/components/schemas/ServiceAccount'
+      type: object
+    CreateShadowLinkResponse:
+      properties:
+        shadow_link:
+          $ref: '#/components/schemas/v2.ShadowLink'
+      title: Response to creating a shadow link
       type: object
     CreateUserInviteRequest:
       properties:
@@ -1215,6 +1385,8 @@ components:
     DeleteRoleBindingResponse:
       description: DeleteRoleBindingResponse is the response of DeleteRoleBinding.
       type: object
+    DeleteRoleResponse:
+      type: object
     DeleteServerlessClusterOperation:
       description: DeleteServerlessClusterOperation is the response of the delete serverless_cluster rpc.
       properties:
@@ -1223,9 +1395,15 @@ components:
       type: object
     DeleteServiceAccountResponse:
       type: object
+    DeleteShadowLinkResponse:
+      title: Response to deleting a shadow link
+      type: object
     DeleteUserInviteResponse:
       type: object
     DeleteUserResponse:
+      type: object
+    EarliestOffset:
+      description: Start at the earliest offset in the partition.
       type: object
     Endpoints:
       description: The endpoints of Redpanda HTTP Proxy or Schema Registry.
@@ -1303,6 +1481,12 @@ components:
           type: string
       title: ErrorInfo
       type: object
+    FailOverResponse:
+      properties:
+        shadow_link:
+          $ref: '#/components/schemas/v2.ShadowLink'
+      title: The response to the FailOverRequest
+      type: object
     FieldViolation:
       description: A message type used to describe a single bad request field.
       properties:
@@ -1361,6 +1545,15 @@ components:
             which represents UPPER_SNAKE_CASE.
           type: string
       type: object
+    FilterType:
+      description: |-
+        - FILTER_TYPE_INCLUDE: Include the items that match the filter
+         - FILTER_TYPE_EXCLUDE: Exclude the items that match the filter
+      enum:
+        - FILTER_TYPE_INCLUDE
+        - FILTER_TYPE_EXCLUDE
+      title: What type of filter this is, include or exclude
+      type: string
     GCP.Subnet:
       description: GCP subnet properties. See the official [GCP API reference](https://cloud.google.com/compute/docs/reference/rest/v1/subnetworks).
       properties:
@@ -1534,6 +1727,11 @@ components:
           $ref: '#/components/schemas/v1.Operation'
       title: GetOperationResponse is the request of GetOperation
       type: object
+    GetPrometheusCredentialsResponse:
+      properties:
+        prometheus_credentials:
+          $ref: '#/components/schemas/PrometheusCredentials'
+      type: object
     GetRegionResponse:
       properties:
         region:
@@ -1549,6 +1747,11 @@ components:
       properties:
         role_binding:
           $ref: '#/components/schemas/v1.RoleBinding'
+      type: object
+    GetRoleResponse:
+      properties:
+        role:
+          $ref: '#/components/schemas/v1.Role'
       type: object
     GetServerlessClusterResponse:
       description: GetServerlessClusterResponse is the request of GetServerlessCluster.
@@ -1571,6 +1774,12 @@ components:
       properties:
         service_account:
           $ref: '#/components/schemas/ServiceAccount'
+      type: object
+    GetShadowTopicResponse:
+      properties:
+        shadow_topic:
+          $ref: '#/components/schemas/ShadowTopic'
+      title: Response of to getting a shadow topic
       type: object
     GetUserInviteResponse:
       properties:
@@ -1655,6 +1864,9 @@ components:
         - management_vault
         - console_vault
       title: Azure Key Vaults
+      type: object
+    LatestOffset:
+      description: Start at the latest offset in the partition.
       type: object
     Link:
       description: Describes a URL link.
@@ -1769,6 +1981,19 @@ components:
           type: array
       title: ListOperationsResponse is the response of ListOperations
       type: object
+    ListPermissionsResponse:
+      description: ListPermissionsResponse is the response of ListPermissions.
+      properties:
+        permissions:
+          description: List of available permissions
+          example:
+            - iam_role_create
+            - iam_role_read
+            - iam_role_update
+          items:
+            $ref: '#/components/schemas/Permission'
+          type: array
+      type: object
     ListRegionsRequest.Filter:
       properties:
         cluster_type:
@@ -1826,6 +2051,23 @@ components:
           description: RoleBindings matching the request
           items:
             $ref: '#/components/schemas/v1.RoleBinding'
+          maxItems: 100
+          type: array
+      type: object
+    ListRolesRequest.Filter:
+      properties:
+        name:
+          type: string
+      type: object
+    ListRolesResponse:
+      description: ListRolesResponse is the response of ListRoles.
+      properties:
+        next_page_token:
+          type: string
+        roles:
+          description: Roles matching the request
+          items:
+            $ref: '#/components/schemas/v1.Role'
           maxItems: 100
           type: array
       type: object
@@ -1896,6 +2138,14 @@ components:
             $ref: '#/components/schemas/ServiceAccount'
           maxItems: 100
           type: array
+      type: object
+    ListShadowTopicsResponse:
+      properties:
+        shadow_topics:
+          items:
+            $ref: '#/components/schemas/ShadowTopic'
+          type: array
+      title: Response to listing all shadow topics in a shadow link
       type: object
     ListUserInvitesRequest.Filter:
       type: object
@@ -1974,6 +2224,20 @@ components:
         unspecified:
           $ref: '#/components/schemas/Unspecified'
       title: MaintenanceWindowConfig
+      type: object
+    NameFilter:
+      properties:
+        filter_type:
+          $ref: '#/components/schemas/FilterType'
+        name:
+          title: |-
+            The resource name, or "*"
+            Note if "*", must be the _only_ character
+            and `pattern_type` must be `PATTERN_TYPE_LITERAL`
+          type: string
+        pattern_type:
+          $ref: '#/components/schemas/PatternType'
+      title: A filter based on the name of a resource
       type: object
     Network:
       description: Resource describing a Network.
@@ -2342,6 +2606,20 @@ components:
         mfa_enforced:
           type: boolean
       type: object
+    PatternType:
+      description: |-
+        - PATTERN_TYPE_LITERAL: Must match the filter exactly
+         - PATTERN_TYPE_PREFIX: Will match anything that starts with filter
+      enum:
+        - PATTERN_TYPE_LITERAL
+        - PATTERN_TYPE_PREFIX
+      title: The matching pattern type
+      type: string
+    Permission:
+      properties:
+        name:
+          type: string
+      type: object
     Placement:
       description: Information about creation of new serverless clusters on the serverless region.
       properties:
@@ -2413,15 +2691,12 @@ components:
         - PRIVATE_LINK_AUTH_MODE_MTLS_AND_SASL
         - PRIVATE_LINK_AUTH_MODE_NONE
       type: string
-    Prometheus:
-      description: Prometheus metrics endpoint properties.
+    PrometheusCredentials:
       properties:
-        url:
-          description: Prometheus API URL.
-          example: https://console-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
-          readOnly: true
+        password:
           type: string
-      readOnly: true
+        username:
+          type: string
       type: object
     QuotaFailure:
       description: |-
@@ -2640,6 +2915,36 @@ components:
         scope:
           $ref: '#/components/schemas/Scope'
       type: object
+    RoleCreate:
+      properties:
+        description:
+          description: The description of the role.
+          example: Billing Admins have access to billing information.
+          type: string
+        name:
+          description: The unique name of the role.
+          example: billing_admin
+          type: string
+        permissions:
+          items:
+            type: string
+          type: array
+      type: object
+    RoleUpdate:
+      properties:
+        description:
+          description: The description of the role.
+          example: Billing Admins have access to billing information.
+          type: string
+        name:
+          description: The unique name of the role.
+          example: billing_admin
+          type: string
+        permissions:
+          items:
+            type: string
+          type: array
+      type: object
     RotateServiceAccountSecretResponse:
       properties:
         service_account:
@@ -2660,6 +2965,12 @@ components:
         sasl:
           $ref: '#/components/schemas/SASLSpec'
       type: object
+    SchemaRegistrySyncOptions:
+      description: Options for how the Schema Registry is synced.
+      properties:
+        shadow_schema_registry_topic:
+          $ref: '#/components/schemas/ShadowSchemaRegistryTopic'
+      type: object
     Scope:
       properties:
         resource_id:
@@ -2675,6 +2986,38 @@ components:
         - SCOPE_RESOURCE_TYPE_SERVERLESS_CLUSTER
         - SCOPE_RESOURCE_TYPE_NETWORK_PEERING
         - SCOPE_RESOURCE_TYPE_ORGANIZATION
+      type: string
+    ScramConfig:
+      properties:
+        password:
+          title: Password
+          type: string
+        password_set:
+          readOnly: true
+          title: Indicates that the password has been set
+          type: boolean
+        password_set_at:
+          format: date-time
+          readOnly: true
+          title: |-
+            Timestamp of when the password was last set - only valid if password_set
+            is true
+          type: string
+        scram_mechanism:
+          $ref: '#/components/schemas/ScramMechanism'
+        username:
+          title: SCRAM username
+          type: string
+      title: SCRAM settings
+      type: object
+    ScramMechanism:
+      description: |-
+        - SCRAM_MECHANISM_SCRAM_SHA_256: SCRAM-SHA-256
+         - SCRAM_MECHANISM_SCRAM_SHA_512: SCRAM-SHA-512
+      enum:
+        - SCRAM_MECHANISM_SCRAM_SHA_256
+        - SCRAM_MECHANISM_SCRAM_SHA_512
+      title: Valid SCRAM mechanisms
       type: string
     SecondaryIPv4Range:
       description: Secondary IPv4 range.
@@ -2701,6 +3044,30 @@ components:
       required:
         - redpanda_security_group
       title: Azure Security Groups
+      type: object
+    SecuritySettingsSyncOptions:
+      properties:
+        acl_filters:
+          items:
+            $ref: '#/components/schemas/ACLFilter'
+          title: ACL filters
+          type: array
+        effective_interval:
+          readOnly: true
+          title: The effective interval for the task
+          type: string
+        interval:
+          title: |-
+            Sync interval
+            If 0 provided, defaults to 30 seconds
+          type: string
+        paused:
+          title: |-
+            Allows user to pause the security settings sync task.  If paused,
+            then the task will enter the 'paused' state and will not sync security
+            settings from the source cluster
+          type: boolean
+      title: Options for syncing security settings
       type: object
     SeedBrokers:
       description: Seed brokers of Redpanda Kafka API.
@@ -2750,6 +3117,8 @@ components:
           nullable: true
           readOnly: true
           type: string
+        prometheus:
+          $ref: '#/components/schemas/ServerlessCluster.Prometheus'
         resource_group_id:
           description: Resource group ID of the cluster.
           example: a0b40af9-0250-48ca-9417-783ed127ce42
@@ -2796,6 +3165,21 @@ components:
           readOnly: true
           title: Kafka API seed brokers (also known as bootstrap servers). Implicitly public
           type: array
+      type: object
+    ServerlessCluster.Prometheus:
+      description: Prometheus metrics endpoint properties.
+      properties:
+        private_url:
+          description: Prometheus API Private URL.
+          example: https://d1d9risv0c3i7qbbeoc0.metrics.us-east-1.mpx.prd.cloud.redpanda.com/public_metrics
+          readOnly: true
+          type: string
+        url:
+          description: Prometheus API URL.
+          example: https://d1d9risv0c3i7qbbeoc0.metrics.us-east-1.mpx.prd.cloud.redpanda.com/public_metrics
+          readOnly: true
+          type: string
+      readOnly: true
       type: object
     ServerlessCluster.SchemaRegistryStatus:
       description: Cluster's Schema Registry properties.
@@ -2950,6 +3334,137 @@ components:
           example: ci_bot
           type: string
       type: object
+    ShadowLinkConfigurations:
+      properties:
+        client_options:
+          $ref: '#/components/schemas/v2.ShadowLinkClientOptions'
+        consumer_offset_sync_options:
+          $ref: '#/components/schemas/ConsumerOffsetSyncOptions'
+        schema_registry_sync_options:
+          $ref: '#/components/schemas/SchemaRegistrySyncOptions'
+        security_sync_options:
+          $ref: '#/components/schemas/SecuritySettingsSyncOptions'
+        topic_metadata_sync_options:
+          $ref: '#/components/schemas/TopicMetadataSyncOptions'
+      title: ShadowLink options
+      type: object
+    ShadowLinkState:
+      description: |-
+        - SHADOW_LINK_STATE_ACTIVE: Shadow link is active
+         - SHADOW_LINK_STATE_PAUSED: Shadow link was paused
+      enum:
+        - SHADOW_LINK_STATE_ACTIVE
+        - SHADOW_LINK_STATE_PAUSED
+      title: State of the shadow link
+      type: string
+    ShadowLinkStatus:
+      properties:
+        shadow_topics:
+          items:
+            $ref: '#/components/schemas/ShadowTopic'
+          title: Status of shadow topics
+          type: array
+        state:
+          $ref: '#/components/schemas/ShadowLinkState'
+        synced_shadow_topic_properties:
+          items:
+            type: string
+          title: List of topic properties that are being synced
+          type: array
+        task_statuses:
+          items:
+            $ref: '#/components/schemas/ShadowLinkTaskStatus'
+          title: Statuses of the running tasks
+          type: array
+      title: Status of the shadow link
+      type: object
+    ShadowLinkTaskStatus:
+      properties:
+        broker_id:
+          format: int32
+          title: The broker the task is running on
+          type: integer
+        name:
+          title: Name of the task
+          type: string
+        reason:
+          title: Reason for task being in state
+          type: string
+        shard:
+          format: int32
+          title: The shard the task is running on
+          type: integer
+        state:
+          $ref: '#/components/schemas/TaskState'
+      title: Status of a task
+      type: object
+    ShadowSchemaRegistryTopic:
+      description: |-
+        Shadow the entire source cluster's Schema Registry byte-for-byte.
+        If set, the Shadow Link will attempt to add the `_schemas`
+        topic to the list of Shadow Topics as long as:
+        1. The `_schemas` topic exists on the source cluster
+        2. The `_schemas` topic does not exist on the shadow cluster, or it is
+        empty.
+        If either of the above conditions are _not_ met, then the `_schemas`
+        topic will _not_ be shadowed by this cluster. Unsetting this flag will
+        _not_ remove the `_schemas` topic from shadowing if it has already been
+        added.  Once made a shadow topic, the
+        `_schemas` topic will be replicated byte-for-byte.  To stop shadowing the
+        `_schemas` topic, unset this field, then either fail-over the topic or
+        delete it.
+      type: object
+    ShadowTopic:
+      properties:
+        name:
+          readOnly: true
+          title: Name of the shadow topic
+          type: string
+        source_topic_id:
+          readOnly: true
+          title: The topic ID of the source topic
+          type: string
+        source_topic_name:
+          title: The name of the source topic
+          type: string
+        status:
+          $ref: '#/components/schemas/ShadowTopicStatus'
+        topic_id:
+          readOnly: true
+          title: The topic ID of the shadow topic
+          type: string
+      title: A ShadowTopic resource contained by the ShadowLink
+      type: object
+    ShadowTopicState:
+      description: |-
+        - SHADOW_TOPIC_STATE_ACTIVE: Shadow topic is active
+         - SHADOW_TOPIC_STATE_FAULTED: Shadow topic has faulted
+         - SHADOW_TOPIC_STATE_PAUSED: Shadow topic has been paused
+         - SHADOW_TOPIC_STATE_FAILING_OVER: Shadow topic is in the process of failing over
+         - SHADOW_TOPIC_STATE_FAILED_OVER: Shadow topic has failed over successfully
+         - SHADOW_TOPIC_STATE_PROMOTING: Shadow topic is in the process of being promoted
+         - SHADOW_TOPIC_STATE_PROMOTED: Shadow topic is promoted successfully
+      enum:
+        - SHADOW_TOPIC_STATE_ACTIVE
+        - SHADOW_TOPIC_STATE_FAULTED
+        - SHADOW_TOPIC_STATE_PAUSED
+        - SHADOW_TOPIC_STATE_FAILING_OVER
+        - SHADOW_TOPIC_STATE_FAILED_OVER
+        - SHADOW_TOPIC_STATE_PROMOTING
+        - SHADOW_TOPIC_STATE_PROMOTED
+      title: State of a shadow topic
+      type: string
+    ShadowTopicStatus:
+      properties:
+        partition_information:
+          items:
+            $ref: '#/components/schemas/TopicPartitionInformation'
+          title: List of partition information for the shadow topic
+          type: array
+        state:
+          $ref: '#/components/schemas/ShadowTopicState'
+      title: Status of a ShadowTopic
+      type: object
     Subnets:
       description: Azure subnets used by Redpand cluster deployment.
       properties:
@@ -3008,6 +3523,55 @@ components:
       required:
         - name
       type: object
+    TLSFileSettings:
+      properties:
+        ca_path:
+          title: Path to the CA
+          type: string
+        cert_path:
+          title: Path to the cert
+          type: string
+        key_path:
+          title: |-
+            Key and Cert are optional but if one is provided, then both must be
+            Path to the key
+          type: string
+      title: TLS file settings
+      type: object
+    TLSPEMSettings:
+      properties:
+        ca:
+          title: The CA
+          type: string
+        cert:
+          title: The cert
+          type: string
+        key:
+          title: |-
+            Key and Cert are optional but if one is provided, then both must be
+            The key
+          type: string
+        key_fingerprint:
+          readOnly: true
+          title: The SHA-256 of the key, in base64 format
+          type: string
+      title: Used when providing the TLS information in PEM format
+      type: object
+    TaskState:
+      description: |-
+        - TASK_STATE_ACTIVE: Task is active
+         - TASK_STATE_PAUSED: Task was paused
+         - TASK_STATE_LINK_UNAVAILABLE: Task is unable to communicate with source cluster
+         - TASK_STATE_NOT_RUNNING: Task is not running
+         - TASK_STATE_FAULTED: Task is faulted
+      enum:
+        - TASK_STATE_ACTIVE
+        - TASK_STATE_PAUSED
+        - TASK_STATE_LINK_UNAVAILABLE
+        - TASK_STATE_NOT_RUNNING
+        - TASK_STATE_FAULTED
+      title: Task states
+      type: string
     TimeZone:
       description: |-
         Represents a time zone from the
@@ -3019,6 +3583,113 @@ components:
         version:
           description: Optional. IANA Time Zone Database version number, e.g. "2019a".
           type: string
+      type: object
+    TopicMetadataSyncOptions:
+      properties:
+        auto_create_shadow_topic_filters:
+          description: |-
+            List of filters that indicate which topics should be automatically
+            created as shadow topics on the shadow cluster.  This only controls
+            automatic creation of shadow topics and does not effect the state of the
+            mirror topic once it is created.
+            Literal filters for __consumer_offsets, _redpanda.audit_log and _schemas
+            will be rejected as well as prefix filters to match topics prefixed with
+            _redpanda or __redpanda.
+            Wildcard `*` is permitted only for literal filters and will _not_ match
+            any topics that start with _redpanda or __redpanda.  If users wish to
+            shadow topics that start with _redpanda or __redpanda, they should
+            provide a literal filter for those topics.
+          items:
+            $ref: '#/components/schemas/NameFilter'
+          type: array
+        effective_interval:
+          readOnly: true
+          title: The effective interval for the task
+          type: string
+        exclude_default:
+          description: |-
+            If this is true, then only the properties listed in
+            `synced_shadow_topic_properties` will be synced.
+          title: |-
+            If false, then the following topic properties will be synced by default:
+            - `compression.type`
+            - `retention.bytes`
+            - `retention.ms`
+            - `delete.retention.ms`
+            - Replication Factor
+            - `min.compaction.lag.ms`
+            - `max.compaction.lag.ms`
+          type: boolean
+        interval:
+          title: |-
+            How often to sync metadata
+            If 0 provided, defaults to 30 seconds
+          type: string
+        paused:
+          title: |-
+            Allows user to pause the topic sync task.  If paused, then
+            the task will enter the 'paused' state and not sync topics or their
+            properties from the source cluster
+          type: boolean
+        start_at_earliest:
+          $ref: '#/components/schemas/EarliestOffset'
+        start_at_latest:
+          $ref: '#/components/schemas/LatestOffset'
+        start_at_timestamp:
+          description: |-
+            Enables data replication from the first offset on the
+            source topic/partition where the record's timestamp is
+            at or after the specified timestamp.
+          format: date-time
+          type: string
+        synced_shadow_topic_properties:
+          description: |-
+            The following properties are not allowed to be replicated and adding them
+            to this list will result in an error:
+            - `redpanda.remote.readreplica`
+            - `redpanda.remote.recovery`
+            - `redpanda.remote.allowgaps`
+            - `redpanda.virtual.cluster.id`
+            - `redpanda.leaders.preference`
+            - `redpanda.cloud_topic.enabled`
+
+            This list is a list of properties in addition to the default properties
+            that will be synced.  See `exclude_default`.
+          items:
+            type: string
+          title: |-
+            List of topic properties that should be synced from the source topic.
+            The following properties will always be replicated
+            - Partition count
+            - `max.message.bytes`
+            - `cleanup.policy`
+            - `timestamp.type`
+          type: array
+      title: Options for syncing topic metadata
+      type: object
+    TopicPartitionInformation:
+      properties:
+        high_watermark:
+          format: int64
+          title: Shadowed partition's HWM
+          type: string
+        partition_id:
+          format: int64
+          title: Partition ID
+          type: string
+        source_high_watermark:
+          format: int64
+          title: Source partition's HWM
+          type: string
+        source_last_stable_offset:
+          format: int64
+          title: Source partition's LSO
+          type: string
+        source_last_updated_timestamp:
+          format: date-time
+          title: Timestamp of the last time the source partition information was updated
+          type: string
+      title: Topic partition information
       type: object
     UAISpec:
       description: Azure user assigned identity.
@@ -3087,6 +3758,19 @@ components:
           $ref: '#/components/schemas/ResourceGroup'
       title: UpdateResourceGroupResponse is the response of UpdateResourceGroup
       type: object
+    UpdateRoleBody:
+      properties:
+        role:
+          $ref: '#/components/schemas/RoleUpdate'
+        update_mask:
+          type: string
+      title: UpdateRoleRequest is the request of UpdateRole
+      type: object
+    UpdateRoleResponse:
+      properties:
+        role:
+          $ref: '#/components/schemas/v1.Role'
+      type: object
     UpdateServerlessClusterBody:
       description: UpdateServerlessClusterRequest is the request of UpdateServerlessCluster.
       type: object
@@ -3108,6 +3792,12 @@ components:
       properties:
         service_account:
           $ref: '#/components/schemas/ServiceAccount'
+      type: object
+    UpdateShadowLinkResponse:
+      properties:
+        shadow_link:
+          $ref: '#/components/schemas/v2.ShadowLink'
+      title: Response to the update shadow link request
       type: object
     UpdateUserInviteBody:
       properties:
@@ -3262,6 +3952,20 @@ components:
       required:
         - name
         - resource_group
+      type: object
+    common.v1.TLSSettings:
+      properties:
+        do_not_set_sni_hostname:
+          title: If true, the SNI hostname will not be provided when TLS is used
+          type: boolean
+        enabled:
+          title: Whether or not TLS is enabled
+          type: boolean
+        tls_file_settings:
+          $ref: '#/components/schemas/TLSFileSettings'
+        tls_pem_settings:
+          $ref: '#/components/schemas/TLSPEMSettings'
+      title: TLS settings
       type: object
     rpc.Status:
       description: Describes errors
@@ -3490,6 +4194,32 @@ components:
       readOnly: true
       title: Operation
       type: object
+    v1.Role:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        description:
+          description: The description of the role.
+          example: Billing Admins have access to billing information.
+          type: string
+        id:
+          type: string
+        is_builtin:
+          description: Whether the role is a built-in role. Built-in roles cannot be modified or deleted.
+          type: boolean
+        name:
+          description: The unique name of the role.
+          example: billing_admin
+          type: string
+        permissions:
+          items:
+            type: string
+          type: array
+        updated_at:
+          format: date-time
+          type: string
+      type: object
     v1.RoleBinding:
       properties:
         account_id:
@@ -3506,6 +4236,143 @@ components:
         updated_at:
           format: date-time
           type: string
+      type: object
+    v2.GetShadowLinkResponse:
+      properties:
+        shadow_link:
+          $ref: '#/components/schemas/v2.ShadowLink'
+      title: Response to getting a shadow link
+      type: object
+    v2.ListShadowLinksResponse:
+      properties:
+        shadow_links:
+          items:
+            $ref: '#/components/schemas/v2.ShadowLink'
+          title: The shadow links
+          type: array
+      title: All shadow links on the cluster
+      type: object
+    v2.ShadowLink:
+      properties:
+        configurations:
+          $ref: '#/components/schemas/ShadowLinkConfigurations'
+        name:
+          title: The name of the shadow link
+          type: string
+        status:
+          $ref: '#/components/schemas/ShadowLinkStatus'
+        uid:
+          readOnly: true
+          title: The UUID of the shadow link
+          type: string
+      required:
+        - name
+      title: A ShadowLink resource
+      type: object
+    v2.ShadowLinkClientOptions:
+      properties:
+        authentication_configuration:
+          $ref: '#/components/schemas/AuthenticationConfiguration'
+        bootstrap_servers:
+          items:
+            type: string
+          title: The bootstrap servers to use
+          type: array
+        client_id:
+          readOnly: true
+          title: |-
+            The Client ID for the Kafka RPC requests setn by this cluster to the
+            source cluster
+          type: string
+        connection_timeout_ms:
+          format: int32
+          title: |-
+            Connection timeout.
+            If 0 is provided, defaults to 1 second
+          type: integer
+        effective_connection_timeout_ms:
+          format: int32
+          readOnly: true
+          title: The effective connection timeout in milliseconds
+          type: integer
+        effective_fetch_max_bytes:
+          format: int32
+          readOnly: true
+          title: The effective fetch max bytes
+          type: integer
+        effective_fetch_min_bytes:
+          format: int32
+          readOnly: true
+          title: The effective fetch min bytes
+          type: integer
+        effective_fetch_partition_max_bytes:
+          format: int32
+          readOnly: true
+          title: The effective fetch partition max bytes
+          type: integer
+        effective_fetch_wait_max_ms:
+          format: int32
+          readOnly: true
+          title: The effective fetch wait max in milliseconds
+          type: integer
+        effective_metadata_max_age_ms:
+          format: int32
+          readOnly: true
+          title: The effective metadata max age in milliseconds
+          type: integer
+        effective_retry_backoff_ms:
+          format: int32
+          readOnly: true
+          title: The effective retry backoff in milliseconds
+          type: integer
+        fetch_max_bytes:
+          format: int32
+          title: |-
+            Fetch max bytes.
+            If 0 is provided, defaults to 20 MiB
+          type: integer
+        fetch_min_bytes:
+          format: int32
+          title: |-
+            Fetch min bytes.
+            If 0 is provided, defaults to 5 MiB
+          type: integer
+        fetch_partition_max_bytes:
+          format: int32
+          title: |-
+            Fetch partition max bytes.
+            If 0 is provided, defaults to 1 MiB
+          type: integer
+        fetch_wait_max_ms:
+          format: int32
+          title: |-
+            Fetch request timeout.
+            If 0 is provided, defaults to 500ms
+          type: integer
+        metadata_max_age_ms:
+          format: int32
+          title: |-
+            Max metadata age.
+            If 0 is provided, defaults to 10 seconds
+          type: integer
+        retry_backoff_ms:
+          format: int32
+          title: |-
+            Retry base backoff.
+            If 0 is provided, defaults to 100ms
+          type: integer
+        source_cluster_id:
+          title: |-
+            If provided, this is the expected ID of the source cluster.  If it does
+            not match then the connection will be rejected.  If provided, this value
+            must match the `ClusterId` field returned in the Kafka Metadata response
+            message
+          type: string
+        tls_settings:
+          $ref: '#/components/schemas/common.v1.TLSSettings'
+      required:
+        - bootstrap_servers
+      title: Options for the client link
       type: object
   securitySchemes:
     auth0:
@@ -4774,6 +5641,32 @@ paths:
       summary: Update organization
       tags:
         - Organization
+  /v1/permissions:
+    get:
+      description: List all available Redpanda Cloud permissions.
+      operationId: PermissionService_ListPermissions
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPermissionsResponse'
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: List permissions
+      tags:
+        - Control Plane Permissions
   /v1/regions/{cloud_provider}:
     get:
       description: List available regions on the different cloud providers.
@@ -5245,6 +6138,191 @@ paths:
       summary: Get role binding
       tags:
         - Control Plane Role Bindings
+  /v1/roles:
+    get:
+      description: List Redpanda Cloud roles.
+      operationId: RoleService_ListRoles
+      parameters:
+        - in: query
+          name: filter.name
+          schema:
+            type: string
+        - in: query
+          name: page_size
+          schema:
+            format: int32
+            type: integer
+        - in: query
+          name: page_token
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRolesResponse'
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: List roles
+      tags:
+        - Control Plane Roles
+    post:
+      description: Create a Redpanda Cloud role.
+      operationId: RoleService_CreateRole
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoleRequest'
+        description: CreateRoleRequest is the request of CreateRole.
+        required: true
+        x-originalParamName: body
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRoleResponse'
+          description: Role Created
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Create role
+      tags:
+        - Control Plane Roles
+  /v1/roles/{id}:
+    delete:
+      description: Delete Redpanda Cloud role.
+      operationId: RoleService_DeleteRole
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          content:
+            application/json:
+              schema: {}
+          description: Role was deleted successfully
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Delete role
+      tags:
+        - Control Plane Roles
+    get:
+      description: Get Redpanda role.
+      operationId: RoleService_GetRole
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRoleResponse'
+          description: Ok
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Get role
+      tags:
+        - Control Plane Roles
+    patch:
+      description: Update a Redpanda Cloud role.
+      operationId: RoleService_UpdateRole
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRoleBody'
+        required: true
+        x-originalParamName: body
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateRoleResponse'
+          description: Ok
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Update role
+      tags:
+        - Control Plane Roles
   /v1/serverless/clusters:
     get:
       description: List Redpanda Serverless clusters. The `filter.` query string parameters find matching clusters that meet all specified conditions.
@@ -5498,6 +6576,50 @@ paths:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
       summary: Update serverless cluster
+      tags:
+        - Serverless Clusters
+  /v1/serverless/clusters/{id}/prometheus/credentials:
+    get:
+      description: Get the Redpanda Serverless cluster Prometheus credentials for accessing the metrics scrape endpoint.
+      operationId: ServerlessClusterService_GetPrometheusCredentials
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrometheusCredentials'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Bad Request
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Get Prometheus Credentials
       tags:
         - Serverless Clusters
   /v1/serverless/region:
@@ -6174,6 +7296,10 @@ tags:
     name: Serverless Regions
   - description: See information about the organization the current user belongs to.
     name: Organization
+  - description: Manage your Redpanda Cloud organization permissions.
+    name: Control Plane Permissions
+  - description: Manage your Redpanda Cloud organization roles.
+    name: Control Plane Roles
   - description: Manage role bindings for your cloud organization users.
     name: Control Plane Role Bindings
   - description: Manage Redpanda Cloud service accounts.

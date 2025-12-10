@@ -831,6 +831,19 @@ Usage tiers define the sizing of a cluster and provide tested and guaranteed wor
     </td>
   </tr>
   <tr>
+    <td>germanywestcentral</td>
+    <td>germanywestcentral-az1,germanywestcentral-az2,germanywestcentral-az3</td>
+    <td>
+      <ul>
+        <li>tier-1-azure-v3-x86: BYOC</li>
+        <li>tier-2-azure-v3-x86: BYOC</li>
+        <li>tier-3-azure-v3-x86: BYOC</li>
+        <li>tier-4-azure-v3-x86: BYOC</li>
+        <li>tier-5-azure-v3-x86: BYOC</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
     <td>northeurope</td>
     <td>northeurope-az1,northeurope-az2,northeurope-az3</td>
     <td>
@@ -853,6 +866,19 @@ Usage tiers define the sizing of a cluster and provide tested and guaranteed wor
         <li>tier-3-azure-v3-x86: BYOC, Dedicated</li>
         <li>tier-4-azure-v3-x86: BYOC, Dedicated</li>
         <li>tier-5-azure-v3-x86: BYOC, Dedicated</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>swedencentral</td>
+    <td>swedencentral-az1,swedencentral-az2,swedencentral-az3</td>
+    <td>
+      <ul>
+        <li>tier-1-azure-v3-x86: BYOC</li>
+        <li>tier-2-azure-v3-x86: BYOC</li>
+        <li>tier-3-azure-v3-x86: BYOC</li>
+        <li>tier-4-azure-v3-x86: BYOC</li>
+        <li>tier-5-azure-v3-x86: BYOC</li>
       </ul>
     </td>
   </tr>
