@@ -753,6 +753,10 @@ components:
           items:
             type: string
           type: array
+        redpanda_node_count:
+          description: redpanda_node_count defines the starting node count for the cluster.
+          format: int32
+          type: integer
         redpanda_version:
           description: Cluster's Redpanda version. Only `major.minor` semver is supported, e.g. `24.1`.
           nullable: true
@@ -1140,6 +1144,12 @@ components:
         service_account:
           $ref: '#/components/schemas/ServiceAccount'
       type: object
+    CreateShadowLinkOperation:
+      description: CreateShadowLinkOperation wraps the Operation for creating a shadow link.
+      properties:
+        operation:
+          $ref: '#/components/schemas/v1.Operation'
+      type: object
     CreateShadowLinkResponse:
       properties:
         shadow_link:
@@ -1394,6 +1404,12 @@ components:
           $ref: '#/components/schemas/v1.Operation'
       type: object
     DeleteServiceAccountResponse:
+      type: object
+    DeleteShadowLinkOperation:
+      description: DeleteShadowLinkOperation wraps the Operation for deleting a shadow link.
+      properties:
+        operation:
+          $ref: '#/components/schemas/v1.Operation'
       type: object
     DeleteShadowLinkResponse:
       title: Response to deleting a shadow link
@@ -2138,6 +2154,15 @@ components:
             $ref: '#/components/schemas/ServiceAccount'
           maxItems: 100
           type: array
+      type: object
+    ListShadowLinksRequest.Filter:
+      properties:
+        resource_group_id:
+          description: Filter by resource group ID.
+          type: string
+        shadow_redpanda_id:
+          description: Filter by shadow Redpanda cluster ID.
+          type: string
       type: object
     ListShadowTopicsResponse:
       properties:
@@ -3131,6 +3156,11 @@ components:
           type: string
         state:
           $ref: '#/components/schemas/ServerlessCluster.State'
+        tags:
+          additionalProperties:
+            type: string
+          title: User-defined tags for the Serverless cluster
+          type: object
         updated_at:
           description: Timestamp when the Serverless cluster was updated.
           format: date-time
@@ -3225,6 +3255,11 @@ components:
         serverless_region:
           description: Name of the region where the Serverless cluster will be provisioned.
           type: string
+        tags:
+          additionalProperties:
+            type: string
+          title: User-defined tags for the Serverless cluster
+          type: object
       required:
         - name
         - resource_group_id
@@ -3237,6 +3272,11 @@ components:
         id:
           description: ID of the vcluster.
           type: string
+        tags:
+          additionalProperties:
+            type: string
+          title: User-defined tags for the Serverless cluster (full replacement)
+          type: object
       required:
         - id
       title: ServerlessClusterUpdate
@@ -3334,6 +3374,16 @@ components:
           example: ci_bot
           type: string
       type: object
+    ShadowLink.State:
+      description: State represents the lifecycle state of a shadow link.
+      enum:
+        - STATE_CREATING
+        - STATE_CREATION_FAILED
+        - STATE_DELETING
+        - STATE_DELETION_FAILED
+        - STATE_ACTIVE
+        - STATE_PAUSED
+      type: string
     ShadowLinkConfigurations:
       properties:
         client_options:
@@ -3347,6 +3397,53 @@ components:
         topic_metadata_sync_options:
           $ref: '#/components/schemas/TopicMetadataSyncOptions'
       title: ShadowLink options
+      type: object
+    ShadowLinkCreate:
+      description: ShadowLinkCreate contains fields for creating a shadow link.
+      properties:
+        client_options:
+          $ref: '#/components/schemas/v1.ShadowLinkClientOptions'
+        consumer_offset_sync_options:
+          $ref: '#/components/schemas/ConsumerOffsetSyncOptions'
+        name:
+          title: |-
+            Human-readable name for the shadow link. Must be unique.
+            Must follow Kubernetes DNS-1123 subdomain naming convention:
+            - lowercase alphanumeric characters, hyphens allowed
+            - must start and end with alphanumeric character
+            - maximum 63 characters
+          type: string
+        schema_registry_sync_options:
+          $ref: '#/components/schemas/SchemaRegistrySyncOptions'
+        security_sync_options:
+          $ref: '#/components/schemas/SecuritySettingsSyncOptions'
+        shadow_redpanda_id:
+          description: Shadow Redpanda cluster ID where the shadow link will be created.
+          type: string
+        source_redpanda_id:
+          description: Source Redpanda cluster ID. This field is optional. If provided, fetches bootstrap server information.
+          type: string
+        topic_metadata_sync_options:
+          $ref: '#/components/schemas/TopicMetadataSyncOptions'
+      type: object
+    ShadowLinkListItem:
+      description: |-
+        ShadowLinkListItem represents a lightweight shadow link item for list responses.
+        This message contains only a subset of shadow link fields for listing operations.
+        To retrieve the full shadow link details use the GetShadowLink method instead.
+      properties:
+        id:
+          description: Shadow link ID.
+          readOnly: true
+          type: string
+        name:
+          description: Human-readable name for the shadow link.
+          type: string
+        shadow_redpanda_id:
+          description: Shadow Redpanda cluster ID where the shadow link is created.
+          type: string
+        state:
+          $ref: '#/components/schemas/ShadowLink.State'
       type: object
     ShadowLinkState:
       description: |-
@@ -3397,6 +3494,23 @@ components:
         state:
           $ref: '#/components/schemas/TaskState'
       title: Status of a task
+      type: object
+    ShadowLinkUpdate:
+      description: ShadowLinkUpdate contains fields that can be updated on a shadow link.
+      properties:
+        client_options:
+          $ref: '#/components/schemas/v1.ShadowLinkClientOptions'
+        consumer_offset_sync_options:
+          $ref: '#/components/schemas/ConsumerOffsetSyncOptions'
+        id:
+          description: Shadow link ID.
+          type: string
+        schema_registry_sync_options:
+          $ref: '#/components/schemas/SchemaRegistrySyncOptions'
+        security_sync_options:
+          $ref: '#/components/schemas/SecuritySettingsSyncOptions'
+        topic_metadata_sync_options:
+          $ref: '#/components/schemas/TopicMetadataSyncOptions'
       type: object
     ShadowSchemaRegistryTopic:
       description: |-
@@ -3773,6 +3887,12 @@ components:
       type: object
     UpdateServerlessClusterBody:
       description: UpdateServerlessClusterRequest is the request of UpdateServerlessCluster.
+      properties:
+        tags:
+          additionalProperties:
+            type: string
+          title: User-defined tags for the Serverless cluster (full replacement)
+          type: object
       type: object
     UpdateServerlessClusterOperation:
       description: UpdateServerlessClusterOperation is the response of the update cluster rpc.
@@ -3792,6 +3912,12 @@ components:
       properties:
         service_account:
           $ref: '#/components/schemas/ServiceAccount'
+      type: object
+    UpdateShadowLinkOperation:
+      description: UpdateShadowLinkOperation wraps the Operation for updating a shadow link.
+      properties:
+        operation:
+          $ref: '#/components/schemas/v1.Operation'
       type: object
     UpdateShadowLinkResponse:
       properties:
@@ -3967,6 +4093,31 @@ components:
           $ref: '#/components/schemas/TLSPEMSettings'
       title: TLS settings
       type: object
+    controlplane.v1.TLSSettings:
+      description: TLSSettings configures TLS encryption.
+      properties:
+        ca:
+          description: The CA certificate for TLS.
+          type: string
+        cert:
+          description: |-
+            Cert is the certificate for TLS.
+
+            Key and Cert are optional but if one is provided, then both must be provided.
+          type: string
+        do_not_set_sni_hostname:
+          description: Do not set SNI hostname.
+          type: boolean
+        enabled:
+          description: Enable TLS.
+          type: boolean
+        key:
+          description: |-
+            The private key for TLS.
+
+            Key and Cert are optional but if one is provided, then both must be provided.
+          type: string
+      type: object
     rpc.Status:
       description: Describes errors
       properties:
@@ -4033,6 +4184,12 @@ components:
         message:
           description: Detailed error message. No compatibility guarantees are given for the text contained in this message.
           type: string
+      type: object
+    v1.CreateShadowLinkRequest:
+      description: CreateShadowLinkRequest creates a new shadow link.
+      properties:
+        shadow_link:
+          $ref: '#/components/schemas/ShadowLinkCreate'
       type: object
     v1.CustomerManagedResources:
       description: The cloud resources created by user.
@@ -4162,6 +4319,24 @@ components:
         - redpanda_connect_service_account
       title: GCP Customer-Managed Resoures
       type: object
+    v1.GetShadowLinkResponse:
+      description: GetShadowLinkResponse returns the shadow link.
+      properties:
+        shadow_link:
+          $ref: '#/components/schemas/v1.ShadowLink'
+      type: object
+    v1.ListShadowLinksResponse:
+      description: ListShadowLinksResponse returns a list of shadow links.
+      properties:
+        next_page_token:
+          description: Token for fetching the next page of results.
+          type: string
+        shadow_links:
+          description: List of shadow links matching the filter.
+          items:
+            $ref: '#/components/schemas/ShadowLinkListItem'
+          type: array
+      type: object
     v1.Operation:
       description: Operation describes a long running operation
       properties:
@@ -4236,6 +4411,136 @@ components:
         updated_at:
           format: date-time
           type: string
+      type: object
+    v1.ShadowLink:
+      description: |-
+        ShadowLink represents a shadow link resource.
+        Shadow links enable data replication from one Redpanda cluster to another.
+      properties:
+        client_options:
+          $ref: '#/components/schemas/v1.ShadowLinkClientOptions'
+        consumer_offset_sync_options:
+          $ref: '#/components/schemas/ConsumerOffsetSyncOptions'
+        created_at:
+          description: Timestamp when the shadow link was created.
+          format: date-time
+          readOnly: true
+          type: string
+        id:
+          description: Shadow link ID.
+          readOnly: true
+          type: string
+        name:
+          title: |-
+            Human-readable name for the shadow link. Must be unique.
+            Must follow Kubernetes DNS-1123 subdomain naming convention:
+            - lowercase alphanumeric characters, hyphens allowed
+            - must start and end with alphanumeric character
+            - maximum 63 characters
+          type: string
+        reason:
+          description: Reason provides additional context for the current state.
+          readOnly: true
+          type: string
+        schema_registry_sync_options:
+          $ref: '#/components/schemas/SchemaRegistrySyncOptions'
+        security_sync_options:
+          $ref: '#/components/schemas/SecuritySettingsSyncOptions'
+        shadow_redpanda_id:
+          description: Shadow Redpanda cluster ID where the shadow link is created. This ID is immutable.
+          type: string
+        state:
+          $ref: '#/components/schemas/ShadowLink.State'
+        topic_metadata_sync_options:
+          $ref: '#/components/schemas/TopicMetadataSyncOptions'
+        updated_at:
+          description: Timestamp when the shadow link was last updated.
+          format: date-time
+          readOnly: true
+          type: string
+      type: object
+    v1.ShadowLinkClientOptions:
+      description: ShadowLinkClientOptions configures the Kafka client connection settings.
+      properties:
+        authentication_configuration:
+          $ref: '#/components/schemas/AuthenticationConfiguration'
+        bootstrap_servers:
+          description: Bootstrap servers for the source cluster. Required if source Redpanda ID is not provided.
+          items:
+            type: string
+          type: array
+        client_id:
+          description: Client ID for the connection.
+          readOnly: true
+          type: string
+        connection_timeout_ms:
+          description: Connection timeout in milliseconds (defaults to 1000ms if 0).
+          format: int32
+          type: integer
+        effective_connection_timeout_ms:
+          format: int32
+          readOnly: true
+          title: The effective connection timeout in milliseconds
+          type: integer
+        effective_fetch_max_bytes:
+          format: int32
+          readOnly: true
+          title: The effective fetch max bytes
+          type: integer
+        effective_fetch_min_bytes:
+          format: int32
+          readOnly: true
+          title: The effective fetch min bytes
+          type: integer
+        effective_fetch_partition_max_bytes:
+          format: int32
+          readOnly: true
+          title: The effective fetch partition max bytes
+          type: integer
+        effective_fetch_wait_max_ms:
+          format: int32
+          readOnly: true
+          title: The effective fetch wait max in milliseconds
+          type: integer
+        effective_metadata_max_age_ms:
+          format: int32
+          readOnly: true
+          title: The effective metadata max age in milliseconds
+          type: integer
+        effective_retry_backoff_ms:
+          format: int32
+          readOnly: true
+          title: The effective retry backoff in milliseconds
+          type: integer
+        fetch_max_bytes:
+          description: Maximum bytes to fetch (defaults to 20971520 bytes / 20 MiB if 0).
+          format: int32
+          type: integer
+        fetch_min_bytes:
+          description: Minimum bytes to fetch (defaults to 5242880 bytes / 5 MiB if 0).
+          format: int32
+          type: integer
+        fetch_partition_max_bytes:
+          description: Maximum bytes per partition to fetch (defaults to 1048576 bytes / 1 MiB if 0).
+          format: int32
+          type: integer
+        fetch_wait_max_ms:
+          description: Maximum time to wait for fetch requests in milliseconds (defaults to 500ms if 0).
+          format: int32
+          type: integer
+        metadata_max_age_ms:
+          description: Metadata refresh interval in milliseconds (defaults to 10000ms if 0).
+          format: int32
+          type: integer
+        retry_backoff_ms:
+          description: Retry backoff in milliseconds (defaults to 100ms if 0).
+          format: int32
+          type: integer
+        source_cluster_id:
+          description: Source cluster ID.
+          type: string
+        tls_settings:
+          $ref: '#/components/schemas/controlplane.v1.TLSSettings'
       type: object
     v2.GetShadowLinkResponse:
       properties:
@@ -4857,7 +5162,7 @@ paths:
         - Clusters
   /v1/network/{network_id}/network-peerings:
     get:
-      description: List Redpanda network peerings.
+      description: List Redpanda networks peerings.
       operationId: NetworkPeeringService_ListNetworkPeerings
       parameters:
         - in: path
@@ -4974,7 +5279,7 @@ paths:
         - Network Peerings
   /v1/network/{network_peering.network_id}/network-peerings:
     post:
-      description: Create a Redpanda network peering.
+      description: Create a Redpanda network pering.
       operationId: NetworkPeeringService_CreateNetworkPeering
       parameters:
         - in: path
@@ -6978,6 +7283,235 @@ paths:
       summary: Rotate service account secret
       tags:
         - Control Plane Service Accounts
+  /v1/shadow-links:
+    get:
+      description: List Redpanda shadow links.
+      operationId: ShadowLinkService_ListShadowLinks
+      parameters:
+        - description: Filter by shadow Redpanda cluster ID.
+          in: query
+          name: filter.shadow_redpanda_id
+          schema:
+            type: string
+        - description: Filter by resource group ID.
+          in: query
+          name: filter.resource_group_id
+          schema:
+            type: string
+        - description: Maximum number of results per page.
+          in: query
+          name: page_size
+          schema:
+            format: int32
+            type: integer
+        - description: Page token from previous response for pagination.
+          in: query
+          name: page_token
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.ListShadowLinksResponse'
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: List shadow links
+      tags:
+        - Shadow Links
+    post:
+      description: Create a Redpanda shadow link for data replication.
+      operationId: ShadowLinkService_CreateShadowLink
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1.CreateShadowLinkRequest'
+        description: CreateShadowLinkRequest creates a new shadow link.
+        required: true
+        x-originalParamName: body
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateShadowLinkOperation'
+          description: Accepted
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Bad Request
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Conflict - Shadow link with given name already exists
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Create shadow link
+      tags:
+        - Shadow Links
+  /v1/shadow-links/{id}:
+    delete:
+      description: Delete a Redpanda shadow link.
+      operationId: ShadowLinkService_DeleteShadowLink
+      parameters:
+        - description: Shadow link ID.
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteShadowLinkOperation'
+          description: Accepted - Shadow link deletion initiated
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found - Shadow link with given ID does not exist
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Delete shadow link
+      tags:
+        - Shadow Links
+    get:
+      description: Get a Redpanda shadow link by ID.
+      operationId: ShadowLinkService_GetShadowLink
+      parameters:
+        - description: Shadow link ID.
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.GetShadowLinkResponse'
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found - Shadow link with given ID does not exist
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Get shadow link
+      tags:
+        - Shadow Links
+  /v1/shadow-links/{shadow_link.id}:
+    patch:
+      description: Update a Redpanda shadow link configuration.
+      operationId: ShadowLinkService_UpdateShadowLink
+      parameters:
+        - description: Shadow link ID.
+          in: path
+          name: shadow_link.id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                client_options:
+                  $ref: '#/components/schemas/v1.ShadowLinkClientOptions'
+                consumer_offset_sync_options:
+                  $ref: '#/components/schemas/ConsumerOffsetSyncOptions'
+                schema_registry_sync_options:
+                  $ref: '#/components/schemas/SchemaRegistrySyncOptions'
+                security_sync_options:
+                  $ref: '#/components/schemas/SecuritySettingsSyncOptions'
+                topic_metadata_sync_options:
+                  $ref: '#/components/schemas/TopicMetadataSyncOptions'
+              title: Shadow link fields to update.
+              type: object
+        description: Shadow link fields to update.
+        required: true
+        x-originalParamName: shadow_link
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateShadowLinkOperation'
+          description: Accepted
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found - Shadow link with given ID does not exist
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Update shadow link
+      tags:
+        - Shadow Links
   /v1/user-invites:
     get:
       description: List user invites to your Redpanda Cloud organization.
@@ -7294,6 +7828,9 @@ tags:
     name: Serverless Private Links
   - description: See available Redpanda Serverless regions.
     name: Serverless Regions
+  - name: ShadowLinkService
+  - description: Manage Redpanda Cloud shadow links for data replication.
+    name: Shadow Links
   - description: See information about the organization the current user belongs to.
     name: Organization
   - description: Manage your Redpanda Cloud organization permissions.
