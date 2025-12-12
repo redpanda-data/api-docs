@@ -2225,7 +2225,6 @@ paths:
         200:
           description: Topic scan and recovery started successfully
           content: {}
-      x-codegen-request-body-name: body
   /v1/cloud_storage/status/{topic}/{partition}:
     get:
       tags:
@@ -2329,7 +2328,150 @@ paths:
       responses:
         200:
           description: Partition metadata is up to date
-          content: {}       
+          content: {}
+  /v1/cloud_storage/automated_recovery:
+    post:
+      tags:
+      - Tiered Storage
+      summary: Initialize cluster recovery
+      description: Initializes a cluster recovery.
+      operationId: initialize_cluster_recovery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: false
+      responses:
+        200:
+          description: Cluster recovery was initialized successfully
+          content: {}
+    get:
+      tags:
+      - Tiered Storage
+      summary: Get cluster recovery status
+      description: Get status of cluster recovery.
+      operationId: get_cluster_recovery
+      responses:
+        200:
+          description: Cluster recovery status response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cluster_recovery_status'
+  /v1/cloud_storage/cache/trim:
+    post:
+      tags:
+      - Tiered Storage
+      summary: Trim tiered storage cache
+      description: Invoke trimming on the local cache of tiered storage objects. If no parameters are included, this endpoint by default trims the cache to the maximum cache size given by the cluster config. Use the `bytes` and `objects` parameters to specify the number of bytes and objects to retain in the cache.
+      operationId: cloud_storage_cache_trim
+      parameters:
+      - name: objects
+        in: query
+        required: false
+        schema:
+          type: integer
+        description: Target number of objects to retain in the cache
+      - name: bytes
+        in: query
+        required: false
+        schema:
+          type: integer
+        description: Target number of bytes to retain in the cache
+      responses:
+        200:
+          description: Success
+          content: {}
+  /v1/cloud_storage/anomalies/{namespace}/{topic}/{partition}:
+    get:
+      tags:
+      - Tiered Storage
+      summary: Get cloud storage anomalies for a partition
+      description: Retrieve cloud storage anomalies for a given partition.
+      operationId: get_cloud_storage_anomalies
+      parameters:
+      - name: namespace
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: topic
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: partition
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloud_storage_partition_anomalies'
+  /v1/cloud_storage/unsafe_reset_metadata_from_cloud/{namespace}/{topic}/{partition}:
+    post:
+      tags:
+      - Tiered Storage
+      summary: Reset metadata from cloud
+      description: Resets the manifest to the one in cloud storage, updating all replicas with the given manifest. The request is refused if applying the change would cause data loss and the force query parameter is unspecified or false.
+      operationId: unsafe_reset_metadata_from_cloud
+      parameters:
+      - name: namespace
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: topic
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: partition
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: force
+        in: query
+        required: false
+        schema:
+          type: boolean
+      responses:
+        200:
+          description: Partition metadata is reset
+          content: {}
+  /v1/cloud_storage/reset_scrubbing_metadata/{namespace}/{topic}/{partition}:
+    post:
+      tags:
+      - Tiered Storage
+      summary: Reset scrubbing metadata
+      description: Reset scrubbing related metadata and anomalies for given partition.
+      operationId: reset_scrubbing_metadata
+      parameters:
+      - name: namespace
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: topic
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: partition
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Success
+          content: {}
 components:
   schemas:
     broker_endpoint:
@@ -4859,16 +5001,32 @@ components:
         cloud_log_size_bytes:
           type: integer
           description: Total size of the addressable cloud log for the partition
+        stm_region_size_bytes:
+          type: integer
+          description: Total size of the addressable segments in the STM region of the log
+        archive_size_bytes:
+          type: integer
+          description: Total size of the archive region of the log
         local_log_size_bytes:
           type: integer
           description: Total size of the addressable local log for the partition
+        stm_region_segment_count:
+          type: integer
+          description: Number of segments in the STM region of the cloud log
         cloud_log_segment_count:
+          type: integer
+          description: Number of segments in the STM region of the cloud log
+        local_log_segment_count:
           type: integer
           description: Number of segments in the local log
         cloud_log_start_offset:
           type: integer
           nullable: true
           description: The first Kafka offset accessible from the cloud (inclusive)
+        stm_region_start_offset:
+          type: integer
+          nullable: true
+          description: The first Kafka offset accessible from the cloud in the STM region (inclusive)
         cloud_log_last_offset:
           type: integer
           nullable: true
@@ -4899,7 +5057,108 @@ components:
         markers:
           type: array
           items:
-            $ref: '#/components/schemas/lifecycle_marker'    
+            $ref: '#/components/schemas/lifecycle_marker'
+    segment_meta:
+      type: object
+      description: Metadata for an uploaded segment
+      properties:
+        base_offset:
+          type: integer
+          format: int64
+        committed_offset:
+          type: integer
+          format: int64
+        delta_offset:
+          type: integer
+          format: int64
+          nullable: true
+        delta_offset_end:
+          type: integer
+          format: int64
+          nullable: true
+        base_timestamp:
+          type: integer
+          format: int64
+        max_timestamp:
+          type: integer
+          format: int64
+        size_bytes:
+          type: integer
+          format: int64
+        is_compacted:
+          type: boolean
+        archiver_term:
+          type: integer
+          format: int64
+        segment_term:
+          type: integer
+          format: int64
+        ntp_revision:
+          type: integer
+          format: int64
+    metadata_anomaly:
+      type: object
+      description: Description of a metadata anomaly
+      properties:
+        type:
+          type: string
+        explanation:
+          type: string
+        at_segment:
+          $ref: '#/components/schemas/segment_meta'
+        previous_segment:
+          type: object
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/segment_meta'
+    cloud_storage_partition_anomalies:
+      type: object
+      description: Anomalies detected by the cloud storage scrubber
+      properties:
+        ns:
+          type: string
+        topic:
+          type: string
+        partition:
+          type: integer
+          format: int64
+        revision_id:
+          type: integer
+          format: int64
+        missing_partition_manifest:
+          type: boolean
+          nullable: true
+        missing_spillover_manifests:
+          type: array
+          nullable: true
+          items:
+            type: string
+        missing_segments:
+          type: array
+          nullable: true
+          items:
+            type: string
+        segment_metadata_anomalies:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/metadata_anomaly'
+        last_complete_scrub_at:
+          type: integer
+          format: int64
+          nullable: true
+        num_discarded_missing_spillover_manifests:
+          type: integer
+          format: int64
+          nullable: true
+        num_discarded_missing_segments:
+          type: integer
+          format: int64
+          nullable: true
+        num_discarded_metadata_anomalies:
+          type: integer
+          format: int64
+          nullable: true
     cluster_config_property_metadata:
       type: object
       properties:
@@ -5828,6 +6087,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/topic_download_counts'
+    cluster_recovery_status:
+      type: object
+      properties:
+        state:
+          type: string
+        error:
+          type: string
     cancel_all_partitions_reconfigurations:
       type: object
       description: TBD
