@@ -506,9 +506,18 @@ components:
     redpanda.core.admin.v2.AuthenticationConfiguration:
       additionalProperties: false
       description: |-
-        Authentication config.  Currently only supporting SASL/SCRAM,
-         however made as a oneof for expansion
+        Authentication config.  Supports:
+         * SASL/SCRAM
+         * SASL/PLAIN
       oneOf:
+        - properties:
+            plainConfiguration:
+              $ref: "#/components/schemas/redpanda.core.admin.v2.PlainConfig"
+              description: SASL/PLAIN configuration
+              title: plain_configuration
+          required:
+            - plainConfiguration
+          title: plain_configuration
         - properties:
             scramConfiguration:
               $ref: "#/components/schemas/redpanda.core.admin.v2.ScramConfig"
@@ -1146,8 +1155,36 @@ components:
         - PATTERN_TYPE_UNSPECIFIED
         - PATTERN_TYPE_LITERAL
         - PATTERN_TYPE_PREFIX
+        - PATTERN_TYPE_PREFIXED
       title: PatternType
       type: string
+    redpanda.core.admin.v2.PlainConfig:
+      additionalProperties: false
+      description: PLAIN settings
+      properties:
+        password:
+          description: Password
+          title: password
+          type: string
+          writeOnly: true
+        passwordSet:
+          description: Indicates that the password has been set
+          readOnly: true
+          title: password_set
+          type: boolean
+        passwordSetAt:
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          description: |-
+            Timestamp of when the password was last set - only valid if password_set
+             is true
+          readOnly: true
+          title: password_set_at
+        username:
+          description: PLAIN username
+          title: username
+          type: string
+      title: PlainConfig
+      type: object
     redpanda.core.admin.v2.RPCRoute:
       additionalProperties: false
       description: A route in the Admin API RPC server.
@@ -1849,6 +1886,7 @@ components:
         - ACL_PATTERN_ANY
         - ACL_PATTERN_LITERAL
         - ACL_PATTERN_PREFIXED
+        - ACL_PATTERN_PREFIX
         - ACL_PATTERN_MATCH
       title: ACLPattern
       type: string
@@ -1958,9 +1996,9 @@ info:
   title: Redpanda Admin API
   version: v2.0.0
   x-admin-api-major: v2.0.0
-  x-generated-at: 2025-11-13T21:09:09.434Z
+  x-generated-at: 2025-12-12T04:54:23.532Z
   x-generator: redpanda-docs-openapi-bundler
-  x-redpanda-core-version: kb/proto/docs/openapi-summaries
+  x-redpanda-core-version: v25.3.2
 openapi: 3.1.0
 paths:
   /redpanda.core.admin.v2.BrokerService/GetBroker:
