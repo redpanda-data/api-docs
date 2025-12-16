@@ -506,7 +506,7 @@ components:
         info:
           $ref: '#/components/schemas/ConnectCluster.Info'
         name:
-          description: Unique name of Connect cluster. For Redpanda Cloud, the value is `redpanda`.
+          description: Unique name of connect cluster. For Redpanda Cloud, the value is `redpanda`.
           type: string
         plugins:
           items:
@@ -1061,6 +1061,15 @@ components:
           type: string
       title: ErrorInfo
       type: object
+    FailOverBody:
+      properties:
+        shadow_topic_name:
+          title: |-
+            The name of the shadow topic to fail over, if not set will fail over
+            the entire shadow link
+          type: string
+      title: Request to fail over a shadow link or a single shadow topic
+      type: object
     FailedEntity:
       properties:
         entity_name:
@@ -1475,7 +1484,7 @@ components:
         tools:
           additionalProperties:
             $ref: '#/components/schemas/Tool'
-          description: The MCP tool's configuration in YAML format.
+          description: The Redpanda Connect MCP tools configuration in YAML format.
           type: object
       required:
         - tools
@@ -1628,15 +1637,15 @@ components:
     ListMCPServersRequest.Filter:
       properties:
         display_name_contains:
-          description: Filter MCP servers by display name. Any MCP servers that partially match this name are returned.
+          description: Any MCP Server that partially match this name will be returned.
           type: string
         secret_id:
-          description: Filter MCP servers by secret ID.
+          description: Match MCP servers that use this secret ID.
           type: string
         tags[string]:
           additionalProperties:
             type: string
-          description: Filter MCP servers by tags. MCP servers that match all the provided tags are returned. The query format is "filter.tags[key]=value".
+          description: MCP servers that match all the provided tags will be returned.
           type: object
       type: object
     ListMCPServersResponse:
@@ -1646,7 +1655,6 @@ components:
             $ref: '#/components/schemas/MCPServer'
           type: array
         next_page_token:
-          description: Token to retrieve the next page of results. Include this value in the next request's `page_token` parameter. Empty if there are no more results.
           type: string
       type: object
     ListMountTasksResponse:
@@ -1959,7 +1967,7 @@ components:
         tools:
           additionalProperties:
             $ref: '#/components/schemas/Tool'
-          description: The MCP server configuration.
+          description: The Redpanda Connect MCP server configuration.
           type: object
         url:
           readOnly: true
@@ -1972,13 +1980,10 @@ components:
         - service_account
       type: object
     MCPServer.ServiceAccount:
-      description: Service account credentials used to authenticate with Redpanda Cloud.
       properties:
         client_id:
-          description: The service account client ID for authenticating with Redpanda Cloud.
           type: string
         client_secret:
-          description: The service account client secret for authenticating with Redpanda Cloud.
           type: string
       required:
         - client_id
@@ -2027,7 +2032,7 @@ components:
         tools:
           additionalProperties:
             $ref: '#/components/schemas/Tool'
-          description: The MCP server configuration.
+          description: The Redpanda Connect MCP server configuration.
           type: object
       required:
         - display_name
@@ -2040,7 +2045,7 @@ components:
           description: MCP server description.
           type: string
         display_name:
-          description: User-friendly MCP server name.
+          description: User-friendly MCP servers name.
           type: string
         resources:
           $ref: '#/components/schemas/Resources'
@@ -2056,7 +2061,7 @@ components:
         tools:
           additionalProperties:
             $ref: '#/components/schemas/Tool'
-          description: The MCP server configuration.
+          description: The Redpanda Connect MCP server configuration.
           type: object
       type: object
     MatchingACL:
@@ -2854,7 +2859,7 @@ components:
         client_id:
           readOnly: true
           title: |-
-            The Client ID for the Kafka RPC requests sent by this cluster to the
+            The Client ID for the Kafka RPC requests setn by this cluster to the
             source cluster
           type: string
         connection_timeout_ms:
@@ -4914,7 +4919,7 @@ paths:
       description: 'List Kafka Connect cluster secrets. Optional: filter based on secret name and labels.'
       operationId: SecretService_ListKafkaConnectSecrets
       parameters:
-        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -5034,7 +5039,7 @@ paths:
       description: Delete a Kafka Connect cluster secret.
       operationId: SecretService_DeleteKafkaConnectSecret
       parameters:
-        - description: Unique name of target Connect cluster. For Redpanda Cloud, use `redpanda`.
+        - description: Unique name of target connect cluster. For Redpanda Cloud, use `redpanda`.
           in: path
           name: cluster_name
           required: true
@@ -5573,20 +5578,20 @@ paths:
         - Redpanda Connect Pipelines
   /v1/redpanda-connect/mcp-servers:
     get:
-      description: 'List MCP servers and optionally filter by display name, tags, or secret ID.'
+      description: 'List Redpanda Connect MCP Servers. Optional: filter based on MCP server name.'
       operationId: MCPServerService_ListMCPServers
       parameters:
-        - description: Filter MCP servers by name. Any servers that partially match this name are returned.
+        - description: Any MCP Server that partially match this name will be returned.
           in: query
           name: filter.display_name_contains
           schema:
             type: string
-        - description: Filter MCP servers by tags. MCP servers that match all the provided tags are returned. The query format is "filter.tags[key]=value".
+        - description: This is a request variable of the map type. The query format is "map_name[key]=value", e.g. If the map name is Age, the key type is string, and the value type is integer, the query parameter is expressed as Age["bob"]=18
           in: query
           name: filter.tags[string]
           schema:
             type: string
-        - description: Filter MCP servers by secret ID.
+        - description: Match MCP servers that use this secret ID.
           in: query
           name: filter.secret_id
           schema:
@@ -5629,11 +5634,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: List MCP servers
+      summary: List Redpanda Connect MCP Servers
       tags:
-        - Remote MCP
+        - Redpanda Connect MCP servers
     post:
-      description: Create an MCP server.
+      description: Create a new Redpanda Connect MCP Server.
       operationId: MCPServerService_CreateMCPServer
       requestBody:
         content:
@@ -5667,15 +5672,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Create an MCP server
+      summary: Create Redpanda Connect MCP Server
       tags:
-        - Remote MCP
+        - Redpanda Connect MCP servers
   /v1/redpanda-connect/mcp-servers/{id}:
     delete:
-      description: Delete an MCP server.
+      description: Delete a Redpanda Connect MCP server.
       operationId: MCPServerService_DeleteMCPServer
       parameters:
-        - description: MCP server ID.
+        - description: MCP Server ID.
           in: path
           name: id
           required: true
@@ -5711,11 +5716,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Delete an MCP server
+      summary: Delete a Redpanda Connect MCP server
       tags:
-        - Remote MCP
+        - Redpanda Connect MCP servers
     get:
-      description: Get a specific MCP server.
+      description: Get a specific Redpanda Connect MCP server.
       operationId: MCPServerService_GetMCPServer
       parameters:
         - description: MCP server ID.
@@ -5755,11 +5760,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Get an MCP server
+      summary: Get Redpanda Connect MCP server
       tags:
-        - Remote MCP
+        - Redpanda Connect MCP servers
     put:
-      description: Edit an MCP server.
+      description: Update the configuration of a Redpanda Connect MCP server.
       operationId: MCPServerService_UpdateMCPServer
       parameters:
         - description: MCP Server ID.
@@ -5807,15 +5812,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Edit an MCP Server
+      summary: Update a Redpanda Connect MCP Server
       tags:
-        - Remote MCP
+        - Redpanda Connect MCP servers
   /v1/redpanda-connect/mcp-servers/{id}:start:
     post:
-      description: Start an existing MCP server.
+      description: Start a stopped Redpanda Connect MCP server.
       operationId: MCPServerService_StartMCPServer
       parameters:
-        - description: MCP server ID.
+        - description: MCP Server ID.
           in: path
           name: id
           required: true
@@ -5852,12 +5857,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Start an existing MCP server
+      summary: Start a Redpanda Connect MCP server
       tags:
-        - Remote MCP
+        - Redpanda Connect MCP servers
   /v1/redpanda-connect/mcp-servers/{id}:stop:
     post:
-      description: Stop an MCP server.
+      description: Stop a running Redpanda Connect MCP server.
       operationId: MCPServerService_StopMCPServer
       parameters:
         - description: MCP Server ID.
@@ -5897,12 +5902,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Stop an MCP server
+      summary: Stops a Redpanda Connect MCP server
       tags:
-        - Remote MCP
+        - Redpanda Connect MCP servers
   /v1/redpanda-connect/mcp-servers:getConfigSchema:
     get:
-      description: The configuration schema includes all available Redpanda Connect components and processors in this MCP server instance.
+      description: The configuration schema includes available components and processors in this Redpanda Connect MCP Server instance.
       operationId: MCPServerService_GetMCPServerServiceConfigSchema
       responses:
         "200":
@@ -5929,12 +5934,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Retrieve the schema for MCP server configurations
+      summary: Retrieve the schema for Redpanda Connect MCP Servers configurations.
       tags:
-        - Remote MCP
+        - Redpanda Connect MCP servers
   /v1/redpanda-connect/mcp-servers:lint-config:
     post:
-      description: Validates a given MCP tool configuration and returns a list of linting hints. The request should contain a map of tool names to tool configurations, where each tool contains YAML in its `config_yaml` field. If no problems are found, the list is empty.
+      description: Validates a supplied Redpanda Connect MCP tools YAML and returns a list of linting hints. If no problems are found, the list is empty.
       operationId: MCPServerService_LintMCPConfig
       requestBody:
         content:
@@ -5968,9 +5973,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: An unexpected error response.
-      summary: Lint the configuration of an MCP tool
+      summary: Lint a Redpanda Connect MCP tools configuration
       tags:
-        - Remote MCP
+        - Redpanda Connect MCP servers
   /v1/redpanda-connect/pipelines:
     get:
       description: 'List Redpanda Connect pipelines. Optional: filter based on pipeline name.'
@@ -7038,6 +7043,227 @@ paths:
       summary: Update secret
       tags:
         - Secrets
+  /v1/shadow-links/{name}:
+    get:
+      description: Retrieve details of a specific shadow link by name.
+      operationId: ShadowLinkService_GetShadowLink
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.GetShadowLinkResponse'
+          description: OK
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Unauthenticated.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Get Shadow Link
+      tags:
+        - Shadow Links (Data Plane)
+  /v1/shadow-links/{name}/failover:
+    post:
+      description: Fail over a shadow link or a specific shadow topic within a link.
+      operationId: ShadowLinkService_FailOver
+      parameters:
+        - description: The name of the shadow link to fail over
+          in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FailOverBody'
+        required: true
+        x-originalParamName: body
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.FailOverResponse'
+          description: Failover accepted and initiated
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Unauthenticated.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Fail Over Shadow Link
+      tags:
+        - Shadow Links (Data Plane)
+  /v1/shadow-links/{name}/metrics:
+    get:
+      description: Retrieve metrics for a specific shadow link, including total topics replicated, failed over topics, and error topics.
+      operationId: ShadowLinkService_GetShadowMetrics
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetShadowMetricsResponse'
+          description: OK
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Unauthenticated.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Get Shadow Link Metrics
+      tags:
+        - Shadow Links (Data Plane)
+  /v1/shadow-links/{shadow_link_name}/topic:
+    get:
+      description: 'List shadow topic status information for a specific shadow link. Optional: filter based on topic name.'
+      operationId: ShadowLinkService_ListShadowLinkTopics
+      parameters:
+        - in: path
+          name: shadow_link_name
+          required: true
+          schema:
+            type: string
+        - description: Substring match on shadow topic name. Case-sensitive.
+          in: query
+          name: filter.topic_name_contains
+          schema:
+            type: string
+        - description: Limit the paginated response to a number of items. Defaults to 100. Use -1 to disable pagination.
+          in: query
+          name: page_size
+          schema:
+            format: int32
+            type: integer
+        - description: |-
+            Value of the next_page_token field returned by the previous response.
+            If not provided, the system assumes the first page is requested.
+          in: query
+          name: page_token
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListShadowLinkTopicsResponse'
+          description: OK
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Unauthenticated.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: List Shadow Link Topics
+      tags:
+        - Shadow Links (Data Plane)
+  /v1/shadow-links/{shadow_link_name}/topic/{topic_name}:
+    get:
+      description: Retrieve details of a specific shadow topic within a shadow link.
+      operationId: ShadowLinkService_GetShadowTopic
+      parameters:
+        - in: path
+          name: shadow_link_name
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: topic_name
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.GetShadowTopicResponse'
+          description: OK
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Unauthenticated.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Get Shadow Topic
+      tags:
+        - Shadow Links (Data Plane)
   /v1/topics:
     get:
       description: 'List topics, with partition count and replication factor. Optional: filter based on topic name.'
@@ -7604,7 +7830,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              example: '{"name":"redact-orders", "input_topic_name":"orders", "output_topic_names":["orders-redacted"], "environment_variables":[{"key":"LOGGER_LEVEL", "value":"DEBUG"}]}'
+              example: '{"name":"redact-orders","input_topic_name":"orders","output_topic_names":["orders-redacted"],"environment_variables":[{"key":"LOGGER_LEVEL","value":"DEBUG"}]}'
               properties:
                 metadata:
                   $ref: '#/components/schemas/DeployTransformRequest'
@@ -8022,8 +8248,8 @@ tags:
     name: Kafka Connect
   - description: Create and manage [Redpanda Connect](https://docs.redpanda.com/redpanda-cloud/develop/connect/about) pipelines and their configurations.
     name: Redpanda Connect Pipelines
-  - description: Create and manage MCP servers and their configurations.
-    name: Remote MCP
+  - description: Create and manage Redpanda Connect MCP servers and their configurations.
+    name: Redpanda Connect MCP servers
   - description: Monitoring operations for Redpanda.
     name: Monitoring
   - description: Manage client throughput limits. See [Redpanda Client Throughput Limits](https://docs.redpanda.com/current/manage/cluster-maintenance/manage-throughput/#client-throughput-limits) for more information.
@@ -8032,6 +8258,8 @@ tags:
     name: Secrets
   - description: Manage Redpanda roles.
     name: Security
+  - description: Data plane operations for Redpanda shadow links.
+    name: Shadow Links (Data Plane)
   - description: Manage Redpanda topics.
     name: Topics
   - description: Manage Redpanda users. For more information, see [Role-Based Access Control](https://docs.redpanda.com/redpanda-cloud/security/authorization/rbac/).
