@@ -5279,7 +5279,7 @@ paths:
         - Network Peerings
   /v1/network/{network_peering.network_id}/network-peerings:
     post:
-      description: Create a Redpanda network peering.
+      description: Create a Redpanda network pering.
       operationId: NetworkPeeringService_CreateNetworkPeering
       parameters:
         - in: path
