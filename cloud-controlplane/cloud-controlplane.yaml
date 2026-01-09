@@ -1067,11 +1067,24 @@ components:
               $ref: '#/components/schemas/GCPPeeringSpec'
           type: object
       type: object
+    CreateNetworkPeeringMetadata:
+      description: Resource describing an in-progress CreateNetworkPeering Operation.
+      properties:
+        network_peering_id:
+          description: ID of the network peering created by this Operation.
+          type: string
+      title: CreateNetworkPeeringMetadata
+      type: object
     CreateNetworkPeeringOperation:
       description: CreateNetworkPeeringOperation is the response of the create network peering rpc.
       properties:
         operation:
           $ref: '#/components/schemas/v1.Operation'
+      type: object
+    CreateNetworkPeeringResponse:
+      properties:
+        network_peering:
+          $ref: '#/components/schemas/NetworkPeering'
       type: object
     CreateNetworkRequest:
       description: CreateNetworkRequest is the request of CreateNetwork.
@@ -1121,6 +1134,14 @@ components:
         role:
           $ref: '#/components/schemas/v1.Role'
       type: object
+    CreateServerlessClusterMetadata:
+      description: Resource describing an in-progress CreateServerlessCluster Operation.
+      properties:
+        serverless_cluster_id:
+          description: ID of the ServerlessCluster created by this operation.
+          type: string
+      title: CreateServerlessClusterMetadata
+      type: object
     CreateServerlessClusterOperation:
       description: CreateServerlessClusterOperation is the response of the create serverless_cluster rpc.
       properties:
@@ -1132,6 +1153,19 @@ components:
       properties:
         serverless_cluster:
           $ref: '#/components/schemas/ServerlessClusterCreate'
+      type: object
+    CreateServerlessClusterResponse:
+      description: CreateServerlessClusterResponse is the request of CreateServerlessCluster.
+      properties:
+        serverless_cluster:
+          $ref: '#/components/schemas/ServerlessCluster'
+      type: object
+    CreateServerlessPrivateLinkMetadata:
+      description: Resource describing an in-progress CreateServerlessPrivateLink Operation.
+      properties:
+        serverless_private_link_id:
+          type: string
+      title: CreateServerlessPrivateLinkMetadata
       type: object
     CreateServiceAccountRequest:
       description: CreateServiceAccountRequest is the request of CreateServiceAccount.
@@ -1380,11 +1414,17 @@ components:
         operation:
           $ref: '#/components/schemas/v1.Operation'
       type: object
+    DeleteNetworkPeeringMetadata:
+      description: Resource describing an in-progress DeleteNetworkPeering Operation.
+      title: DeleteNetworkPeeringMetadata
+      type: object
     DeleteNetworkPeeringOperation:
       description: DeleteNetworkPeeringOperation is the response of the delete network peering rpc.
       properties:
         operation:
           $ref: '#/components/schemas/v1.Operation'
+      type: object
+    DeleteNetworkPeeringResponse:
       type: object
     DeleteNetworkResponse:
       description: DeleteNetworkResponse is the response of DeleteNetwork.
@@ -1397,11 +1437,22 @@ components:
       type: object
     DeleteRoleResponse:
       type: object
+    DeleteServerlessClusterMetadata:
+      description: Resource describing an in-progress DeleteServerlessCluster Operation.
+      title: DeleteServerlessClusterMetadata
+      type: object
     DeleteServerlessClusterOperation:
       description: DeleteServerlessClusterOperation is the response of the delete serverless_cluster rpc.
       properties:
         operation:
           $ref: '#/components/schemas/v1.Operation'
+      type: object
+    DeleteServerlessClusterResponse:
+      description: DeleteServerlessClusterResponse is the request of DeleteServerlessCluster.
+      type: object
+    DeleteServerlessPrivateLinkMetadata:
+      description: Resource describing an in-progress DeleteServerlessPrivateLink Operation.
+      title: DeleteServerlessPrivateLinkMetadata
       type: object
     DeleteServiceAccountResponse:
       type: object
@@ -1844,6 +1895,17 @@ components:
             $ref: '#/components/schemas/Link'
           type: array
       title: Help
+      type: object
+    Identity:
+      properties:
+        connection:
+          type: string
+        is_primary:
+          type: boolean
+        provider:
+          type: string
+        user_id:
+          type: string
       type: object
     KafkaAPISpec:
       description: Cluster's Kafka API properties.
@@ -2564,6 +2626,46 @@ components:
                     - type.googleapis.com/redpanda.api.controlplane.v1.DeleteClusterMetadata
                   type: string
             - $ref: '#/components/schemas/DeleteClusterMetadata'
+        - allOf:
+            - properties:
+                '@type':
+                  description: Fully qualified protobuf type name of the underlying response, prefixed with `type.googleapis.com/`.
+                  enum:
+                    - type.googleapis.com/redpanda.api.controlplane.v1.CreateNetworkPeeringMetadata
+                  type: string
+            - $ref: '#/components/schemas/CreateNetworkPeeringMetadata'
+        - allOf:
+            - properties:
+                '@type':
+                  description: Fully qualified protobuf type name of the underlying response, prefixed with `type.googleapis.com/`.
+                  enum:
+                    - type.googleapis.com/redpanda.api.controlplane.v1.DeleteNetworkPeeringMetadata
+                  type: string
+            - $ref: '#/components/schemas/DeleteNetworkPeeringMetadata'
+        - allOf:
+            - properties:
+                '@type':
+                  description: Fully qualified protobuf type name of the underlying response, prefixed with `type.googleapis.com/`.
+                  enum:
+                    - type.googleapis.com/redpanda.api.controlplane.v1.DeleteNetworkPeeringMetadata
+                  type: string
+            - $ref: '#/components/schemas/DeleteNetworkPeeringMetadata'
+        - allOf:
+            - properties:
+                '@type':
+                  description: Fully qualified protobuf type name of the underlying response, prefixed with `type.googleapis.com/`.
+                  enum:
+                    - type.googleapis.com/redpanda.api.controlplane.v1.CreateServerlessClusterMetadata
+                  type: string
+            - $ref: '#/components/schemas/CreateServerlessClusterMetadata'
+        - allOf:
+            - properties:
+                '@type':
+                  description: Fully qualified protobuf type name of the underlying response, prefixed with `type.googleapis.com/`.
+                  enum:
+                    - type.googleapis.com/redpanda.api.controlplane.v1.DeleteServerlessClusterMetadata
+                  type: string
+            - $ref: '#/components/schemas/DeleteServerlessClusterMetadata'
     OperationResponse:
       description: Response of the long-running Operation.
       oneOf:
@@ -2607,6 +2709,46 @@ components:
                     - type.googleapis.com/redpanda.api.controlplane.v1.DeleteNetworkResponse
                   type: string
             - $ref: '#/components/schemas/DeleteNetworkResponse'
+        - allOf:
+            - properties:
+                '@type':
+                  description: Fully qualified protobuf type name of the underlying response, prefixed with `type.googleapis.com/`.
+                  enum:
+                    - type.googleapis.com/redpanda.api.controlplane.v1.CreateNetworkPeeringResponse
+                  type: string
+            - $ref: '#/components/schemas/CreateNetworkPeeringResponse'
+        - allOf:
+            - properties:
+                '@type':
+                  description: Fully qualified protobuf type name of the underlying response, prefixed with `type.googleapis.com/`.
+                  enum:
+                    - type.googleapis.com/redpanda.api.controlplane.v1.DeleteNetworkPeeringResponse
+                  type: string
+            - $ref: '#/components/schemas/DeleteNetworkPeeringResponse'
+        - allOf:
+            - properties:
+                '@type':
+                  description: Fully qualified protobuf type name of the underlying response, prefixed with `type.googleapis.com/`.
+                  enum:
+                    - type.googleapis.com/redpanda.api.controlplane.v1.DeleteNetworkPeeringResponse
+                  type: string
+            - $ref: '#/components/schemas/DeleteNetworkPeeringResponse'
+        - allOf:
+            - properties:
+                '@type':
+                  description: Fully qualified protobuf type name of the underlying response, prefixed with `type.googleapis.com/`.
+                  enum:
+                    - type.googleapis.com/redpanda.api.controlplane.v1.CreateServerlessClusterResponse
+                  type: string
+            - $ref: '#/components/schemas/CreateServerlessClusterResponse'
+        - allOf:
+            - properties:
+                '@type':
+                  description: Fully qualified protobuf type name of the underlying response, prefixed with `type.googleapis.com/`.
+                  enum:
+                    - type.googleapis.com/redpanda.api.controlplane.v1.DeleteServerlessClusterResponse
+                  type: string
+            - $ref: '#/components/schemas/DeleteServerlessClusterResponse'
     Organization:
       properties:
         auth0_id:
@@ -3900,6 +4042,13 @@ components:
         operation:
           $ref: '#/components/schemas/v1.Operation'
       type: object
+    UpdateServerlessPrivateLinkMetadata:
+      description: Resource describing an in-progress UpdateServerlessPrivateLink Operation.
+      properties:
+        serverless_private_link_id:
+          type: string
+      title: UpdateServerlessPrivateLinkMetadata
+      type: object
     UpdateServiceAccountBody:
       properties:
         service_account:
@@ -3947,6 +4096,10 @@ components:
           type: string
         id:
           type: string
+        identities:
+          items:
+            $ref: '#/components/schemas/Identity'
+          type: array
         name:
           type: string
         picture_url:
@@ -4793,7 +4946,7 @@ paths:
                       url: schema-registry-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com:9092
                     state: STATE_READY
                     state_description: null
-                    throughput_tier: tier-1-gcp-um4g
+                    throughput_tier: tier-1-gcp-v2-x86
                     type: TYPE_DEDICATED
                     updated_at: "2023-01-01T00:00:00Z"
                     zones:
@@ -4824,18 +4977,19 @@ paths:
         content:
           application/json:
             example:
-              cloud_provider: CLOUD_PROVIDER_GCP
-              connection_type: CONNECTION_TYPE_PUBLIC
-              name: my-new-cluster
-              network_id: cjb69k1c4vs45df9bee0
-              region: us-west1
-              resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
-              throughput_tier: tier-1-gcp-um4g
-              type: TYPE_DEDICATED
-              zones:
-                - us-west1-a
-                - us-west1-b
-                - us-west1-c
+              cluster:
+                cloud_provider: CLOUD_PROVIDER_GCP
+                connection_type: CONNECTION_TYPE_PUBLIC
+                name: my-new-cluster
+                network_id: cjb69k1c4vs45df9bee0
+                region: us-west1
+                resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+                throughput_tier: tier-1-gcp-v2-x86
+                type: TYPE_DEDICATED
+                zones:
+                  - us-west1-a
+                  - us-west1-b
+                  - us-west1-c
             schema:
               $ref: '#/components/schemas/CreateClusterRequest'
         description: CreateClusterRequest is the request of CreateCluster.
@@ -5131,7 +5285,7 @@ paths:
                     url: schema-registry-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com:9092
                   state: STATE_READY
                   state_description: null
-                  throughput_tier: tier-1-gcp-um4g
+                  throughput_tier: tier-1-gcp-v2-x86
                   type: TYPE_DEDICATED
                   updated_at: "2023-01-01T00:00:00Z"
                   zones:
@@ -5174,6 +5328,29 @@ paths:
         "200":
           content:
             application/json:
+              example:
+                network_peerings:
+                  - aws:
+                      peer_owner_id: "123456789012"
+                      peer_vpc_id: vpc-0123456789abcdef0
+                    cloud_provider: CLOUD_PROVIDER_AWS
+                    created_at: "2023-01-01T00:00:00Z"
+                    deleted_at: null
+                    display_name: my-aws-peering
+                    id: cjp5vehc4vs19qc11pjg
+                    network_id: cjd533pc4vs8pjdkrrv0
+                    state: STATE_READY
+                    status:
+                      cloud_provider:
+                        aws:
+                          accepter_cidr_block: 10.1.0.0/16
+                          expiration_time: null
+                          status: active
+                          status_message: ""
+                      created:
+                        aws:
+                          vpc_peering_connection_id: pcx-0123456789abcdef0
+                    updated_at: "2023-01-01T00:00:00Z"
               schema:
                 $ref: '#/components/schemas/ListNetworkPeeringsResponse'
           description: OK
@@ -5183,12 +5360,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpc.Status'
-          description: An unexpected error response.
       summary: List network peerings
       tags:
         - Network Peerings
@@ -5211,6 +5382,16 @@ paths:
         "202":
           content:
             application/json:
+              example:
+                operation:
+                  finished_at: null
+                  id: cjp5999c4vs6rgpkevsg
+                  metadata:
+                    '@type': type.googleapis.com/redpanda.api.controlplane.v1.DeleteNetworkPeeringMetadata
+                  resource_id: cjp5vehc4vs19qc11pjg
+                  started_at: null
+                  state: STATE_IN_PROGRESS
+                  type: TYPE_DELETE_NETWORK_PEERING
               schema:
                 $ref: '#/components/schemas/DeleteNetworkPeeringOperation'
           description: Delete request accepted
@@ -5226,12 +5407,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpc.Status'
-          description: An unexpected error response.
       summary: Delete network peering
       tags:
         - Network Peerings
@@ -5239,12 +5414,14 @@ paths:
       description: Get information about a Redpanda network peering.
       operationId: NetworkPeeringService_GetNetworkPeering
       parameters:
-        - in: path
+        - example: cjd533pc4vs8pjdkrrv0
+          in: path
           name: network_id
           required: true
           schema:
             type: string
-        - in: path
+        - example: cjp5vehc4vs19qc11pjg
+          in: path
           name: id
           required: true
           schema:
@@ -5253,6 +5430,29 @@ paths:
         "200":
           content:
             application/json:
+              example:
+                network_peering:
+                  aws:
+                    peer_owner_id: "123456789012"
+                    peer_vpc_id: vpc-0123456789abcdef0
+                  cloud_provider: CLOUD_PROVIDER_AWS
+                  created_at: "2023-01-01T00:00:00Z"
+                  deleted_at: null
+                  display_name: my-aws-peering
+                  id: cjp5vehc4vs19qc11pjg
+                  network_id: cjd533pc4vs8pjdkrrv0
+                  state: STATE_READY
+                  status:
+                    cloud_provider:
+                      aws:
+                        accepter_cidr_block: 10.1.0.0/16
+                        expiration_time: null
+                        status: active
+                        status_message: ""
+                    created:
+                      aws:
+                        vpc_peering_connection_id: pcx-0123456789abcdef0
+                  updated_at: "2023-01-01T00:00:00Z"
               schema:
                 $ref: '#/components/schemas/GetNetworkPeeringRequest'
           description: OK
@@ -5268,18 +5468,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpc.Status'
-          description: An unexpected error response.
       summary: Get network peering
       tags:
         - Network Peerings
   /v1/network/{network_peering.network_id}/network-peerings:
     post:
-      description: Create a Redpanda network peering.
+      description: Create a Redpanda network pering.
       operationId: NetworkPeeringService_CreateNetworkPeering
       parameters:
         - in: path
@@ -5290,6 +5484,14 @@ paths:
       requestBody:
         content:
           application/json:
+            example:
+              network_peering:
+                aws:
+                  peer_owner_id: "123456789012"
+                  peer_vpc_id: vpc-0123456789abcdef0
+                cloud_provider: CLOUD_PROVIDER_AWS
+                display_name: my-aws-peering
+                network_id: cjd533pc4vs8pjdkrrv0
             schema:
               $ref: '#/components/schemas/CreateNetworkPeeringBody'
         required: true
@@ -5298,6 +5500,17 @@ paths:
         "202":
           content:
             application/json:
+              example:
+                operation:
+                  finished_at: null
+                  id: cjp5uh9c4vs1td8emmcg
+                  metadata:
+                    '@type': type.googleapis.com/redpanda.api.controlplane.v1.CreateNetworkPeeringMetadata
+                    network_peering_id: cjp5vehc4vs19qc11pjg
+                  resource_id: cjp5vehc4vs19qc11pjg
+                  started_at: null
+                  state: STATE_IN_PROGRESS
+                  type: TYPE_CREATE_NETWORK_PEERING
               schema:
                 $ref: '#/components/schemas/CreateNetworkPeeringOperation'
           description: Accepted
@@ -5307,12 +5520,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpc.Status'
-          description: An unexpected error response.
       summary: Create network peering
       tags:
         - Network Peerings
@@ -5396,12 +5603,13 @@ paths:
         content:
           application/json:
             example:
-              cidr_block: 10.0.0.0/20
-              cloud_provider: CLOUD_PROVIDER_GCP
-              cluster_type: TYPE_DEDICATED
-              name: my-network
-              region: us-west1
-              resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+              network:
+                cidr_block: 10.0.0.0/20
+                cloud_provider: CLOUD_PROVIDER_GCP
+                cluster_type: TYPE_DEDICATED
+                name: my-network
+                region: us-west1
+                resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
             schema:
               $ref: '#/components/schemas/CreateNetworkRequest'
         description: CreateNetworkRequest is the request of CreateNetwork.
@@ -6128,7 +6336,8 @@ paths:
         content:
           application/json:
             example:
-              name: my-new-namespace
+              resource_group:
+                name: my-new-namespace
             schema:
               $ref: '#/components/schemas/CreateResourceGroupRequest'
         description: CreateResourceGroupRequest is the request of CreateResourceGroup.
@@ -6684,6 +6893,8 @@ paths:
           name: page_size
           schema:
             format: int32
+            maximum: 100
+            minimum: 1
             type: integer
         - description: Value of the next_page_token field returned by the previous response. If not provided, the system assumes the first page is requested.
           in: query
@@ -6694,6 +6905,33 @@ paths:
         "200":
           content:
             application/json:
+              example:
+                next_page_token: some-opaque-string
+                serverless_clusters:
+                  - console_private_url: ""
+                    console_url: https://console-d1d9risv0c3i7qbbeoc0.any.us-east-1.mpx.prd.cloud.redpanda.com
+                    created_at: "2023-01-01T00:00:00Z"
+                    dataplane_api:
+                      private_url: ""
+                      url: https://d1d9risv0c3i7qbbeoc0.any.us-east-1.mpx.prd.cloud.redpanda.com
+                    id: d1d9risv0c3i7qbbeoc0
+                    kafka_api:
+                      private_seed_brokers: []
+                      seed_brokers:
+                        - d1d9risv0c3i7qbbeoc0.any.us-east-1.mpx.prd.cloud.redpanda.com:9092
+                    name: my-serverless-cluster
+                    networking_config: null
+                    prometheus:
+                      private_url: ""
+                      url: https://d1d9risv0c3i7qbbeoc0.metrics.us-east-1.mpx.prd.cloud.redpanda.com/public_metrics
+                    resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+                    schema_registry:
+                      private_url: ""
+                      url: https://d1d9risv0c3i7qbbeoc0.any.us-east-1.mpx.prd.cloud.redpanda.com:30993
+                    serverless_region: us-east-1
+                    state: STATE_READY
+                    tags: {}
+                    updated_at: "2023-01-01T00:00:00Z"
               schema:
                 $ref: '#/components/schemas/ListServerlessClustersResponse'
           description: OK
@@ -6703,12 +6941,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpc.Status'
-          description: An unexpected error response.
       summary: List Serverless clusters
       tags:
         - Serverless Clusters
@@ -6718,6 +6950,11 @@ paths:
       requestBody:
         content:
           application/json:
+            example:
+              serverless_cluster:
+                name: my-serverless-cluster
+                resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+                serverless_region: us-east-1
             schema:
               $ref: '#/components/schemas/CreateServerlessClusterRequest'
         description: CreateServerlessClusterRequest is the request of CreateServerlessCluster.
@@ -6727,6 +6964,17 @@ paths:
         "202":
           content:
             application/json:
+              example:
+                operation:
+                  finished_at: null
+                  id: cjsl7h9c4vs1td8emmcg
+                  metadata:
+                    '@type': type.googleapis.com/redpanda.api.controlplane.v1.CreateServerlessClusterMetadata
+                    serverless_cluster_id: d1d9risv0c3i7qbbeoc0
+                  resource_id: d1d9risv0c3i7qbbeoc0
+                  started_at: null
+                  state: STATE_IN_PROGRESS
+                  type: TYPE_CREATE_SERVERLESS_CLUSTER
               schema:
                 $ref: '#/components/schemas/CreateServerlessClusterOperation'
           description: Accepted
@@ -6748,12 +6996,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpc.Status'
-          description: An unexpected error response.
       summary: Create Serverless cluster
       tags:
         - Serverless Clusters
@@ -6772,6 +7014,16 @@ paths:
         "202":
           content:
             application/json:
+              example:
+                operation:
+                  finished_at: null
+                  id: cjsl9c4vs6rgpkevsg
+                  metadata:
+                    '@type': type.googleapis.com/redpanda.api.controlplane.v1.DeleteServerlessClusterMetadata
+                  resource_id: d1d9risv0c3i7qbbeoc0
+                  started_at: null
+                  state: STATE_IN_PROGRESS
+                  type: TYPE_DELETE_SERVERLESS_CLUSTER
               schema:
                 $ref: '#/components/schemas/DeleteServerlessClusterOperation'
           description: Accepted
@@ -6787,12 +7039,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpc.Status'
-          description: An unexpected error response.
       summary: Delete Serverless cluster
       tags:
         - Serverless Clusters
@@ -6801,6 +7047,7 @@ paths:
       operationId: ServerlessClusterService_GetServerlessCluster
       parameters:
         - description: ID of Serverless cluster.
+          example: d1d9risv0c3i7qbbeoc0
           in: path
           name: id
           required: true
@@ -6814,6 +7061,32 @@ paths:
         "200":
           content:
             application/json:
+              example:
+                serverless_cluster:
+                  console_private_url: ""
+                  console_url: https://console-d1d9risv0c3i7qbbeoc0.any.us-east-1.mpx.prd.cloud.redpanda.com
+                  created_at: "2023-01-01T00:00:00Z"
+                  dataplane_api:
+                    private_url: ""
+                    url: https://d1d9risv0c3i7qbbeoc0.any.us-east-1.mpx.prd.cloud.redpanda.com
+                  id: d1d9risv0c3i7qbbeoc0
+                  kafka_api:
+                    private_seed_brokers: []
+                    seed_brokers:
+                      - d1d9risv0c3i7qbbeoc0.any.us-east-1.mpx.prd.cloud.redpanda.com:9092
+                  name: my-serverless-cluster
+                  networking_config: null
+                  prometheus:
+                    private_url: ""
+                    url: https://d1d9risv0c3i7qbbeoc0.metrics.us-east-1.mpx.prd.cloud.redpanda.com/public_metrics
+                  resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+                  schema_registry:
+                    private_url: ""
+                    url: https://d1d9risv0c3i7qbbeoc0.any.us-east-1.mpx.prd.cloud.redpanda.com:30993
+                  serverless_region: us-east-1
+                  state: STATE_READY
+                  tags: {}
+                  updated_at: "2023-01-01T00:00:00Z"
               schema:
                 $ref: '#/components/schemas/ServerlessCluster'
           description: OK
@@ -6829,12 +7102,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpc.Status'
           description: Internal Server Error. Please reach out to support.
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpc.Status'
-          description: An unexpected error response.
       summary: Get Serverless cluster
       tags:
         - Serverless Clusters
@@ -7818,14 +8085,14 @@ tags:
     name: Networks
   - description: Manage Redpanda Cloud network peerings.
     name: Network Peerings
-  - description: Get information about available Redpanda regions.
-    name: Regions
-  - description: Manage Redpanda Cloud resource groups.
-    name: Resource Groups
   - description: Manage [Redpanda Serverless](https://docs.redpanda.com/redpanda-cloud/get-started/cloud-overview/#redpanda-cloud-cluster-types) clusters. For detailed steps, see [Use the Control Plane API with Serverless](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/).
     name: Serverless Clusters
   - description: Manage Redpanda Serverless Private Links. For detailed steps and information, see [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/).
     name: Serverless Private Links
+  - description: Get information about available Redpanda regions.
+    name: Regions
+  - description: Manage Redpanda Cloud resource groups.
+    name: Resource Groups
   - description: See available Redpanda Serverless regions.
     name: Serverless Regions
   - name: ShadowLinkService
