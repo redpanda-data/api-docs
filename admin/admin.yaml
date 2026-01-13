@@ -2195,25 +2195,12 @@ paths:
           description: Service not found
         500:
           description: Internal Server Error 
-  /v1/cloud_storage/initiate_topic_scan_and_recovery:
-    get:
-      tags:
-      - Tiered Storage
-      summary: Get automated topic recovery status
-      description: Query the status of automated topic recovery.
-      operationId: query_automated_recovery
-      responses:
-        200:
-          description: Topic recovery status response
-          content: 
-            application/json:
-              schema:
-                $ref: '#/components/schemas/init_recovery_result'
+  /v1/cloud_storage/topic_recovery:
     post:
       tags:
       - Tiered Storage
       summary: Start topic scan and recovery
-      description: Initiate a topic scan and start topic recovery.
+      description: Initiate a topic scan on bucket and start topic recovery.
       operationId: initiate_topic_scan_and_recovery
       requestBody:
         content:
@@ -2223,8 +2210,21 @@ paths:
         required: false
       responses:
         200:
-          description: Topic scan and recovery started successfully
+          description: Topic scan was initiated successfully
           content: {}
+    get:
+      tags:
+      - Tiered Storage
+      summary: Query automated topic recovery status
+      description: Query status of automated topic recovery.
+      operationId: query_automated_recovery
+      responses:
+        200:
+          description: Topic recovery status response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/topic_recovery_status'
   /v1/cloud_storage/status/{topic}/{partition}:
     get:
       tags:
@@ -2340,7 +2340,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              $ref: '#/components/schemas/automated_recovery_request_body'
         required: false
       responses:
         200:
@@ -6094,6 +6094,15 @@ components:
           type: string
         error:
           type: string
+    automated_recovery_request_body:
+      description: Request body for initializing a cluster recovery
+      type: object
+      properties:
+        cluster_uuid_override:
+          description: Optional cluster uuid to recover. If not provided, will auto-discover the manifest with highest sequence number.
+          type: string
+          format: uuid
+      additionalProperties: false
     cancel_all_partitions_reconfigurations:
       type: object
       description: TBD
