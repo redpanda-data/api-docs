@@ -6099,7 +6099,7 @@ components:
       type: object
       properties:
         cluster_uuid_override:
-          description: Optional cluster uuid to recover. If not provided, will auto-discover the manifest with highest sequence number.
+          description: Optional cluster UUID to recover. If not provided, will auto-discover the manifest with highest sequence number.
           type: string
           format: uuid
       additionalProperties: false
