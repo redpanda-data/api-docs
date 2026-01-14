@@ -2372,13 +2372,13 @@ paths:
         required: false
         schema:
           type: integer
-        description: Target number of objects to retain in the cache
+        description: Target number of objects to retain in the cache.
       - name: bytes
         in: query
         required: false
         schema:
           type: integer
-        description: Target number of bytes to retain in the cache
+        description: Target number of bytes to retain in the cache.
       responses:
         200:
           description: Success
