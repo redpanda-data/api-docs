@@ -2210,7 +2210,7 @@ paths:
         required: false
       responses:
         200:
-          description: Topic scan was initiated successfully
+          description: Topic scan initiated successfully
           content: {}
     get:
       tags:
@@ -2363,8 +2363,8 @@ paths:
     post:
       tags:
       - Tiered Storage
-      summary: Trim tiered storage cache
-      description: Invoke trimming on the local cache of tiered storage objects. If no parameters are included, this endpoint by default trims the cache to the maximum cache size given by the cluster config. Use the `bytes` and `objects` parameters to specify the number of bytes and objects to retain in the cache.
+      summary: Trim Tiered Storage cache
+      description: Invoke trimming on the local cache of Tiered Storage objects. If no parameters are included, this endpoint by default trims the cache to the maximum cache size given by the cluster config. Use the `bytes` and `objects` parameters to specify the number of bytes and objects to retain in the cache.
       operationId: cloud_storage_cache_trim
       parameters:
       - name: objects
@@ -2450,7 +2450,7 @@ paths:
       tags:
       - Tiered Storage
       summary: Reset scrubbing metadata
-      description: Reset scrubbing related metadata and anomalies for given partition.
+      description: Reset scrubbing-related metadata and anomalies for given partition.
       operationId: reset_scrubbing_metadata
       parameters:
       - name: namespace
@@ -6099,7 +6099,7 @@ components:
       type: object
       properties:
         cluster_uuid_override:
-          description: Optional cluster UUID to recover. If not provided, will auto-discover the manifest with highest sequence number.
+          description: Optional cluster UUID to recover. If not provided, auto-discover selects the manifest with highest sequence number.
           type: string
           format: uuid
       additionalProperties: false
