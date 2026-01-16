@@ -1996,9 +1996,9 @@ info:
   title: Redpanda Admin API
   version: v2.0.0
   x-admin-api-major: v2.0.0
-  x-generated-at: 2025-12-12T04:54:23.532Z
+  x-generated-at: 2026-01-16T14:02:58.802Z
   x-generator: redpanda-docs-openapi-bundler
-  x-redpanda-core-version: v25.3.2
+  x-redpanda-core-version: v25.3.5
 openapi: 3.1.0
 paths:
   /redpanda.core.admin.v2.BrokerService/GetBroker:
@@ -2075,7 +2075,9 @@ paths:
         - BrokerService
   /redpanda.core.admin.v2.ClusterService/ListKafkaConnections:
     post:
-      description: Returns information about the cluster's Kafka connections, collected and ordered across all brokers.
+      description: |-
+        Returns information about the cluster's Kafka connections, collected
+         and ordered across all brokers.
       operationId: redpanda.core.admin.v2.ClusterService.ListKafkaConnections
       parameters:
         - in: header
