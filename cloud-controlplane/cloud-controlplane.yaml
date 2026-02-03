@@ -8578,7 +8578,7 @@ tags:
     name: Network Peerings
   - description: Manage [Redpanda Serverless](https://docs.redpanda.com/redpanda-cloud/get-started/cloud-overview/#redpanda-cloud-cluster-types) clusters. For detailed steps, see [Use the Control Plane API with Serverless](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/).
     name: Serverless Clusters
-  - description: 'Manage Redpanda Serverless private links. For detailed steps and information, see [Networking: Serverless](https://docs.redpanda.com/redpanda-cloud/networking/serverless).'
+  - description: 'Manage Redpanda Serverless private links. For detailed steps and information, see [Configure AWS PrivateLink with the Cloud API](https://docs.redpanda.com/redpanda-cloud/networking/serverless/aws/privatelink-api/).'
     name: Serverless Private Links
   - description: Get information about available Redpanda regions.
     name: Regions
