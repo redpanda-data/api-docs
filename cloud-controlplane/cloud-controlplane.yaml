@@ -40,28 +40,30 @@ components:
         - ACL_OPERATION_DESCRIBE_CONFIGS
         - ACL_OPERATION_ALTER_CONFIGS
         - ACL_OPERATION_IDEMPOTENT_WRITE
-      title: / The ACL operation to match
+      title: The ACL operation to match
       type: string
     ACLPattern:
       description: |-
         - ACL_PATTERN_ANY: Wildcard to match any pattern
          - ACL_PATTERN_LITERAL: Match a literal string
          - ACL_PATTERN_PREFIXED: Match a prefix
+         - ACL_PATTERN_PREFIX: Match a prefix
          - ACL_PATTERN_MATCH: Match serves as a catch-all for all the names of a topic
         the principal is authorized to access
       enum:
         - ACL_PATTERN_ANY
         - ACL_PATTERN_LITERAL
         - ACL_PATTERN_PREFIXED
+        - ACL_PATTERN_PREFIX
         - ACL_PATTERN_MATCH
-      title: / The ACL pattern type
+      title: The ACL pattern type
       type: string
     ACLPermissionType:
       enum:
         - ACL_PERMISSION_TYPE_ANY
         - ACL_PERMISSION_TYPE_ALLOW
         - ACL_PERMISSION_TYPE_DENY
-      title: / ACL permission types
+      title: ACL permission types
       type: string
     ACLResource:
       description: |-
@@ -82,7 +84,7 @@ components:
         - ACL_RESOURCE_SR_SUBJECT
         - ACL_RESOURCE_SR_REGISTRY
         - ACL_RESOURCE_SR_ANY
-      title: / The ACL resource types
+      title: The ACL resource types
       type: string
     ACLResourceFilter:
       properties:
@@ -97,6 +99,15 @@ components:
         resource_type:
           $ref: '#/components/schemas/ACLResource'
       title: A filter to match ACLs for resources
+      type: object
+    AIGateway:
+      description: Cluster's AI Gateway properties.
+      properties:
+        url:
+          description: AI Gateway URL.
+          example: https://ai-gateway.cjb69h1c4vs42pca89s0.clusters.rdpa.co
+          readOnly: true
+          type: string
       type: object
     AWS.Role:
       description: Role identifies AWS role.
@@ -256,11 +267,14 @@ components:
       type: object
     AuthenticationConfiguration:
       properties:
+        plain_configuration:
+          $ref: '#/components/schemas/PlainConfig'
         scram_configuration:
           $ref: '#/components/schemas/ScramConfig'
       title: |-
-        Authentication config.  Currently only supporting SASL/SCRAM,
-        however made as a oneof for expansion
+        Authentication config.  Supports:
+        * SASL/SCRAM
+        * SASL/PLAIN
       type: object
     AzurePeeringSpec:
       properties:
@@ -446,6 +460,8 @@ components:
     Cluster:
       description: Resource describing a Cluster.
       properties:
+        ai_gateway:
+          $ref: '#/components/schemas/AIGateway'
         api_gateway_access:
           $ref: '#/components/schemas/NetworkAccessMode'
         aws_private_link:
@@ -1167,6 +1183,16 @@ components:
           type: string
       title: CreateServerlessPrivateLinkMetadata
       type: object
+    CreateServerlessPrivateLinkOperation:
+      properties:
+        operation:
+          $ref: '#/components/schemas/v1.Operation'
+      type: object
+    CreateServerlessPrivateLinkRequest:
+      properties:
+        serverless_private_link:
+          $ref: '#/components/schemas/ServerlessPrivateLinkCreate'
+      type: object
     CreateServiceAccountRequest:
       description: CreateServiceAccountRequest is the request of CreateServiceAccount.
       properties:
@@ -1453,6 +1479,11 @@ components:
     DeleteServerlessPrivateLinkMetadata:
       description: Resource describing an in-progress DeleteServerlessPrivateLink Operation.
       title: DeleteServerlessPrivateLinkMetadata
+      type: object
+    DeleteServerlessPrivateLinkOperation:
+      properties:
+        operation:
+          $ref: '#/components/schemas/v1.Operation'
       type: object
     DeleteServiceAccountResponse:
       type: object
@@ -1826,6 +1857,11 @@ components:
         serverless_cluster:
           $ref: '#/components/schemas/ServerlessCluster'
       type: object
+    GetServerlessPrivateLinkResponse:
+      properties:
+        serverless_private_link:
+          $ref: '#/components/schemas/ServerlessPrivateLink'
+      type: object
     GetServerlessRegionResponse:
       description: GetServerlessRegionResponse is the response of GetServerlessRegions.
       properties:
@@ -2180,6 +2216,36 @@ components:
           items:
             $ref: '#/components/schemas/ServerlessCluster'
           maxItems: 100
+          type: array
+      type: object
+    ListServerlessPrivateLinksRequest.Filter:
+      properties:
+        name_contains:
+          description: Name of private link. Partial match.
+          type: string
+        resource_group_id:
+          description: Resource group ID of Serverless private link.
+          type: string
+        serverless_region:
+          title: Display name of the region in which Serverless private link is hosted
+          type: string
+        state_in:
+          description: States of Serverless private link.
+          items:
+            $ref: '#/components/schemas/ServerlessPrivateLink.State'
+          type: array
+      type: object
+    ListServerlessPrivateLinksResponse:
+      properties:
+        next_page_token:
+          description: |-
+            Token to retrieve the next page of results, or empty if there are no more
+            results.
+          type: string
+        serverless_private_links:
+          description: The list of serverless private links.
+          items:
+            $ref: '#/components/schemas/ServerlessPrivateLink'
           type: array
       type: object
     ListServerlessRegionsRequest.Filter:
@@ -2777,9 +2843,11 @@ components:
       description: |-
         - PATTERN_TYPE_LITERAL: Must match the filter exactly
          - PATTERN_TYPE_PREFIX: Will match anything that starts with filter
+         - PATTERN_TYPE_PREFIXED: Will match anything that starts with filter
       enum:
         - PATTERN_TYPE_LITERAL
         - PATTERN_TYPE_PREFIX
+        - PATTERN_TYPE_PREFIXED
       title: The matching pattern type
       type: string
     Permission:
@@ -2795,6 +2863,27 @@ components:
           readOnly: true
           type: boolean
       readOnly: true
+      type: object
+    PlainConfig:
+      properties:
+        password:
+          title: Password
+          type: string
+        password_set:
+          readOnly: true
+          title: Indicates that the password has been set
+          type: boolean
+        password_set_at:
+          format: date-time
+          readOnly: true
+          title: |-
+            Timestamp of when the password was last set - only valid if password_set
+            is true
+          type: string
+        username:
+          title: PLAIN username
+          type: string
+      title: PLAIN settings
       type: object
     PlannedDeletion:
       description: Date after which this cluster can and should be deleted.
@@ -3090,7 +3179,7 @@ components:
           type: string
         name:
           description: The unique name of the role.
-          example: billing_admin
+          example: billing-admin
           type: string
         permissions:
           items:
@@ -3105,7 +3194,7 @@ components:
           type: string
         name:
           description: The unique name of the role.
-          example: billing_admin
+          example: billing-admin
           type: string
         permissions:
           items:
@@ -3140,6 +3229,14 @@ components:
       type: object
     Scope:
       properties:
+        dataplane_id:
+          description: |-
+            dataplane_id is required when the scope.resource_type is a dataplane resource:
+            MCPSERVER, AIAGENT, AIGATEWAY_MODEL_PROVIDER, AIGATEWAY_MODEL, AIGATEWAY_PROVIDER_CONFIG, AIGATEWAY_GATEWAY.
+            This can either be the cluster id or the serverless cluster id depending on the dataplane resource.
+            Must be a valid XID (20-character base32 hex encoded string).
+          nullable: true
+          type: string
         resource_id:
           type: string
         resource_type:
@@ -3153,6 +3250,12 @@ components:
         - SCOPE_RESOURCE_TYPE_SERVERLESS_CLUSTER
         - SCOPE_RESOURCE_TYPE_NETWORK_PEERING
         - SCOPE_RESOURCE_TYPE_ORGANIZATION
+        - SCOPE_RESOURCE_TYPE_MCPSERVER
+        - SCOPE_RESOURCE_TYPE_AIAGENT
+        - SCOPE_RESOURCE_TYPE_AIGATEWAY_MODEL_PROVIDER
+        - SCOPE_RESOURCE_TYPE_AIGATEWAY_MODEL
+        - SCOPE_RESOURCE_TYPE_AIGATEWAY_PROVIDER_CONFIG
+        - SCOPE_RESOURCE_TYPE_AIGATEWAY_GATEWAY
       type: string
     ScramConfig:
       properties:
@@ -3389,6 +3492,12 @@ components:
           description: Unique name of the Serverless cluster within the org.
           example: development-ServerlessCluster
           type: string
+        networking_config:
+          $ref: '#/components/schemas/ServerlessNetworkingConfig'
+        private_link_id:
+          description: Private link configuration for the Serverless cluster.
+          nullable: true
+          type: string
         resource_group_id:
           description: Resource group ID of the cluster.
           example: a0b40af9-0250-48ca-9417-783ed127ce42
@@ -3414,6 +3523,12 @@ components:
         id:
           description: ID of the vcluster.
           type: string
+        networking_config:
+          $ref: '#/components/schemas/ServerlessNetworkingConfig'
+        private_link_id:
+          description: Private link configuration for the Serverless cluster.
+          nullable: true
+          type: string
         tags:
           additionalProperties:
             type: string
@@ -3435,6 +3550,92 @@ components:
         - STATE_DISABLED
         - STATE_ENABLED
       type: string
+    ServerlessPrivateLink:
+      properties:
+        aws_config:
+          $ref: '#/components/schemas/ServerlessPrivateLink.AWS'
+        cloudprovider:
+          $ref: '#/components/schemas/CloudProvider'
+        created_at:
+          format: date-time
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        resource_group_id:
+          type: string
+        serverless_region:
+          type: string
+        state:
+          $ref: '#/components/schemas/ServerlessPrivateLink.State'
+        status:
+          $ref: '#/components/schemas/ServerlessPrivateLinkStatus'
+        updated_at:
+          format: date-time
+          type: string
+      type: object
+    ServerlessPrivateLink.AWS:
+      properties:
+        allowed_principals:
+          items:
+            type: string
+          type: array
+      type: object
+    ServerlessPrivateLink.State:
+      description: |2-
+         - STATE_CREATING: Private link is being created.
+         - STATE_READY: Private link is ready to use.
+         - STATE_DELETING: Private link is being deleted.
+         - STATE_FAILED: Private link is in an error state.
+         - STATE_UPDATING: Private link is in an updating state.
+      enum:
+        - STATE_CREATING
+        - STATE_READY
+        - STATE_DELETING
+        - STATE_FAILED
+        - STATE_UPDATING
+      type: string
+    ServerlessPrivateLinkCreate:
+      properties:
+        aws_config:
+          $ref: '#/components/schemas/ServerlessPrivateLinkCreate.AWS'
+        cloudprovider:
+          $ref: '#/components/schemas/CloudProvider'
+        name:
+          type: string
+        resource_group_id:
+          type: string
+        serverless_region:
+          type: string
+      required:
+        - cloudprovider
+      type: object
+    ServerlessPrivateLinkCreate.AWS:
+      properties:
+        allowed_principals:
+          description: |-
+            allowed_principals specifies the list of AWS principals (for example, account
+            ARNs) that can access the Redpanda AWS PrivateLink Endpoint service.
+          items:
+            type: string
+          type: array
+      type: object
+    ServerlessPrivateLinkStatus:
+      properties:
+        aws:
+          $ref: '#/components/schemas/ServerlessPrivateLinkStatus.AWS'
+      title: ServerlessPrivateLinkStatus contains provider-specific status information
+      type: object
+    ServerlessPrivateLinkStatus.AWS:
+      properties:
+        availability_zones:
+          items:
+            type: string
+          type: array
+        vpc_endpoint_service_name:
+          type: string
+      type: object
     ServerlessRegion:
       description: Resource describing a ServerlessRegion.
       properties:
@@ -4030,6 +4231,12 @@ components:
     UpdateServerlessClusterBody:
       description: UpdateServerlessClusterRequest is the request of UpdateServerlessCluster.
       properties:
+        networking_config:
+          $ref: '#/components/schemas/ServerlessNetworkingConfig'
+        private_link_id:
+          description: Private link configuration for the Serverless cluster.
+          nullable: true
+          type: string
         tags:
           additionalProperties:
             type: string
@@ -4042,12 +4249,32 @@ components:
         operation:
           $ref: '#/components/schemas/v1.Operation'
       type: object
+    UpdateServerlessPrivateLinkBody:
+      properties:
+        aws_config:
+          $ref: '#/components/schemas/UpdateServerlessPrivateLinkRequest.AWS'
+      type: object
     UpdateServerlessPrivateLinkMetadata:
       description: Resource describing an in-progress UpdateServerlessPrivateLink Operation.
       properties:
         serverless_private_link_id:
           type: string
       title: UpdateServerlessPrivateLinkMetadata
+      type: object
+    UpdateServerlessPrivateLinkOperation:
+      properties:
+        operation:
+          $ref: '#/components/schemas/v1.Operation'
+      type: object
+    UpdateServerlessPrivateLinkRequest.AWS:
+      properties:
+        allowed_principals:
+          description: |-
+            allowed_principals specifies the list of AWS principals (for example, account
+            ARNs) that can access the Redpanda AWS PrivateLink Endpoint service.
+          items:
+            type: string
+          type: array
       type: object
     UpdateServiceAccountBody:
       properties:
@@ -4799,7 +5026,7 @@ components:
           format: int32
           title: |-
             Fetch partition max bytes.
-            If 0 is provided, defaults to 1 MiB
+            If 0 is provided, defaults to 5 MiB
           type: integer
         fetch_wait_max_ms:
           format: int32
@@ -4900,7 +5127,8 @@ paths:
             application/json:
               example:
                 clusters:
-                  - api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
+                  - ai_gateway: null
+                    api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
                     cloud_provider: CLOUD_PROVIDER_GCP
                     cloud_provider_tags: {}
                     cloud_storage: null
@@ -4931,6 +5159,7 @@ paths:
                     name: my-new-cluster
                     nat_gateways: []
                     network_id: cjb69k1c4vs45df9bee0
+                    oxla: null
                     prometheus:
                       url: https://console-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
                     read_replica_cluster_ids: []
@@ -5239,6 +5468,7 @@ paths:
             application/json:
               example:
                 cluster:
+                  ai_gateway: null
                   api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
                   cloud_provider: CLOUD_PROVIDER_GCP
                   cloud_provider_tags: {}
@@ -5270,6 +5500,7 @@ paths:
                   name: my-new-cluster
                   nat_gateways: []
                   network_id: cjb69k1c4vs45df9bee0
+                  oxla: null
                   prometheus:
                     url: https://console-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
                   read_replica_cluster_ids: []
@@ -5853,6 +6084,7 @@ paths:
                       response:
                         '@type': type.googleapis.com/redpanda.api.controlplane.v1.CreateClusterResponse
                         cluster:
+                          ai_gateway: null
                           api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
                           cloud_provider: CLOUD_PROVIDER_GCP
                           cloud_provider_tags: {}
@@ -5884,6 +6116,7 @@ paths:
                           name: my-new-cluster
                           nat_gateways: []
                           network_id: cjb69k1c4vs45df9bee0
+                          oxla: null
                           prometheus:
                             url: https://console-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
                           read_replica_cluster_ids: []
@@ -5979,6 +6212,7 @@ paths:
                       response:
                         '@type': type.googleapis.com/redpanda.api.controlplane.v1.CreateClusterResponse
                         cluster:
+                          ai_gateway: null
                           api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
                           cloud_provider: CLOUD_PROVIDER_GCP
                           cloud_provider_tags: {}
@@ -6010,6 +6244,7 @@ paths:
                           name: my-new-cluster
                           nat_gateways: []
                           network_id: cjb69k1c4vs45df9bee0
+                          oxla: null
                           prometheus:
                             url: https://console-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
                           read_replica_cluster_ids: []
@@ -6509,9 +6744,24 @@ paths:
               - SCOPE_RESOURCE_TYPE_SERVERLESS_CLUSTER
               - SCOPE_RESOURCE_TYPE_NETWORK_PEERING
               - SCOPE_RESOURCE_TYPE_ORGANIZATION
+              - SCOPE_RESOURCE_TYPE_MCPSERVER
+              - SCOPE_RESOURCE_TYPE_AIAGENT
+              - SCOPE_RESOURCE_TYPE_AIGATEWAY_MODEL_PROVIDER
+              - SCOPE_RESOURCE_TYPE_AIGATEWAY_MODEL
+              - SCOPE_RESOURCE_TYPE_AIGATEWAY_PROVIDER_CONFIG
+              - SCOPE_RESOURCE_TYPE_AIGATEWAY_GATEWAY
             type: string
         - in: query
           name: filter.scope.resource_id
+          schema:
+            type: string
+        - description: |-
+            dataplane_id is required when the scope.resource_type is a dataplane resource:
+            MCPSERVER, AIAGENT, AIGATEWAY_MODEL_PROVIDER, AIGATEWAY_MODEL, AIGATEWAY_PROVIDER_CONFIG, AIGATEWAY_GATEWAY.
+            This can either be the cluster id or the serverless cluster id depending on the dataplane resource.
+            Must be a valid XID (20-character base32 hex encoded string).
+          in: query
+          name: filter.scope.dataplane_id
           schema:
             type: string
         - in: query
@@ -7194,6 +7444,247 @@ paths:
       summary: Get Prometheus Credentials
       tags:
         - Serverless Clusters
+  /v1/serverless/private-links:
+    get:
+      description: List Redpanda Serverless private links. The `filter.` query string parameters find matching private links that meet all specified conditions.
+      operationId: ServerlessPrivateLinkService_ListServerlessPrivateLinks
+      parameters:
+        - description: |-
+            States of Serverless private link.
+
+             - STATE_CREATING: Private link is being created.
+             - STATE_READY: Private link is ready to use.
+             - STATE_DELETING: Private link is being deleted.
+             - STATE_FAILED: Private link is in an error state.
+             - STATE_UPDATING: Private link is in an updating state.
+          in: query
+          name: filter.state_in
+          schema:
+            items:
+              enum:
+                - STATE_CREATING
+                - STATE_READY
+                - STATE_DELETING
+                - STATE_FAILED
+                - STATE_UPDATING
+              type: string
+            type: array
+        - description: Resource group ID of Serverless private link.
+          in: query
+          name: filter.resource_group_id
+          schema:
+            type: string
+        - description: Name of private link. Partial match.
+          in: query
+          name: filter.name_contains
+          schema:
+            type: string
+        - description: Display name of the region in which Serverless private link is hosted
+          in: query
+          name: filter.serverless_region
+          schema:
+            type: string
+        - description: Limit the paginated response to a number of items.
+          in: query
+          name: page_size
+          schema:
+            format: int32
+            type: integer
+        - description: |-
+            Value of the next_page_token field returned by the previous response. If
+            not provided, the system assumes the first page is requested.
+          in: query
+          name: page_token
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListServerlessPrivateLinksResponse'
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: List Serverless private links
+      tags:
+        - Serverless Private Links
+    post:
+      description: Create a Serverless private link. Returns a long-running operation. Call `GET /v1/operations/{id}` to check operation state.
+      operationId: ServerlessPrivateLinkService_CreateServerlessPrivateLink
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateServerlessPrivateLinkRequest'
+        required: true
+        x-originalParamName: body
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateServerlessPrivateLinkOperation'
+          description: Accepted
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Bad Request
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Conflict
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Create Serverless private link
+      tags:
+        - Serverless Private Links
+  /v1/serverless/private-links/{id}:
+    delete:
+      description: Delete Serverless private link. Returns a long-running operation. Call `GET /v1/operations/{id}` to check operation state.
+      operationId: ServerlessPrivateLinkService_DeleteServerlessPrivateLink
+      parameters:
+        - description: The ID of the serverless private link to delete.
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteServerlessPrivateLinkOperation'
+          description: Accepted
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Delete Serverless private link
+      tags:
+        - Serverless Private Links
+    get:
+      description: Get information about a Serverless private link.
+      operationId: ServerlessPrivateLinkService_GetServerlessPrivateLink
+      parameters:
+        - description: The ID of the serverless private link to get.
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetServerlessPrivateLinkResponse'
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Get Serverless private link
+      tags:
+        - Serverless Private Links
+    patch:
+      description: Updates a Serverless private link. Returns a long-running operation. Call `GET /v1/operations/{id}` to check operation state.
+      operationId: ServerlessPrivateLinkService_UpdateServerlessPrivateLink
+      parameters:
+        - description: ID of the private link.
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateServerlessPrivateLinkBody'
+        required: true
+        x-originalParamName: body
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateServerlessPrivateLinkOperation'
+          description: Accepted
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Update Serverless private link
+      tags:
+        - Serverless Private Links
   /v1/serverless/region:
     get:
       description: Get Redpanda Serverless region.
@@ -8087,7 +8578,7 @@ tags:
     name: Network Peerings
   - description: Manage [Redpanda Serverless](https://docs.redpanda.com/redpanda-cloud/get-started/cloud-overview/#redpanda-cloud-cluster-types) clusters. For detailed steps, see [Use the Control Plane API with Serverless](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/).
     name: Serverless Clusters
-  - description: Manage Redpanda Serverless Private Links. For detailed steps and information, see [Use the Control Plane API](https://docs.redpanda.com/redpanda-cloud/manage/api/controlplane/).
+  - description: 'Manage Redpanda Serverless private links. For detailed steps and information, see [Configure AWS PrivateLink with the Cloud API](https://docs.redpanda.com/redpanda-cloud/networking/serverless/aws/privatelink-api/).'
     name: Serverless Private Links
   - description: Get information about available Redpanda regions.
     name: Regions
