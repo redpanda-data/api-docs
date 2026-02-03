@@ -7852,7 +7852,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransformMetadata'
           description: Created
-      summary: Deploy Transform
+      summary: Deploy transform
       tags:
         - Wasm Transforms
   /v1/transforms/{name}:
