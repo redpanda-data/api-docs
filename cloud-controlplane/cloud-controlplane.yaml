@@ -5066,8 +5066,8 @@ components:
         implicit:
           authorizationUrl: https://auth.prd.cloud.redpanda.com/oauth/authorize
           scopes: {}
-          x-client-id: dQjapNIAHhF7EQqQToRla3yEII9sUSap
       type: oauth2
+      x-client-id: dQjapNIAHhF7EQqQToRla3yEII9sUSap
 info:
   description: The Redpanda Cloud Control Plane API allows programmatic management of Redpanda Cloud resources including clusters, networks, and resource groups.
   title: Redpanda Cloud Control Plane API
