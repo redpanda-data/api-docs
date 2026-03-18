@@ -16,6 +16,9 @@ actions:
       - name: ClusterService
         description: |-
           ClusterService provides information about the Redpanda cluster as a whole, such as its configuration, status, and client connections.
+      - name: SecurityService
+        description: |-
+          Use SecurityService to manage SCRAM credentials, role-based access control (RBAC), and OpenID Connect (OIDC) operations.
       - name: ShadowLinkService
         description: |-
           Use ShadowLinkService to manage shadow links between clusters for disaster recovery.
