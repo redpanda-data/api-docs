@@ -41,3 +41,50 @@ actions:
   - target: "$.paths['/redpanda.core.admin.v2.ShadowLinkService/UpdateShadowLink'].post"
     update:
       x-state: "Added in v25.3"
+
+# 26.1 endpoints
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/AddRoleMembers'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/CreateRole'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/CreateScramCredential'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/DeleteRole'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/DeleteScramCredential'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/GetRole'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/GetScramCredential'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/ListCurrentUserRoles'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/ListRoles'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/ListScramCredentials'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/RefreshOidcKeys'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/RemoveRoleMembers'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/ResolveOidcIdentity'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/RevokeOidcSessions'].post"
+    update:
+      x-state: "Added in v26.1"
+  - target: "$.paths['/redpanda.core.admin.v2.SecurityService/UpdateScramCredential'].post"
+    update:
+      x-state: "Added in v26.1"
