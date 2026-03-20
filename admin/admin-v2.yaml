@@ -441,11 +441,13 @@ components:
           title: host
           type: string
         operation:
-          $ref: "#/components/schemas/redpanda.core.common.v1.ACLOperation"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.common.v1.ACLOperation"
           description: The ACL operation to match
           title: operation
         permissionType:
-          $ref: "#/components/schemas/redpanda.core.common.v1.ACLPermissionType"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.common.v1.ACLPermissionType"
           description: The permission type
           title: permission_type
         principal:
@@ -461,11 +463,13 @@ components:
       description: A filter for ACLs
       properties:
         accessFilter:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ACLAccessFilter"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ACLAccessFilter"
           description: The access filter
           title: access_filter
         resourceFilter:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ACLResourceFilter"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ACLResourceFilter"
           description: The resource filter
           title: resource_filter
       title: ACLFilter
@@ -482,11 +486,13 @@ components:
           title: name
           type: string
         patternType:
-          $ref: "#/components/schemas/redpanda.core.common.v1.ACLPattern"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.common.v1.ACLPattern"
           description: The pattern to apply to name
           title: pattern_type
         resourceType:
-          $ref: "#/components/schemas/redpanda.core.common.v1.ACLResource"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.common.v1.ACLResource"
           description: The ACL resource type to match
           title: resource_type
       title: ACLResourceFilter
@@ -517,7 +523,8 @@ components:
       description: AddRoleMembersResponse is the response from the AddRoleMembers RPC.
       properties:
         role:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.Role"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.Role"
           description: The updated Role.
           title: role
       title: AddRoleMembersResponse
@@ -543,7 +550,8 @@ components:
       oneOf:
         - properties:
             plainConfiguration:
-              $ref: "#/components/schemas/redpanda.core.admin.v2.PlainConfig"
+              allOf:
+                - $ref: "#/components/schemas/redpanda.core.admin.v2.PlainConfig"
               description: SASL/PLAIN configuration
               title: plain_configuration
           required:
@@ -551,7 +559,8 @@ components:
           title: plain_configuration
         - properties:
             scramConfiguration:
-              $ref: "#/components/schemas/redpanda.core.admin.v2.ScramConfig"
+              allOf:
+                - $ref: "#/components/schemas/redpanda.core.admin.v2.ScramConfig"
               description: SASL/SCRAM configuration
               title: scram_configuration
           required:
@@ -564,11 +573,13 @@ components:
       description: Other Messages
       properties:
         mechanism:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.AuthenticationMechanism"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.AuthenticationMechanism"
           description: Authentication mechanism
           title: mechanism
         state:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.AuthenticationState"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.AuthenticationState"
           description: Authentication state
           title: state
         userPrincipal:
@@ -600,7 +611,8 @@ components:
       description: The resource for an individual broker within the Kafka Cluster.
       properties:
         adminServer:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.AdminServer"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.AdminServer"
           description: |-
             The admin server information.
 
@@ -608,7 +620,8 @@ components:
           nullable: true
           title: admin_server
         buildInfo:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.BuildInfo"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.BuildInfo"
           description: |-
             The build this broker is running.
 
@@ -641,7 +654,8 @@ components:
       description: Options for syncing consumer offsets
       properties:
         effectiveInterval:
-          $ref: "#/components/schemas/google.protobuf.Duration"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Duration"
           description: The effective interval for the task
           readOnly: true
           title: effective_interval
@@ -652,7 +666,8 @@ components:
           title: group_filters
           type: array
         interval:
-          $ref: "#/components/schemas/google.protobuf.Duration"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Duration"
           description: |-
             Sync interval
              If 0 provided, defaults to 30 seconds
@@ -671,7 +686,8 @@ components:
       description: CreateRoleRequest is the request for the CreateRole RPC.
       properties:
         role:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.Role"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.Role"
           description: The Role to create.
           title: role
       required:
@@ -683,7 +699,8 @@ components:
       description: CreateRoleResponse is the response from the CreateRole RPC.
       properties:
         role:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.Role"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.Role"
           description: The created Role.
           title: role
       title: CreateRoleResponse
@@ -695,7 +712,8 @@ components:
          RPC.
       properties:
         scramCredential:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ScramCredential"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ScramCredential"
           description: The SCRAM credential to create.
           title: scram_credential
       required:
@@ -709,7 +727,8 @@ components:
          RPC.
       properties:
         scramCredential:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ScramCredential"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ScramCredential"
           description: The created SCRAM credential.
           title: scram_credential
       title: CreateScramCredentialResponse
@@ -719,7 +738,8 @@ components:
       description: Create a new shadow link
       properties:
         shadowLink:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
           description: The shadow link to create
           title: shadow_link
       title: CreateShadowLinkRequest
@@ -729,7 +749,8 @@ components:
       description: Response to creating a shadow link
       properties:
         shadowLink:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
           description: The shadow link that was created
           title: shadow_link
       title: CreateShadowLinkResponse
@@ -823,7 +844,8 @@ components:
       description: The response to the FailOverRequest
       properties:
         shadowLink:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
           description: The shadow link that was failed over
           title: shadow_link
       title: FailOverResponse
@@ -855,7 +877,8 @@ components:
       description: GetBrokerResponse is the response from the GetBroker RPC.
       properties:
         broker:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.Broker"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.Broker"
           description: The specified broker and it's information.
           title: broker
       title: GetBrokerResponse
@@ -877,7 +900,8 @@ components:
       description: GetRoleResponse is the response from the GetRole RPC.
       properties:
         role:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.Role"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.Role"
           description: The requested Role.
           title: role
       title: GetRoleResponse
@@ -899,7 +923,8 @@ components:
       description: GetScramCredentialResponse is the response from the GetScramCredential RPC.
       properties:
         scramCredential:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ScramCredential"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ScramCredential"
           description: The requested SCRAM credential.
           title: scram_credential
       title: GetScramCredentialResponse
@@ -921,7 +946,8 @@ components:
       description: Response to getting a shadow link
       properties:
         shadowLink:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
           description: The shadow link that was retrieved
           title: shadow_link
       title: GetShadowLinkResponse
@@ -948,7 +974,8 @@ components:
       description: Response of to getting a shadow topic
       properties:
         shadowTopic:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowTopic"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowTopic"
           title: shadow_topic
       title: GetShadowTopicResponse
       type: object
@@ -980,7 +1007,8 @@ components:
           title: api_key
           type: integer
         inFlightDuration:
-          $ref: "#/components/schemas/google.protobuf.Duration"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Duration"
           description: How long the request has been in-flight since it was received
           title: in_flight_duration
       title: Request
@@ -1012,7 +1040,8 @@ components:
           title: api_versions
           type: object
         authenticationInfo:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.AuthenticationInfo"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.AuthenticationInfo"
           description: Information about the authentication state of the connection
           title: authentication_info
         clientId:
@@ -1038,7 +1067,8 @@ components:
           title: client_software_version
           type: string
         closeTime:
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
           description: |-
             When the connection was closed. This field is set only when the
              connection state is "closed".
@@ -1066,11 +1096,13 @@ components:
           title: group_member_id
           type: string
         idleDuration:
-          $ref: "#/components/schemas/google.protobuf.Duration"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Duration"
           description: How long the connection has been idle (no in-flight requests)
           title: idle_duration
         inFlightRequests:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.InFlightRequests"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.InFlightRequests"
           description: Currently in-flight requests
           title: in_flight_requests
         listenerName:
@@ -1087,11 +1119,13 @@ components:
           title: node_id
           type: integer
         openTime:
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
           description: When the broker accepted the connection
           title: open_time
         recentRequestStatistics:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.RequestStatistics"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.RequestStatistics"
           description: Statistics for previous last one minute window.
           title: recent_request_statistics
         shardId:
@@ -1099,21 +1133,25 @@ components:
           title: shard_id
           type: integer
         source:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.Source"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.Source"
           description: Remote client address of the TCP connection
           title: source
         state:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.KafkaConnectionState"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.KafkaConnectionState"
           description: Lifecycle state of the connection (open/aborting/closed)
           title: state
         tlsInfo:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.TLSInfo"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.TLSInfo"
           description: |-
             Information about the TLS state of the connection (e.g., whether TLS
              encryption is used for this connection)
           title: tls_info
         totalRequestStatistics:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.RequestStatistics"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.RequestStatistics"
           description: Aggregated statistics for the entire connection's lifetime.
           title: total_request_statistics
         transactionalId:
@@ -1366,7 +1404,8 @@ components:
       description: A filter based on the name of a resource
       properties:
         filterType:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.FilterType"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.FilterType"
           description: Include or exclude
           title: filter_type
         name:
@@ -1377,7 +1416,8 @@ components:
           title: name
           type: string
         patternType:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.PatternType"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.PatternType"
           description: Literal or prefix
           title: pattern_type
       title: NameFilter
@@ -1406,7 +1446,8 @@ components:
           title: password_set
           type: boolean
         passwordSetAt:
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
           description: |-
             Timestamp of when the password was last set - only valid if password_set
              is true
@@ -1474,7 +1515,8 @@ components:
       description: RemoveRoleMembersResponse is the response from the RemoveRoleMembers RPC.
       properties:
         role:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.Role"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.Role"
           description: The updated Role.
           title: role
       title: RemoveRoleMembersResponse
@@ -1524,7 +1566,8 @@ components:
       description: ResolveOidcIdentityResponse is the response from the ResolveOidcIdentity RPC.
       properties:
         expire:
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
           description: The timestamp of the token's expiry.
           title: expire
         groups:
@@ -1583,14 +1626,16 @@ components:
       oneOf:
         - properties:
             group:
-              $ref: "#/components/schemas/redpanda.core.admin.v2.RoleGroup"
+              allOf:
+                - $ref: "#/components/schemas/redpanda.core.admin.v2.RoleGroup"
               title: group
           required:
             - group
           title: group
         - properties:
             user:
-              $ref: "#/components/schemas/redpanda.core.admin.v2.RoleUser"
+              allOf:
+                - $ref: "#/components/schemas/redpanda.core.admin.v2.RoleUser"
               title: user
           required:
             - user
@@ -1613,7 +1658,8 @@ components:
       oneOf:
         - properties:
             shadowSchemaRegistryTopic:
-              $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncOptions.ShadowSchemaRegistryTopic"
+              allOf:
+                - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncOptions.ShadowSchemaRegistryTopic"
               title: shadow_schema_registry_topic
           required:
             - shadowSchemaRegistryTopic
@@ -1653,14 +1699,16 @@ components:
           title: password_set
           type: boolean
         passwordSetAt:
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
           description: |-
             Timestamp of when the password was last set - only valid if password_set
              is true
           readOnly: true
           title: password_set_at
         scramMechanism:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ScramMechanism"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ScramMechanism"
           description: The SCRAM mechanism to use
           title: scram_mechanism
         username:
@@ -1674,7 +1722,8 @@ components:
       description: The ScramCredential resource used for SCRAM authentication.
       properties:
         mechanism:
-          $ref: "#/components/schemas/redpanda.core.common.v1.ScramMechanism"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.common.v1.ScramMechanism"
           description: The SCRAM mechanism used for this credential.
           title: mechanism
         name:
@@ -1687,7 +1736,8 @@ components:
           type: string
           writeOnly: true
         passwordSetAt:
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
           description: |-
             The timestamp when the password was last set.
              For passwords set before this feature was implemented, this will return
@@ -1717,12 +1767,14 @@ components:
           title: acl_filters
           type: array
         effectiveInterval:
-          $ref: "#/components/schemas/google.protobuf.Duration"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Duration"
           description: The effective interval for the task
           readOnly: true
           title: effective_interval
         interval:
-          $ref: "#/components/schemas/google.protobuf.Duration"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Duration"
           description: |-
             Sync interval
              If 0 provided, defaults to 30 seconds
@@ -1741,7 +1793,8 @@ components:
       description: A ShadowLink resource
       properties:
         configurations:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLinkConfigurations"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLinkConfigurations"
           description: Shadow link configuration
           title: configurations
         name:
@@ -1749,7 +1802,8 @@ components:
           title: name
           type: string
         status:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLinkStatus"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLinkStatus"
           description: Status of the shadow link
           readOnly: true
           title: status
@@ -1767,7 +1821,8 @@ components:
       description: Options for the client link
       properties:
         authenticationConfiguration:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.AuthenticationConfiguration"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.AuthenticationConfiguration"
           description: Authentication settings
           nullable: true
           title: authentication_configuration
@@ -1884,7 +1939,8 @@ components:
           title: source_cluster_id
           type: string
         tlsSettings:
-          $ref: "#/components/schemas/redpanda.core.common.v1.TLSSettings"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.common.v1.TLSSettings"
           description: TLS settings
           nullable: true
           title: tls_settings
@@ -1897,23 +1953,28 @@ components:
       description: ShadowLink options
       properties:
         clientOptions:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLinkClientOptions"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLinkClientOptions"
           description: Configuration for the internal kafka client
           title: client_options
         consumerOffsetSyncOptions:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ConsumerOffsetSyncOptions"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ConsumerOffsetSyncOptions"
           description: Consumer offset sync options
           title: consumer_offset_sync_options
         schemaRegistrySyncOptions:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncOptions"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncOptions"
           description: Schema Registry sync options
           title: schema_registry_sync_options
         securitySyncOptions:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.SecuritySettingsSyncOptions"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.SecuritySettingsSyncOptions"
           description: Security settings sync options
           title: security_sync_options
         topicMetadataSyncOptions:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.TopicMetadataSyncOptions"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.TopicMetadataSyncOptions"
           description: Topic metadata sync options
           title: topic_metadata_sync_options
       title: ShadowLinkConfigurations
@@ -1937,7 +1998,8 @@ components:
           title: shadow_topics
           type: array
         state:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLinkState"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLinkState"
           title: state
         syncedShadowTopicProperties:
           description: List of topic properties that are being synced
@@ -1976,7 +2038,8 @@ components:
           title: shard
           type: integer
         state:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.TaskState"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.TaskState"
           description: State of the task
           title: state
       title: ShadowLinkTaskStatus
@@ -2000,7 +2063,8 @@ components:
           title: source_topic_name
           type: string
         status:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowTopicStatus"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowTopicStatus"
           description: The status of the shadow topic
           readOnly: true
           title: status
@@ -2035,7 +2099,8 @@ components:
           title: partition_information
           type: array
         state:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowTopicState"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowTopicState"
           description: State of the shadow topic
           title: state
       title: ShadowTopicStatus
@@ -2093,7 +2158,8 @@ components:
               title: auto_create_shadow_topic_filters
               type: array
             effectiveInterval:
-              $ref: "#/components/schemas/google.protobuf.Duration"
+              allOf:
+                - $ref: "#/components/schemas/google.protobuf.Duration"
               description: The effective interval for the task
               readOnly: true
               title: effective_interval
@@ -2113,7 +2179,8 @@ components:
               title: exclude_default
               type: boolean
             interval:
-              $ref: "#/components/schemas/google.protobuf.Duration"
+              allOf:
+                - $ref: "#/components/schemas/google.protobuf.Duration"
               description: |-
                 How often to sync metadata
                  If 0 provided, defaults to 30 seconds
@@ -2152,7 +2219,8 @@ components:
         - oneOf:
             - properties:
                 startAtEarliest:
-                  $ref: "#/components/schemas/redpanda.core.admin.v2.TopicMetadataSyncOptions.EarliestOffset"
+                  allOf:
+                    - $ref: "#/components/schemas/redpanda.core.admin.v2.TopicMetadataSyncOptions.EarliestOffset"
                   description: |-
                     Enables data replication from the earliest offset
                      on the source topic/partition.
@@ -2162,7 +2230,8 @@ components:
               title: start_at_earliest
             - properties:
                 startAtLatest:
-                  $ref: "#/components/schemas/redpanda.core.admin.v2.TopicMetadataSyncOptions.LatestOffset"
+                  allOf:
+                    - $ref: "#/components/schemas/redpanda.core.admin.v2.TopicMetadataSyncOptions.LatestOffset"
                   description: |-
                     Enables data replication from the latest offset
                      on the source topic/partition.
@@ -2172,7 +2241,8 @@ components:
               title: start_at_latest
             - properties:
                 startAtTimestamp:
-                  $ref: "#/components/schemas/google.protobuf.Timestamp"
+                  allOf:
+                    - $ref: "#/components/schemas/google.protobuf.Timestamp"
                   description: |-
                     Enables data replication from the first offset on the
                      source topic/partition where the record's timestamp is
@@ -2227,7 +2297,8 @@ components:
             - integer
             - string
         sourceLastUpdatedTimestamp:
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
           description: Timestamp of the last time the source partition information was updated
           title: source_last_updated_timestamp
       title: TopicPartitionInformation
@@ -2239,11 +2310,13 @@ components:
          RPC.
       properties:
         scramCredential:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ScramCredential"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ScramCredential"
           description: The SCRAM credential to update.
           title: scram_credential
         updateMask:
-          $ref: "#/components/schemas/google.protobuf.FieldMask"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.FieldMask"
           description: |-
             The list of fields to update
              See [AIP-134](https://google.aip.dev/134) for how to use `field_mask`
@@ -2259,7 +2332,8 @@ components:
          RPC.
       properties:
         scramCredential:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ScramCredential"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ScramCredential"
           description: The updated SCRAM credential.
           title: scram_credential
       title: UpdateScramCredentialResponse
@@ -2269,11 +2343,13 @@ components:
       description: Updates a shadow link
       properties:
         shadowLink:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
           description: The shadow link to update
           title: shadow_link
         updateMask:
-          $ref: "#/components/schemas/google.protobuf.FieldMask"
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.FieldMask"
           description: |-
             The list of fields to update
              See [AIP-134](https://google.aip.dev/134) for how to use `field_mask`
@@ -2285,7 +2361,8 @@ components:
       description: Response to the update shadow link request
       properties:
         shadowLink:
-          $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
           description: The shadow link that was updated
           title: shadow_link
       title: UpdateShadowLinkResponse
@@ -2410,7 +2487,8 @@ components:
         - oneOf:
             - properties:
                 tlsFileSettings:
-                  $ref: "#/components/schemas/redpanda.core.common.v1.TLSFileSettings"
+                  allOf:
+                    - $ref: "#/components/schemas/redpanda.core.common.v1.TLSFileSettings"
                   description: Certificates and keys are provided as files
                   title: tls_file_settings
               required:
@@ -2418,7 +2496,8 @@ components:
               title: tls_file_settings
             - properties:
                 tlsPemSettings:
-                  $ref: "#/components/schemas/redpanda.core.common.v1.TLSPEMSettings"
+                  allOf:
+                    - $ref: "#/components/schemas/redpanda.core.common.v1.TLSPEMSettings"
                   description: Certificates and keys are provided in PEM format
                   title: tls_pem_settings
               required:
@@ -2432,7 +2511,7 @@ info:
   title: Redpanda Admin API
   version: v2.0.0
   x-admin-api-major: v2.0.0
-  x-generated-at: 2026-03-18T00:41:12.496Z
+  x-generated-at: 2026-03-19T03:09:31.752Z
   x-generator: redpanda-docs-openapi-bundler
   x-redpanda-core-version: v26.1.1-rc2
 openapi: 3.1.0
