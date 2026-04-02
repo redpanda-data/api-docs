@@ -108,6 +108,11 @@ components:
           example: https://ai-gateway.cjb69h1c4vs42pca89s0.clusters.rdpa.co
           readOnly: true
           type: string
+        v2_url:
+          description: AI Gateway v2 URL.
+          example: https://aigw.cjb69h1c4vs42pca89s0.clusters.rdpa.co
+          readOnly: true
+          type: string
       type: object
     AWS.Role:
       description: Role identifies AWS role.
@@ -556,6 +561,8 @@ components:
           description: Resource group ID of the cluster.
           example: a0b40af9-0250-48ca-9417-783ed127ce42
           type: string
+        sandbox:
+          $ref: '#/components/schemas/Sandbox'
         schema_registry:
           $ref: '#/components/schemas/Cluster.SchemaRegistryStatus'
         state:
@@ -1053,6 +1060,17 @@ components:
         cluster:
           $ref: '#/components/schemas/Cluster'
       type: object
+    CreateGroupRequest:
+      description: CreateGroupRequest is the request of CreateGroup.
+      properties:
+        group:
+          $ref: '#/components/schemas/GroupCreate'
+      type: object
+    CreateGroupResponse:
+      properties:
+        group:
+          $ref: '#/components/schemas/Group'
+      type: object
     CreateNetworkMetadata:
       description: Resource describing an in-progress CreateNetwork Operation.
       properties:
@@ -1348,6 +1366,10 @@ components:
     CustomerManagedResourcesUpdate.AWS:
       description: AWS resources managed by user.
       properties:
+        oxla_node_group_instance_profile:
+          $ref: '#/components/schemas/AWSInstanceProfile'
+        oxla_security_group:
+          $ref: '#/components/schemas/AWSSecurityGroup'
         redpanda_connect_node_group_instance_profile:
           $ref: '#/components/schemas/AWSInstanceProfile'
         redpanda_connect_security_group:
@@ -1429,6 +1451,8 @@ components:
       type: object
     DeleteClusterResponse:
       description: DeleteClusterResponse is the request of DeleteCluster.
+      type: object
+    DeleteGroupResponse:
       type: object
     DeleteNetworkMetadata:
       description: Resource describing an in-progress DeleteNetwork Operation.
@@ -1801,6 +1825,11 @@ components:
         GetCurrentOrganizationResponse the response of the the
         GetCurrentOrganization rpc
       type: object
+    GetGroupResponse:
+      properties:
+        group:
+          $ref: '#/components/schemas/Group'
+      type: object
     GetNetworkPeeringRequest:
       properties:
         id:
@@ -1893,6 +1922,46 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+      type: object
+    Group:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        description:
+          description: The description of the group.
+          example: Engineering team group for RBAC.
+          type: string
+        id:
+          type: string
+        name:
+          description: The unique name of the group.
+          example: engineering
+          type: string
+      type: object
+    GroupCreate:
+      properties:
+        description:
+          description: The description of the group.
+          example: Engineering team group for RBAC.
+          nullable: true
+          type: string
+        name:
+          description: The unique name of the group.
+          example: engineering
+          type: string
+      type: object
+    GroupUpdate:
+      properties:
+        description:
+          description: The description of the group.
+          example: Engineering team group for RBAC.
+          nullable: true
+          type: string
+        name:
+          description: The unique name of the group.
+          example: engineering
+          type: string
       type: object
     HTTPProxySpec:
       description: Cluster's HTTP Proxy properties. See [Use Redpanda with the HTTP Proxy API](https://docs.redpanda.com/redpanda-cloud/develop/http-proxy/) and the [HTTP Proxy API reference](https://docs.redpanda.com/api/doc/http-proxy) for more information.
@@ -2032,6 +2101,23 @@ components:
           type: array
         next_page_token:
           description: Page token to fetch the next page. The value can be used as `next_page_token` in the next call to this endpoint.
+          type: string
+      type: object
+    ListGroupsRequest.Filter:
+      properties:
+        name:
+          type: string
+      type: object
+    ListGroupsResponse:
+      description: ListGroupsResponse is the response of ListGroups.
+      properties:
+        groups:
+          description: Groups matching the request
+          items:
+            $ref: '#/components/schemas/Group'
+          maxItems: 100
+          type: array
+        next_page_token:
           type: string
       type: object
     ListNetworkPeeringsResponse:
@@ -2852,6 +2938,9 @@ components:
       type: string
     Permission:
       properties:
+        description:
+          description: A human-readable description of what the permission grants.
+          type: string
         name:
           type: string
       type: object
@@ -3213,6 +3302,15 @@ components:
           type: boolean
       title: SASL configuration
       type: object
+    Sandbox:
+      description: Cluster's sandbox properties.
+      properties:
+        url:
+          description: Sandbox URL.
+          example: https://sandbox.cjb69h1c4vs42pca89s0.clusters.rdpa.co
+          readOnly: true
+          type: string
+      type: object
     SchemaRegistrySpec:
       description: Cluster's Schema Registry properties. See the [Schema Registry overview](https://docs.redpanda.com/redpanda-cloud/manage/schema-reg/schema-reg-overview/) and the [Schema Registry API reference](https://docs.redpanda.com/api/doc/schema-registry) for more information.
       properties:
@@ -3256,6 +3354,7 @@ components:
         - SCOPE_RESOURCE_TYPE_AIGATEWAY_MODEL
         - SCOPE_RESOURCE_TYPE_AIGATEWAY_PROVIDER_CONFIG
         - SCOPE_RESOURCE_TYPE_AIGATEWAY_GATEWAY
+        - SCOPE_RESOURCE_TYPE_KAFKA_TOPIC
       type: string
     ScramConfig:
       properties:
@@ -4108,7 +4207,7 @@ components:
             - `redpanda.remote.allowgaps`
             - `redpanda.virtual.cluster.id`
             - `redpanda.leaders.preference`
-            - `redpanda.cloud_topic.enabled`
+            - `redpanda.storage.mode`
 
             This list is a list of properties in addition to the default properties
             that will be synced.  See `exclude_default`.
@@ -4190,6 +4289,19 @@ components:
         - UPDATE_CLUSTER_TYPE_CUSTOMER_CONFIG
         - UPDATE_CLUSTER_TYPE_SCALING
       type: string
+    UpdateGroupBody:
+      properties:
+        group:
+          $ref: '#/components/schemas/GroupUpdate'
+        update_mask:
+          type: string
+      title: UpdateGroupRequest is the request of UpdateGroup
+      type: object
+    UpdateGroupResponse:
+      properties:
+        group:
+          $ref: '#/components/schemas/Group'
+      type: object
     UpdateOrganizationResponse:
       properties:
         organization:
@@ -4597,6 +4709,10 @@ components:
         k8s_cluster_role:
           $ref: '#/components/schemas/AWS.Role'
         node_security_group:
+          $ref: '#/components/schemas/AWSSecurityGroup'
+        oxla_node_group_instance_profile:
+          $ref: '#/components/schemas/AWSInstanceProfile'
+        oxla_security_group:
           $ref: '#/components/schemas/AWSSecurityGroup'
         permissions_boundary_policy:
           $ref: '#/components/schemas/Policy'
@@ -5168,6 +5284,7 @@ paths:
                     redpanda_node_count: 0
                     region: us-west1
                     resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+                    sandbox: null
                     schema_registry:
                       all_urls: null
                       mtls: null
@@ -5509,6 +5626,7 @@ paths:
                   redpanda_node_count: 0
                   region: us-west1
                   resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+                  sandbox: null
                   schema_registry:
                     all_urls: null
                     mtls: null
@@ -5545,6 +5663,195 @@ paths:
       summary: Get cluster
       tags:
         - Clusters
+  /v1/groups:
+    get:
+      description: List groups in your organization.
+      operationId: GroupService_ListGroups
+      parameters:
+        - in: query
+          name: filter.name
+          schema:
+            type: string
+        - in: query
+          name: page_size
+          schema:
+            format: int32
+            type: integer
+        - in: query
+          name: page_token
+          schema:
+            type: string
+        - in: query
+          name: read_mask
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListGroupsResponse'
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: List groups
+      tags:
+        - Control Plane Groups
+    post:
+      description: Create a Redpanda Cloud Group.
+      operationId: GroupService_CreateGroup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGroupRequest'
+        description: CreateGroupRequest is the request of CreateGroup.
+        required: true
+        x-originalParamName: body
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateGroupResponse'
+          description: Group Created
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Create group
+      tags:
+        - Control Plane Groups
+  /v1/groups/{id}:
+    delete:
+      description: Delete a group.
+      operationId: GroupService_DeleteGroup
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          content:
+            application/json:
+              schema: {}
+          description: Group was deleted successfully
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Delete group
+      tags:
+        - Control Plane Groups
+    get:
+      description: Get group details.
+      operationId: GroupService_GetGroup
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGroupResponse'
+          description: Ok
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Get group
+      tags:
+        - Control Plane Groups
+    patch:
+      description: Update a Redpanda Cloud group.
+      operationId: GroupService_UpdateGroup
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGroupBody'
+        required: true
+        x-originalParamName: body
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateGroupResponse'
+          description: Ok
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Update group
+      tags:
+        - Control Plane Groups
   /v1/network/{network_id}/network-peerings:
     get:
       description: List Redpanda networks peerings.
@@ -6125,6 +6432,7 @@ paths:
                           redpanda_node_count: 0
                           region: us-west1
                           resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+                          sandbox: null
                           schema_registry:
                             all_urls: null
                             mtls: null
@@ -6253,6 +6561,7 @@ paths:
                           redpanda_node_count: 0
                           region: us-west1
                           resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+                          sandbox: null
                           schema_registry:
                             all_urls: null
                             mtls: null
@@ -6750,6 +7059,7 @@ paths:
               - SCOPE_RESOURCE_TYPE_AIGATEWAY_MODEL
               - SCOPE_RESOURCE_TYPE_AIGATEWAY_PROVIDER_CONFIG
               - SCOPE_RESOURCE_TYPE_AIGATEWAY_GATEWAY
+              - SCOPE_RESOURCE_TYPE_KAFKA_TOPIC
             type: string
         - in: query
           name: filter.scope.resource_id
@@ -8578,7 +8888,7 @@ tags:
     name: Network Peerings
   - description: Manage [Redpanda Serverless](https://docs.redpanda.com/redpanda-cloud/get-started/cloud-overview/#redpanda-cloud-cluster-types) clusters. For detailed steps, see [Use the Control Plane API with Serverless](https://docs.redpanda.com/redpanda-cloud/manage/api/cloud-serverless-controlplane-api/).
     name: Serverless Clusters
-  - description: 'Manage Redpanda Serverless private links. For detailed steps and information, see [Configure AWS PrivateLink with the Cloud API](https://docs.redpanda.com/redpanda-cloud/networking/serverless/aws/privatelink-api/).'
+  - description: 'Manage Redpanda Serverless private links. For detailed steps and information, see [Networking: Serverless](https://docs.redpanda.com/redpanda-cloud/networking/serverless).'
     name: Serverless Private Links
   - description: Get information about available Redpanda regions.
     name: Regions
@@ -8589,6 +8899,8 @@ tags:
   - name: ShadowLinkService
   - description: Manage Redpanda Cloud shadow links for data replication.
     name: Shadow Links
+  - description: Manage Redpanda Cloud groups.
+    name: Control Plane Groups
   - description: See information about the organization the current user belongs to.
     name: Organization
   - description: Manage your Redpanda Cloud organization permissions.

@@ -7834,7 +7834,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              example: '{"name":"redact-orders", "input_topic_name":"orders", "output_topic_names":["orders-redacted"], "environment_variables":[{"key":"LOGGER_LEVEL", "value":"DEBUG"}]}'
+              example: '{"name":"redact-orders","input_topic_name":"orders","output_topic_names":["orders-redacted"],"environment_variables":[{"key":"LOGGER_LEVEL","value":"DEBUG"}]}'
               properties:
                 metadata:
                   $ref: '#/components/schemas/DeployTransformRequest'
@@ -7852,7 +7852,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransformMetadata'
           description: Created
-      summary: Deploy transform
+      summary: Deploy Transform
       tags:
         - Wasm Transforms
   /v1/transforms/{name}:
