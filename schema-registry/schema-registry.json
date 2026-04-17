@@ -24,6 +24,7 @@
           },
           {
             "name": "defaultToGlobal",
+            "description": "If true, return the global compatibility level if the subject doesn't have a level set.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -570,7 +571,7 @@
     },
     "/schemas/ids/{id}/versions": {
       "get": {
-        "summary": "Get a list of subject-version for the schema ID.",
+        "summary": "Get a list of subject-version pairs for the schema ID.",
         "operationId": "get_schemas_ids_id_versions",
         "parameters": [
           {
@@ -1545,7 +1546,7 @@
       },
       "post": {
         "summary": "Create ACLs",
-        "description": "Create new ACL rules.",
+        "description": "Create one or more ACL rules. The request body is an array of ACL definitions.",
         "operationId": "post_security_acls",
         "parameters": [
           {
@@ -1689,7 +1690,7 @@
       "properties": {
         "properties": {
           "type": "object",
-          "description": "Accepted values may be string, number, or boolean, they are converted to strings.",
+          "description": "Accepted values may be string, number, or boolean. All values are converted to strings.",
           "additionalProperties": {
             "type": "string"
           }
