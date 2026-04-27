@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Redpanda Schema Registry API",
-    "version": "1.1.2"
+    "version": "1.2.0"
   },
   "host": "localhost:8081",
   "basePath": "/",
@@ -17,12 +17,14 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject to get the config for. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context. Use :.<context>: for context-level config.",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
             "name": "defaultToGlobal",
+            "description": "If true, return the global compatibility level if the subject doesn't have a level set.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -59,6 +61,7 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject to set the config for. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context. Use :.<context>: for context-level config.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -97,6 +100,7 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject to delete the config for. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context. Use :.<context>: for context-level config.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -275,7 +279,7 @@
         "parameters": [
           {
             "name": "subject",
-            "description": "The subject to get the mode for.",
+            "description": "The subject to get the mode for. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context. Use :.<context>: for context-level mode.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -325,7 +329,7 @@
         "parameters": [
           {
             "name": "subject",
-            "description": "The subject to set the mode for.",
+            "description": "The subject to set the mode for. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context. Use :.<context>: for context-level mode.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -383,7 +387,7 @@
         "parameters": [
           {
             "name": "subject",
-            "description": "The subject to delete the mode for.",
+            "description": "The subject to delete the mode for. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context. Use :.<context>: for context-level mode.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -462,6 +466,20 @@
             "required": false,
             "type": "string",
             "description": "Redpanda version 25.2 or later. For Avro and Protobuf schemas only. Supported values: an empty string `''` returns the schema in its current format (default), and `serialized` (Protobuf only) returns the schema in its Base64-encoded wire binary format. Unsupported values return a 501 error."
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Qualified subject to scope the lookup. Use :.<context>: for context-only lookup, or :.<context>:<subject> to also verify the schema is associated with that subject. Defaults to searching the default context if unspecified."
+          },
+          {
+            "name": "referenceFormat",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "If set to 'qualified', schema references are returned in context-qualified form. Otherwise, unqualified references are returned."
           }
         ],
         "produces": [
@@ -473,7 +491,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/schema_def"
+              "$ref": "#/definitions/schema_def_response"
             }
           },
           "404": {
@@ -497,9 +515,63 @@
         }
       }
     },
+    "/schemas/ids/{id}/schema": {
+      "get": {
+        "summary": "Get the raw schema by ID.",
+        "operationId": "get_schemas_ids_id_schema",
+        "description": "Retrieves only the schema identified by the input ID, without additional metadata.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Qualified subject to scope the lookup. Use :.<context>: for context-only lookup, or :.<context>:<subject> to also verify the schema is associated with that subject. Defaults to searching the default context if unspecified."
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Desired output format, dependent on schema type."
+          }
+        ],
+        "produces": [
+          "application/vnd.schemaregistry.v1+json",
+          "application/vnd.schemaregistry+json",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Raw schema string",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Not Found: Schema not found",
+            "schema": {
+              "$ref": "#/definitions/error_body"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error_body"
+            }
+          }
+        }
+      }
+    },
     "/schemas/ids/{id}/versions": {
       "get": {
-        "summary": "Get a list of subject-version for the schema ID.",
+        "summary": "Get a list of subject-version pairs for the schema ID.",
         "operationId": "get_schemas_ids_id_versions",
         "parameters": [
           {
@@ -507,6 +579,13 @@
             "in": "path",
             "required": true,
             "type": "integer"
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Qualified subject to scope the lookup. Use :.<context>: for context-only lookup, or :.<context>:<subject> to also verify the schema is associated with that subject. Defaults to searching the default context if unspecified."
           }
         ],
         "produces": [
@@ -563,6 +642,13 @@
             "in": "query",
             "required": false,
             "type": "boolean"
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Qualified subject to scope the lookup. Use :.<context>: for context-only lookup, or :.<context>:<subject> to also verify the schema is associated with that subject. Defaults to searching the default context if unspecified."
           }
         ],
         "produces": [
@@ -608,6 +694,7 @@
           },
           {
             "name": "subjectPrefix",
+            "description": "If specified, only return subjects that start with the given prefix. A plain prefix (e.g. \"my-\") matches subjects in the default context. A context-qualified prefix \":.<context>:<prefix>\" (e.g. \":.my-context:my-\") matches within a specific context. The wildcard context \":*:<prefix>\" (e.g. \":*:my-\") matches across all contexts. Use just the context qualifier (e.g. \":.my-context:\" or \":*:\") to list all subjects in a context.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -649,6 +736,7 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject name. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -676,7 +764,7 @@
             "name": "schema_def",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/schema_def"
+              "$ref": "#/definitions/schema_def_request"
             }
           }
         ],
@@ -689,7 +777,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/stored_schema"
+              "$ref": "#/definitions/stored_schema_response"
             }
           },
           "404": {
@@ -730,6 +818,7 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject name. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -778,6 +867,7 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject name. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -829,6 +919,7 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject name. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -840,10 +931,10 @@
             "type": "boolean"
           },
           {
-            "name": "schema_def",
+            "name": "request",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/stored_schema"
+              "$ref": "#/definitions/stored_schema_request"
             }
           }
         ],
@@ -856,12 +947,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "integer"
-                }
-              }
+              "$ref": "#/definitions/post_subject_versions_response"
             }
           },
           "409": {
@@ -892,6 +978,7 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject name. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -926,7 +1013,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/stored_schema"
+              "$ref": "#/definitions/get_subject_versions_version_response"
             }
           },
           "404": {
@@ -961,6 +1048,7 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject name. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1020,6 +1108,7 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject name. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1091,6 +1180,7 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject name. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1147,6 +1237,7 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject name. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1207,6 +1298,7 @@
         "parameters": [
           {
             "name": "subject",
+            "description": "The subject name. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1222,7 +1314,7 @@
             "name": "schema_def",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/schema_def"
+              "$ref": "#/definitions/schema_def_request"
             }
           },
           {
@@ -1276,6 +1368,79 @@
           },
           "503": {
             "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/contexts": {
+      "get": {
+        "summary": "List all contexts.",
+        "operationId": "get_contexts",
+        "parameters": [],
+        "produces": [
+          "application/vnd.schemaregistry.v1+json",
+          "application/vnd.schemaregistry+json",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error_body"
+            }
+          }
+        }
+      }
+    },
+    "/contexts/{context}": {
+      "delete": {
+        "summary": "Delete a context.",
+        "description": "Deletes the specified context if it is empty. Subjects must be permanently deleted before the context can be deleted.",
+        "operationId": "delete_context",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The context to delete (e.g., .staging). Cannot delete the default context.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/vnd.schemaregistry.v1+json",
+          "application/vnd.schemaregistry+json",
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found: Context not found",
+            "schema": {
+              "$ref": "#/definitions/error_body"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity: Context not empty",
+            "schema": {
+              "$ref": "#/definitions/error_body"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error_body"
+            }
           }
         }
       }
@@ -1381,7 +1546,7 @@
       },
       "post": {
         "summary": "Create ACLs",
-        "description": "Create new ACL rules.",
+        "description": "Create one or more ACL rules. The request body is an array of ACL definitions.",
         "operationId": "post_security_acls",
         "parameters": [
           {
@@ -1502,7 +1667,48 @@
         }
       }
     },
-    "schema_def": {
+    "schema_reference": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name used to reference this schema in the dependent schema definition."
+        },
+        "subject": {
+          "type": "string",
+          "description": "The subject name of the referenced schema. Use [:.<context>:]<subject> for context-qualified subjects, or just <subject> for the default context."
+        },
+        "version": {
+          "type": "integer",
+          "description": "The version of the referenced schema."
+        }
+      }
+    },
+    "schema_metadata_request": {
+      "type": "object",
+      "description": "A map of user-defined properties associated with this schema",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Accepted values may be string, number, or boolean. All values are converted to strings.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "schema_metadata_response": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "schema_def_request": {
       "type": "object",
       "properties": {
         "schema": {
@@ -1514,23 +1720,35 @@
         "references": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "subject": {
-                "type": "string"
-              },
-              "version": {
-                "type": "integer"
-              }
-            }
+            "$ref": "#/definitions/schema_reference"
           }
+        },
+        "metadata": {
+          "$ref": "#/definitions/schema_metadata_request"
         }
       }
     },
-    "stored_schema": {
+    "schema_def_response": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "type": "string"
+        },
+        "schemaType": {
+          "type": "string"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/schema_reference"
+          }
+        },
+        "metadata": {
+          "$ref": "#/definitions/schema_metadata_response"
+        }
+      }
+    },
+    "stored_schema_request": {
       "type": "object",
       "properties": {
         "subject": {
@@ -1548,19 +1766,98 @@
         "references": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "subject": {
-                "type": "string"
-              },
-              "version": {
-                "type": "integer"
-              }
-            }
+            "$ref": "#/definitions/schema_reference"
           }
+        },
+        "metadata": {
+          "$ref": "#/definitions/schema_metadata_request"
+        },
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "stored_schema_response": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "schemaType": {
+          "type": "string"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/schema_reference"
+          }
+        },
+        "metadata": {
+          "$ref": "#/definitions/schema_metadata_response"
+        },
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "get_subject_versions_version_response": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "schemaType": {
+          "type": "string"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/schema_reference"
+          }
+        },
+        "metadata": {
+          "$ref": "#/definitions/schema_metadata_response"
+        },
+        "schema": {
+          "type": "string"
+        },
+        "deleted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "post_subject_versions_response": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "version": {
+          "type": "integer"
+        },
+        "schemaType": {
+          "type": "string"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/schema_reference"
+          }
+        },
+        "metadata": {
+          "$ref": "#/definitions/schema_metadata_response"
         },
         "schema": {
           "type": "string"
@@ -1574,7 +1871,15 @@
           "type": "string",
           "description": "Compatibility level",
           "example": "FULL_TRANSITIVE",
-          "enum": ["BACKWARD", "BACKWARD_TRANSITIVE", "FORWARD", "FORWARD_TRANSITIVE", "FULL", "FULL_TRANSITIVE", "NONE"]
+          "enum": [
+            "BACKWARD",
+            "BACKWARD_TRANSITIVE",
+            "FORWARD",
+            "FORWARD_TRANSITIVE",
+            "FULL",
+            "FULL_TRANSITIVE",
+            "NONE"
+          ]
         }
       }
     },
@@ -1585,7 +1890,15 @@
           "type": "string",
           "description": "Compatibility level",
           "example": "FULL_TRANSITIVE",
-          "enum": ["BACKWARD", "BACKWARD_TRANSITIVE", "FORWARD", "FORWARD_TRANSITIVE", "FULL", "FULL_TRANSITIVE", "NONE"]
+          "enum": [
+            "BACKWARD",
+            "BACKWARD_TRANSITIVE",
+            "FORWARD",
+            "FORWARD_TRANSITIVE",
+            "FULL",
+            "FULL_TRANSITIVE",
+            "NONE"
+          ]
         }
       }
     },
