@@ -100,20 +100,6 @@ components:
           $ref: '#/components/schemas/ACLResource'
       title: A filter to match ACLs for resources
       type: object
-    AIGateway:
-      description: Cluster's AI Gateway properties.
-      properties:
-        url:
-          description: AI Gateway URL.
-          example: https://ai-gateway.cjb69h1c4vs42pca89s0.clusters.rdpa.co
-          readOnly: true
-          type: string
-        v2_url:
-          description: AI Gateway v2 URL.
-          example: https://aigw.cjb69h1c4vs42pca89s0.clusters.rdpa.co
-          readOnly: true
-          type: string
-      type: object
     AWS.Role:
       description: Role identifies AWS role.
       properties:
@@ -267,6 +253,15 @@ components:
       required:
         - arn
       title: Security Group
+      type: object
+    AdpApi:
+      description: Cluster's ADP API properties.
+      properties:
+        url:
+          description: ADP API URL.
+          example: https://adp-api.cjb69h1c4vs42pca89s0.clusters.rdpa.co
+          readOnly: true
+          type: string
       type: object
     Anytime:
       type: object
@@ -465,8 +460,10 @@ components:
     Cluster:
       description: Resource describing a Cluster.
       properties:
+        adp_api:
+          $ref: '#/components/schemas/AdpApi'
         ai_gateway:
-          $ref: '#/components/schemas/AIGateway'
+          $ref: '#/components/schemas/Cluster.AIGateway'
         api_gateway_access:
           $ref: '#/components/schemas/NetworkAccessMode'
         aws_private_link:
@@ -586,6 +583,20 @@ components:
             type: string
           type: array
       title: Cluster
+      type: object
+    Cluster.AIGateway:
+      description: Cluster's AI Gateway properties.
+      properties:
+        url:
+          description: AI Gateway URL.
+          example: https://ai-gateway.cjb69h1c4vs42pca89s0.clusters.rdpa.co
+          readOnly: true
+          type: string
+        v2_url:
+          description: AI Gateway v2 URL.
+          example: https://aigw.cjb69h1c4vs42pca89s0.clusters.rdpa.co
+          readOnly: true
+          type: string
       type: object
     Cluster.CloudStorage:
       properties:
@@ -3457,6 +3468,8 @@ components:
     ServerlessCluster:
       description: Resource describing a ServerlessCluster.
       properties:
+        ai_gateway:
+          $ref: '#/components/schemas/ServerlessCluster.AIGateway'
         console_private_url:
           readOnly: true
           type: string
@@ -3510,6 +3523,16 @@ components:
           format: date-time
           type: string
       title: ServerlessCluster
+      type: object
+    ServerlessCluster.AIGateway:
+      description: Cluster's AI Gateway properties.
+      properties:
+        v2_url:
+          description: AI Gateway v2 URL.
+          example: https://d1d9risv0c3i7qbbeoc0.aigw.adp.us-east-1.mpx.prd.cloud.redpanda.com
+          readOnly: true
+          type: string
+      readOnly: true
       type: object
     ServerlessCluster.DataplaneAPI:
       description: Cluster's Data Plane API properties.
@@ -5243,7 +5266,8 @@ paths:
             application/json:
               example:
                 clusters:
-                  - ai_gateway: null
+                  - adp_api: null
+                    ai_gateway: null
                     api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
                     cloud_provider: CLOUD_PROVIDER_GCP
                     cloud_provider_tags: {}
@@ -5585,6 +5609,7 @@ paths:
             application/json:
               example:
                 cluster:
+                  adp_api: null
                   ai_gateway: null
                   api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
                   cloud_provider: CLOUD_PROVIDER_GCP
@@ -6114,6 +6139,7 @@ paths:
                     cluster_type: TYPE_DEDICATED
                     created_at: "2023-01-01T00:00:00Z"
                     customer_managed_resources: null
+                    egress_spec: null
                     id: cjd533pc4vs8pjdkrrv0
                     name: my-network
                     region: us-west1
@@ -6257,6 +6283,7 @@ paths:
                   cluster_type: TYPE_DEDICATED
                   created_at: "2023-01-01T00:00:00Z"
                   customer_managed_resources: null
+                  egress_spec: null
                   id: cjd533pc4vs8pjdkrrv0
                   name: my-network
                   region: us-west1
@@ -6391,6 +6418,7 @@ paths:
                       response:
                         '@type': type.googleapis.com/redpanda.api.controlplane.v1.CreateClusterResponse
                         cluster:
+                          adp_api: null
                           ai_gateway: null
                           api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
                           cloud_provider: CLOUD_PROVIDER_GCP
@@ -6469,6 +6497,7 @@ paths:
                           cluster_type: TYPE_DEDICATED
                           created_at: "2023-01-01T00:00:00Z"
                           customer_managed_resources: null
+                          egress_spec: null
                           id: cjb6capc4vs0m91gh3kg
                           name: my-new-cluster
                           region: us-central1
@@ -6520,6 +6549,7 @@ paths:
                       response:
                         '@type': type.googleapis.com/redpanda.api.controlplane.v1.CreateClusterResponse
                         cluster:
+                          adp_api: null
                           ai_gateway: null
                           api_gateway_access: NETWORK_ACCESS_MODE_UNSPECIFIED
                           cloud_provider: CLOUD_PROVIDER_GCP
@@ -7468,7 +7498,8 @@ paths:
               example:
                 next_page_token: some-opaque-string
                 serverless_clusters:
-                  - console_private_url: ""
+                  - ai_gateway: null
+                    console_private_url: ""
                     console_url: https://console-d1d9risv0c3i7qbbeoc0.any.us-east-1.mpx.prd.cloud.redpanda.com
                     created_at: "2023-01-01T00:00:00Z"
                     dataplane_api:
@@ -7623,6 +7654,7 @@ paths:
             application/json:
               example:
                 serverless_cluster:
+                  ai_gateway: null
                   console_private_url: ""
                   console_url: https://console-d1d9risv0c3i7qbbeoc0.any.us-east-1.mpx.prd.cloud.redpanda.com
                   created_at: "2023-01-01T00:00:00Z"
