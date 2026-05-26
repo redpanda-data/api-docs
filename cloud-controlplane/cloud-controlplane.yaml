@@ -505,6 +505,12 @@ components:
         desired_redpanda_version:
           description: Desired Redpanda version of the cluster.
           type: string
+        gcp_global_access_api_gateway_enabled:
+          description: |-
+            gcp_global_access_api_gateway_enabled reports whether global access is enabled on the internal
+            load balancer serving the Console/API Gateway endpoint. Applicable only for GCP.
+          nullable: true
+          type: boolean
         gcp_global_access_enabled:
           nullable: true
           title: gcp_enable_global_access control if global access is enabled on the seed load balancer, applicable only for GCP. Default is false
@@ -764,6 +770,11 @@ components:
         gcp_enable_global_access:
           title: gcp_enable_global_access control if global access is enabled on the seed load balancer, applicable only for GCP. Default is false
           type: boolean
+        gcp_enable_global_access_api_gateway:
+          description: |-
+            gcp_enable_global_access_api_gateway controls if global access is enabled on the internal load balancer
+            serving the Console/API Gateway endpoint. Applicable only for GCP. Default is false.
+          type: boolean
         gcp_private_service_connect:
           $ref: '#/components/schemas/GCPPrivateServiceConnectSpec'
         http_proxy:
@@ -904,6 +915,12 @@ components:
           $ref: '#/components/schemas/ClusterUpdate.ClusterConfiguration'
         customer_managed_resources:
           $ref: '#/components/schemas/CustomerManagedResourcesUpdate'
+        gcp_enable_global_access_api_gateway:
+          description: |-
+            gcp_enable_global_access_api_gateway controls if global access is enabled on the internal load balancer
+            serving the Console/API Gateway endpoint. Applicable only for GCP. Default is false.
+            Maps to enable_global_access_console in the internal RedpandaSpec connectivity spec.
+          type: boolean
         gcp_private_service_connect:
           $ref: '#/components/schemas/GCPPrivateServiceConnectSpec'
         http_proxy:
@@ -5481,6 +5498,12 @@ paths:
                   $ref: '#/components/schemas/ClusterUpdate.ClusterConfiguration'
                 customer_managed_resources:
                   $ref: '#/components/schemas/CustomerManagedResourcesUpdate'
+                gcp_enable_global_access_api_gateway:
+                  description: |-
+                    gcp_enable_global_access_api_gateway controls if global access is enabled on the internal load balancer
+                    serving the Console/API Gateway endpoint. Applicable only for GCP. Default is false.
+                    Maps to enable_global_access_console in the internal RedpandaSpec connectivity spec.
+                  type: boolean
                 gcp_private_service_connect:
                   $ref: '#/components/schemas/GCPPrivateServiceConnectSpec'
                 http_proxy:
