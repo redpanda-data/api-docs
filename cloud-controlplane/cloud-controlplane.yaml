@@ -1379,11 +1379,11 @@ components:
       properties:
         oxla_node_group_instance_profile:
           $ref: '#/components/schemas/AWSInstanceProfile'
-        oxla_security_group:
-          $ref: '#/components/schemas/AWSSecurityGroup'
         redpanda_connect_node_group_instance_profile:
           $ref: '#/components/schemas/AWSInstanceProfile'
         redpanda_connect_security_group:
+          $ref: '#/components/schemas/AWSSecurityGroup'
+        rpsql_security_group:
           $ref: '#/components/schemas/AWSSecurityGroup'
       title: AWS Customer-Managed Resoures
       type: object
@@ -4735,8 +4735,6 @@ components:
           $ref: '#/components/schemas/AWSSecurityGroup'
         oxla_node_group_instance_profile:
           $ref: '#/components/schemas/AWSInstanceProfile'
-        oxla_security_group:
-          $ref: '#/components/schemas/AWSSecurityGroup'
         permissions_boundary_policy:
           $ref: '#/components/schemas/Policy'
         redpanda_agent_security_group:
@@ -4748,6 +4746,8 @@ components:
         redpanda_node_group_instance_profile:
           $ref: '#/components/schemas/AWSInstanceProfile'
         redpanda_node_group_security_group:
+          $ref: '#/components/schemas/AWSSecurityGroup'
+        rpsql_security_group:
           $ref: '#/components/schemas/AWSSecurityGroup'
         utility_node_group_instance_profile:
           $ref: '#/components/schemas/AWSInstanceProfile'
@@ -5299,7 +5299,6 @@ paths:
                     name: my-new-cluster
                     nat_gateways: []
                     network_id: cjb69k1c4vs45df9bee0
-                    oxla: null
                     prometheus:
                       url: https://console-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
                     read_replica_cluster_ids: []
@@ -5308,6 +5307,7 @@ paths:
                     redpanda_node_count: 0
                     region: us-west1
                     resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+                    rpsql: null
                     sandbox: null
                     schema_registry:
                       all_urls: null
@@ -5642,7 +5642,6 @@ paths:
                   name: my-new-cluster
                   nat_gateways: []
                   network_id: cjb69k1c4vs45df9bee0
-                  oxla: null
                   prometheus:
                     url: https://console-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
                   read_replica_cluster_ids: []
@@ -5651,6 +5650,7 @@ paths:
                   redpanda_node_count: 0
                   region: us-west1
                   resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+                  rpsql: null
                   sandbox: null
                   schema_registry:
                     all_urls: null
@@ -6451,7 +6451,6 @@ paths:
                           name: my-new-cluster
                           nat_gateways: []
                           network_id: cjb69k1c4vs45df9bee0
-                          oxla: null
                           prometheus:
                             url: https://console-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
                           read_replica_cluster_ids: []
@@ -6460,6 +6459,7 @@ paths:
                           redpanda_node_count: 0
                           region: us-west1
                           resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+                          rpsql: null
                           sandbox: null
                           schema_registry:
                             all_urls: null
@@ -6582,7 +6582,6 @@ paths:
                           name: my-new-cluster
                           nat_gateways: []
                           network_id: cjb69k1c4vs45df9bee0
-                          oxla: null
                           prometheus:
                             url: https://console-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
                           read_replica_cluster_ids: []
@@ -6591,6 +6590,7 @@ paths:
                           redpanda_node_count: 0
                           region: us-west1
                           resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
+                          rpsql: null
                           sandbox: null
                           schema_registry:
                             all_urls: null
