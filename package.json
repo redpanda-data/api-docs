@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/redpanda-data/api-docs#readme",
   "dependencies": {
-    "@redpanda-data/docs-extensions-and-macros": "^4.0.0"
+    "@redpanda-data/docs-extensions-and-macros": "^5.0.0"
   }
 }
