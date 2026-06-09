@@ -549,6 +549,8 @@ components:
           items:
             type: string
           type: array
+        redpanda_connect:
+          $ref: '#/components/schemas/RedpandaConnect'
         redpanda_console:
           $ref: '#/components/schemas/RedpandaConsole'
         redpanda_node_count:
@@ -1394,12 +1396,14 @@ components:
     CustomerManagedResourcesUpdate.AWS:
       description: AWS resources managed by user.
       properties:
-        oxla_node_group_instance_profile:
-          $ref: '#/components/schemas/AWSInstanceProfile'
         redpanda_connect_node_group_instance_profile:
           $ref: '#/components/schemas/AWSInstanceProfile'
         redpanda_connect_security_group:
           $ref: '#/components/schemas/AWSSecurityGroup'
+        rpsql_cloud_storage_bucket:
+          $ref: '#/components/schemas/CustomerManagedAWSCloudStorageBucket'
+        rpsql_node_group_instance_profile:
+          $ref: '#/components/schemas/AWSInstanceProfile'
         rpsql_security_group:
           $ref: '#/components/schemas/AWSSecurityGroup'
       title: AWS Customer-Managed Resoures
@@ -2729,6 +2733,16 @@ components:
         created:
           $ref: '#/components/schemas/Created'
       type: object
+    NetworkUpdate:
+      description: Resource describing an Update Network.
+      properties:
+        id:
+          description: ID of the network.
+          type: string
+      required:
+        - id
+      title: NetworkUpdate
+      type: object
     NullValue:
       description: |-
         `NullValue` is a singleton enumeration to represent the null value for the
@@ -2759,6 +2773,7 @@ components:
         - TYPE_DELETE_SERVERLESS_PRIVATE_LINK
         - TYPE_CREATE_NETWORK_PEERING
         - TYPE_DELETE_NETWORK_PEERING
+        - TYPE_UPDATE_NETWORK
         - TYPE_CREATE_SHADOW_LINK
         - TYPE_UPDATE_SHADOW_LINK
         - TYPE_DELETE_SHADOW_LINK
@@ -3188,6 +3203,14 @@ components:
             The subject on which the quota check failed.
             For example, "clientip:<ip address of client>" or "project:<Google
             developer project id>".
+          type: string
+      type: object
+    RedpandaConnect:
+      description: Cluster's Redpanda Connect properties.
+      properties:
+        version:
+          description: Version of the Redpanda Connect engine running on the Cluster.
+          readOnly: true
           type: string
       type: object
     RedpandaConsole:
@@ -4342,6 +4365,16 @@ components:
         group:
           $ref: '#/components/schemas/Group'
       type: object
+    UpdateNetworkMetadata:
+      description: Resource describing an in-progress UpdateNetwork Operation.
+      title: UpdateNetworkMetadata
+      type: object
+    UpdateNetworkOperation:
+      description: UpdateNetworkOperation is the response of the update network rpc.
+      properties:
+        operation:
+          $ref: '#/components/schemas/v1.Operation'
+      type: object
     UpdateOrganizationResponse:
       properties:
         organization:
@@ -4750,8 +4783,6 @@ components:
           $ref: '#/components/schemas/AWS.Role'
         node_security_group:
           $ref: '#/components/schemas/AWSSecurityGroup'
-        oxla_node_group_instance_profile:
-          $ref: '#/components/schemas/AWSInstanceProfile'
         permissions_boundary_policy:
           $ref: '#/components/schemas/Policy'
         redpanda_agent_security_group:
@@ -4764,6 +4795,10 @@ components:
           $ref: '#/components/schemas/AWSInstanceProfile'
         redpanda_node_group_security_group:
           $ref: '#/components/schemas/AWSSecurityGroup'
+        rpsql_cloud_storage_bucket:
+          $ref: '#/components/schemas/CustomerManagedAWSCloudStorageBucket'
+        rpsql_node_group_instance_profile:
+          $ref: '#/components/schemas/AWSInstanceProfile'
         rpsql_security_group:
           $ref: '#/components/schemas/AWSSecurityGroup'
         utility_node_group_instance_profile:
@@ -5319,6 +5354,7 @@ paths:
                     prometheus:
                       url: https://console-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
                     read_replica_cluster_ids: []
+                    redpanda_connect: null
                     redpanda_console:
                       url: https://console-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com/api
                     redpanda_node_count: 0
@@ -5668,6 +5704,7 @@ paths:
                   prometheus:
                     url: https://console-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
                   read_replica_cluster_ids: []
+                  redpanda_connect: null
                   redpanda_console:
                     url: https://console-aa0000l0.cjd3r21c4vs870t0ku30.fmc.prd.cloud.redpanda.com/api
                   redpanda_node_count: 0
@@ -6159,6 +6196,7 @@ paths:
                 networks:
                   - cidr_block: 10.0.0.0/20
                     cloud_provider: CLOUD_PROVIDER_GCP
+                    cloud_provider_access_id: ""
                     cluster_type: TYPE_DEDICATED
                     created_at: "2023-01-01T00:00:00Z"
                     customer_managed_resources: null
@@ -6303,6 +6341,7 @@ paths:
                 network:
                   cidr_block: 10.0.0.0/20
                   cloud_provider: CLOUD_PROVIDER_GCP
+                  cloud_provider_access_id: ""
                   cluster_type: TYPE_DEDICATED
                   created_at: "2023-01-01T00:00:00Z"
                   customer_managed_resources: null
@@ -6332,6 +6371,60 @@ paths:
       summary: Get network
       tags:
         - Networks
+  /v1/networks/{network.id}:
+    patch:
+      description: Update a Redpanda network.
+      operationId: NetworkService_UpdateNetwork
+      parameters:
+        - description: ID of the network.
+          in: path
+          name: network.id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Resource describing an Update Network.
+              required:
+                - network
+              title: NetworkUpdate
+              type: object
+        description: |-
+          NetworkUpdate
+
+          Resource describing an Update Network.
+        required: true
+        x-originalParamName: network
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateNetworkOperation'
+          description: Accepted
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Update network
+      tags:
+        - Networks
   /v1/operations:
     get:
       description: List operations. This is a generic endpoint and can be used to list any type of operation.
@@ -6356,6 +6449,7 @@ paths:
                 - TYPE_DELETE_SERVERLESS_PRIVATE_LINK
                 - TYPE_CREATE_NETWORK_PEERING
                 - TYPE_DELETE_NETWORK_PEERING
+                - TYPE_UPDATE_NETWORK
                 - TYPE_CREATE_SHADOW_LINK
                 - TYPE_UPDATE_SHADOW_LINK
                 - TYPE_DELETE_SHADOW_LINK
@@ -6477,6 +6571,7 @@ paths:
                           prometheus:
                             url: https://console-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
                           read_replica_cluster_ids: []
+                          redpanda_connect: null
                           redpanda_console:
                             url: https://console-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com/api
                           redpanda_node_count: 0
@@ -6517,6 +6612,7 @@ paths:
                         network:
                           cidr_block: 10.0.0.0/20
                           cloud_provider: CLOUD_PROVIDER_GCP
+                          cloud_provider_access_id: ""
                           cluster_type: TYPE_DEDICATED
                           created_at: "2023-01-01T00:00:00Z"
                           customer_managed_resources: null
@@ -6608,6 +6704,7 @@ paths:
                           prometheus:
                             url: https://console-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com/api/cloud/prometheus/public_metrics
                           read_replica_cluster_ids: []
+                          redpanda_connect: null
                           redpanda_console:
                             url: https://console-aa0000l0.cjb69h1c4vs42pca89s0.fmc.prd.cloud.redpanda.com/api
                           redpanda_node_count: 0
