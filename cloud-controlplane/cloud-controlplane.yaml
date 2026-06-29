@@ -413,6 +413,23 @@ components:
         - aks_service_cidr
       title: CIDR
       type: object
+    CidrPort:
+      description: CidrPort represents a CIDR block and port or port range for network access control.
+      properties:
+        cidr:
+          description: CIDR notation, e.g. "10.5.0.0/16". Must be a valid IPv4 CIDR.
+          type: string
+        port_end:
+          description: |-
+            Optional end of the TCP/UDP port range, 0-65535. When 0 (default), only port_start is used.
+            When non-zero, must be >= port_start.
+          format: int32
+          type: integer
+        port_start:
+          description: Start of the TCP/UDP port range, 1-65535.
+          format: int32
+          type: integer
+      type: object
     CloudProvider:
       description: Cloud provider where resources are created.
       enum:
@@ -800,6 +817,8 @@ components:
           items:
             type: string
           type: array
+        redpanda_connect:
+          $ref: '#/components/schemas/RedpandaConnect'
         redpanda_node_count:
           description: redpanda_node_count defines the starting node count for the cluster.
           format: int32
@@ -945,6 +964,8 @@ components:
           items:
             type: string
           type: array
+        redpanda_connect:
+          $ref: '#/components/schemas/RedpandaConnect'
         redpanda_node_count:
           format: int32
           type: integer
@@ -1510,6 +1531,9 @@ components:
       type: object
     DeleteNetworkResponse:
       description: DeleteNetworkResponse is the response of DeleteNetwork.
+      type: object
+    DeleteOrganizationResponse:
+      description: DeleteOrganizationResponse is the response of the DeleteOrganization rpc.
       type: object
     DeleteResourceGroupResponse:
       description: DeleteResourceGroupResponse is the response of DeleteResourceGroup.
@@ -3086,6 +3110,67 @@ components:
         username:
           type: string
       type: object
+    Quota:
+      description: Platform-enforced upper bounds applied to the Serverless cluster.
+      properties:
+        acls:
+          format: int64
+          readOnly: true
+          type: string
+        ai_agents:
+          format: int64
+          readOnly: true
+          type: string
+        bytes_from_client:
+          $ref: '#/components/schemas/Rate'
+        bytes_to_client:
+          $ref: '#/components/schemas/Rate'
+        client_connections:
+          format: int64
+          readOnly: true
+          type: string
+        connect_pipelines:
+          format: int64
+          readOnly: true
+          type: string
+        consumer_groups:
+          format: int64
+          readOnly: true
+          type: string
+        mcp_servers:
+          format: int64
+          readOnly: true
+          type: string
+        partitions:
+          format: int64
+          readOnly: true
+          type: string
+        passwords_per_user:
+          format: int64
+          readOnly: true
+          type: string
+        producer_ids:
+          format: int64
+          readOnly: true
+          type: string
+        sr_schemas:
+          format: int64
+          readOnly: true
+          type: string
+        sr_subjects:
+          format: int64
+          readOnly: true
+          type: string
+        topics:
+          format: int64
+          readOnly: true
+          type: string
+        users:
+          format: int64
+          readOnly: true
+          type: string
+      readOnly: true
+      type: object
     QuotaFailure:
       description: |-
         Describes how a quota check failed.
@@ -3205,9 +3290,29 @@ components:
             developer project id>".
           type: string
       type: object
+    Rate:
+      description: Rate is a maximum number of units per period, along with a burst of units.
+      properties:
+        burst:
+          format: int32
+          readOnly: true
+          type: integer
+        period:
+          readOnly: true
+          type: string
+        rate:
+          format: int32
+          readOnly: true
+          type: integer
+      type: object
     RedpandaConnect:
       description: Cluster's Redpanda Connect properties.
       properties:
+        allowed_destination_cidr_ports:
+          description: Custom outbound destinations allowed for Connect pipelines. Maximum 16 entries.
+          items:
+            $ref: '#/components/schemas/CidrPort'
+          type: array
         version:
           description: Version of the Redpanda Connect engine running on the Cluster.
           readOnly: true
@@ -3541,6 +3646,8 @@ components:
           type: string
         prometheus:
           $ref: '#/components/schemas/ServerlessCluster.Prometheus'
+        quota:
+          $ref: '#/components/schemas/Quota'
         resource_group_id:
           description: Resource group ID of the cluster.
           example: a0b40af9-0250-48ca-9417-783ed127ce42
@@ -4874,6 +4981,12 @@ components:
           $ref: '#/components/schemas/GCPServiceAccount'
         redpanda_operator_service_account:
           $ref: '#/components/schemas/GCPServiceAccount'
+        rpsql_api_service_account:
+          $ref: '#/components/schemas/GCPServiceAccount'
+        rpsql_cloud_storage_bucket:
+          $ref: '#/components/schemas/CustomerManagedGoogleCloudStorageBucket'
+        rpsql_service_account:
+          $ref: '#/components/schemas/GCPServiceAccount'
         subnet:
           $ref: '#/components/schemas/GCP.Subnet'
         tiered_storage_bucket:
@@ -5559,6 +5672,8 @@ paths:
                   items:
                     type: string
                   type: array
+                redpanda_connect:
+                  $ref: '#/components/schemas/RedpandaConnect'
                 redpanda_node_count:
                   format: int32
                   type: integer
@@ -6791,6 +6906,36 @@ paths:
       tags:
         - Organization
   /v1/organizations/current:
+    delete:
+      description: Delete the current organization. Only serverless organizations with no clusters and no outstanding usage can be deleted.
+      operationId: OrganizationService_DeleteOrganization
+      responses:
+        "204":
+          content:
+            application/json:
+              schema: {}
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Bad Request. The organization is not eligible for deletion.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: Internal Server Error. Please reach out to support.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpc.Status'
+          description: An unexpected error response.
+      summary: Delete organization
+      tags:
+        - Organization
     get:
       description: Get information about the current organization.
       operationId: OrganizationService_GetCurrentOrganization
@@ -7635,6 +7780,7 @@ paths:
                     prometheus:
                       private_url: ""
                       url: https://d1d9risv0c3i7qbbeoc0.metrics.us-east-1.mpx.prd.cloud.redpanda.com/public_metrics
+                    quota: null
                     resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
                     schema_registry:
                       private_url: ""
@@ -7791,6 +7937,7 @@ paths:
                   prometheus:
                     private_url: ""
                     url: https://d1d9risv0c3i7qbbeoc0.metrics.us-east-1.mpx.prd.cloud.redpanda.com/public_metrics
+                  quota: null
                   resource_group_id: 6c09e47b-f426-4ec7-a7b4-8048caf8ae47
                   schema_registry:
                     private_url: ""
