@@ -88,3 +88,8 @@ actions:
   - target: "$.paths['/redpanda.core.admin.v2.SecurityService/UpdateScramCredential'].post"
     update:
       x-state: "Added in v26.1"
+
+# 26.2 endpoints
+  - target: "$.paths['/redpanda.core.admin.v2.IcebergService/GetIcebergStatus'].post"
+    update:
+      x-state: "Added in v26.2"
