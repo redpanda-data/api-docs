@@ -1,0 +1,56 @@
+overlay: 1.0.0
+info:
+  title: Hide Remote MCP endpoints
+  version: 1.0.0
+actions:
+  # --- Paths (exact keys confirmed in cloud-dataplane.yaml) ---
+  - target: "$.paths['/v1/redpanda-connect/mcp-servers']"
+    remove: true
+  - target: "$.paths['/v1/redpanda-connect/mcp-servers/{id}']"
+    remove: true
+  - target: "$.paths['/v1/redpanda-connect/mcp-servers/{id}:start']"
+    remove: true
+  - target: "$.paths['/v1/redpanda-connect/mcp-servers/{id}:stop']"
+    remove: true
+  - target: "$.paths['/v1/redpanda-connect/mcp-servers:getConfigSchema']"
+    remove: true
+  - target: "$.paths['/v1/redpanda-connect/mcp-servers:lint-config']"
+    remove: true
+  # --- Tag definition (avoids an empty nav group) ---
+  - target: "$.tags[?(@.name=='Remote MCP')]"
+    remove: true
+  # --- MCP-only component schemas (all verified MCP-exclusive) ---
+  - target: "$.components.schemas.CreateMCPServerResponse"
+    remove: true
+  - target: "$.components.schemas.DeleteMCPServerResponse"
+    remove: true
+  - target: "$.components.schemas.GetMCPServerResponse"
+    remove: true
+  - target: "$.components.schemas.GetMCPServerServiceConfigSchemaResponse"
+    remove: true
+  - target: "$.components.schemas.LintMCPConfigRequest"
+    remove: true
+  - target: "$.components.schemas.LintMCPConfigResponse"
+    remove: true
+  - target: "$.components.schemas['ListMCPServersRequest.Filter']"
+    remove: true
+  - target: "$.components.schemas.ListMCPServersResponse"
+    remove: true
+  - target: "$.components.schemas.MCPServer"
+    remove: true
+  - target: "$.components.schemas['MCPServer.ServiceAccount']"
+    remove: true
+  - target: "$.components.schemas['MCPServer.State']"
+    remove: true
+  - target: "$.components.schemas['MCPServer.Status']"
+    remove: true
+  - target: "$.components.schemas.MCPServerCreate"
+    remove: true
+  - target: "$.components.schemas.MCPServerUpdate"
+    remove: true
+  - target: "$.components.schemas.StartMCPServerResponse"
+    remove: true
+  - target: "$.components.schemas.StopMCPServerResponse"
+    remove: true
+  - target: "$.components.schemas.UpdateMCPServerResponse"
+    remove: true
