@@ -54,3 +54,10 @@ actions:
     remove: true
   - target: "$.components.schemas.UpdateMCPServerResponse"
     remove: true
+  # --- Transitively MCP-only schemas (orphaned once the above are removed) ---
+  - target: "$.components.schemas.ConfigurationYAMLSchema"
+    remove: true
+  - target: "$.components.schemas.Tool"
+    remove: true
+  - target: "$.components.schemas.ComponentType"
+    remove: true
