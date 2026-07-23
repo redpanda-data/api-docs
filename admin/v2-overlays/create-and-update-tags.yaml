@@ -3,7 +3,7 @@
 overlay: 1.0.0
 info:
   title: Redpanda Admin API v2 Tags
-  version: 2.1.1
+  version: 2.2.0
 
 actions:
   # Add tags object to the root level
@@ -16,6 +16,12 @@ actions:
       - name: ClusterService
         description: |-
           ClusterService provides information about the Redpanda cluster as a whole, such as its configuration, status, and client connections.
+      - name: FeaturesService
+        description: |-
+          Use FeaturesService to manage finalization of a deferred (unfinalized) major version upgrade. Finalize an upgrade to commit the cluster to the new logical version, or check finalization status to see whether a rollback to the previous version is still possible.
+      - name: IcebergService
+        description: |-
+          Use IcebergService to monitor the health of Iceberg topics, including Iceberg catalog connectivity and per-partition catalog commit lag.
       - name: SecurityService
         description: |-
           Use SecurityService to manage SCRAM credentials, role-based access control (RBAC), and OpenID Connect (OIDC) operations.

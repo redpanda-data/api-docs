@@ -649,6 +649,24 @@ components:
           type: string
       title: BuildInfo
       type: object
+    redpanda.core.admin.v2.CatalogHealth:
+      additionalProperties: false
+      description: |-
+        CatalogHealth reports whether the Iceberg catalog is reachable. On failure,
+         error_code is the iceberg::catalog_errc enum name (e.g. "io_error",
+         "timedout") and error_message is a human-readable diagnostic.
+      properties:
+        errorCode:
+          title: error_code
+          type: string
+        errorMessage:
+          title: error_message
+          type: string
+        reachable:
+          title: reachable
+          type: boolean
+      title: CatalogHealth
+      type: object
     redpanda.core.admin.v2.ConsumerOffsetSyncOptions:
       additionalProperties: false
       description: Options for syncing consumer offsets
@@ -742,6 +760,12 @@ components:
             - $ref: "#/components/schemas/redpanda.core.admin.v2.ShadowLink"
           description: The shadow link to create
           title: shadow_link
+        validateOnly:
+          description: |-
+            (OPTIONAL) If true, validate connection parameters without creating the link.
+             Returns an empty response on success or an error if validation fails.
+          title: validate_only
+          type: boolean
       title: CreateShadowLinkRequest
       type: object
     redpanda.core.admin.v2.CreateShadowLinkResponse:
@@ -858,6 +882,35 @@ components:
         - FILTER_TYPE_EXCLUDE
       title: FilterType
       type: string
+    redpanda.core.admin.v2.FinalizationState:
+      description: |-
+        FinalizationState summarizes where the cluster sits in the
+         upgrade-finalization lifecycle. It is derived from the per-member
+         logical versions using the same preconditions the controller applies
+         when deciding whether to advance the active version.
+      enum:
+        - FINALIZATION_STATE_UNSPECIFIED
+        - FINALIZATION_STATE_FINALIZED
+        - FINALIZATION_STATE_READY_TO_FINALIZE
+        - FINALIZATION_STATE_UPGRADE_IN_PROGRESS
+      title: FinalizationState
+      type: string
+    redpanda.core.admin.v2.FinalizeUpgradeRequest:
+      additionalProperties: false
+      description: |-
+        FinalizeUpgradeRequest takes no parameters: the target version is
+         determined from current cluster state.
+      title: FinalizeUpgradeRequest
+      type: object
+    redpanda.core.admin.v2.FinalizeUpgradeResponse:
+      additionalProperties: false
+      description: |-
+        FinalizeUpgradeResponse is returned on successful submission. The
+         actual version advance happens asynchronously on the controller
+         leader's background loop; poll the cluster's active version (via
+         `GET /v1/features`) to confirm.
+      title: FinalizeUpgradeResponse
+      type: object
     redpanda.core.admin.v2.GetBrokerRequest:
       additionalProperties: false
       description: GetBrokerRequest returns information about a single broker in the cluster
@@ -882,6 +935,33 @@ components:
           description: The specified broker and it's information.
           title: broker
       title: GetBrokerResponse
+      type: object
+    redpanda.core.admin.v2.GetIcebergStatusRequest:
+      additionalProperties: false
+      properties:
+        topicsFilter:
+          description: |-
+            Names of Iceberg topics to report on. If empty, returns all Iceberg
+             topics known to the coordinator.
+          items:
+            type: string
+          title: topics_filter
+          type: array
+      title: GetIcebergStatusRequest
+      type: object
+    redpanda.core.admin.v2.GetIcebergStatusResponse:
+      additionalProperties: false
+      properties:
+        catalog:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.CatalogHealth"
+          title: catalog
+        topics:
+          items:
+            $ref: "#/components/schemas/redpanda.core.admin.v2.TopicIcebergStatus"
+          title: topics
+          type: array
+      title: GetIcebergStatusResponse
       type: object
     redpanda.core.admin.v2.GetRoleRequest:
       additionalProperties: false
@@ -979,6 +1059,104 @@ components:
           title: shadow_topic
       title: GetShadowTopicResponse
       type: object
+    redpanda.core.admin.v2.GetUpgradeStatusRequest:
+      additionalProperties: false
+      description: GetUpgradeStatusRequest takes no parameters.
+      title: GetUpgradeStatusRequest
+      type: object
+    redpanda.core.admin.v2.GetUpgradeStatusResponse:
+      additionalProperties: false
+      description: |-
+        GetUpgradeStatusResponse describes the cluster's upgrade-finalization
+         state.
+      properties:
+        activeVersion:
+          description: |-
+            The cluster's current active logical version. This is also the
+             downgrade floor: the cluster can still roll back to a binary that
+             supports this version. When state is FINALIZATION_STATE_FINALIZED
+             this equals version_after_finalization (no downgrade possible).
+          format: int64
+          title: active_version
+          type:
+            - integer
+            - string
+        autoFinalizationEnabled:
+          description: |-
+            Whether the cluster advances the active version automatically once
+             all members agree (the features_auto_finalization cluster config).
+             When false, an explicit FinalizeUpgrade is required.
+          title: auto_finalization_enabled
+          type: boolean
+        members:
+          description: |-
+            Per-member reported version state. Compare logical_version across
+             members to see whether all nodes are on the same version (ready to
+             finalize) or still differ (upgrade in progress).
+          items:
+            $ref: "#/components/schemas/redpanda.core.admin.v2.MemberVersion"
+          title: members
+          type: array
+        state:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.FinalizationState"
+          description: |-
+            High-level lifecycle state derived from the per-member versions
+             below.
+          title: state
+        versionAfterFinalization:
+          description: |-
+            The active version that a FinalizeUpgrade would produce right now.
+             Greater than active_version only when state is
+             FINALIZATION_STATE_READY_TO_FINALIZE; otherwise equal to
+             active_version (finalizing would be a no-op).
+          format: int64
+          title: version_after_finalization
+          type:
+            - integer
+            - string
+      title: GetUpgradeStatusResponse
+      type: object
+    redpanda.core.admin.v2.HTTPBasicAuthOptions:
+      additionalProperties: false
+      description: HTTP Basic auth credentials.
+      properties:
+        password:
+          description: HTTP Basic auth password. For Confluent Cloud, this is the API secret.
+          title: password
+          type: string
+          writeOnly: true
+        passwordSet:
+          description: Indicates that the password has been set.
+          readOnly: true
+          title: password_set
+          type: boolean
+        passwordSetAt:
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
+          description: |-
+            Timestamp of when the password was last set - only valid if password_set
+             is true.
+          readOnly: true
+          title: password_set_at
+        username:
+          description: HTTP Basic auth username. For Confluent Cloud, this is the API key.
+          title: username
+          type: string
+      title: HTTPBasicAuthOptions
+      type: object
+    redpanda.core.admin.v2.IcebergLifecycleState:
+      description: |-
+        IcebergLifecycleState mirrors the coordinator's per-topic lifecycle. Named
+         distinctly from the internal DatalakeService's LifecycleState because both
+         generate into the proto::admin C++ namespace.
+      enum:
+        - ICEBERG_LIFECYCLE_STATE_UNSPECIFIED
+        - ICEBERG_LIFECYCLE_STATE_LIVE
+        - ICEBERG_LIFECYCLE_STATE_CLOSED
+        - ICEBERG_LIFECYCLE_STATE_PURGED
+      title: IcebergLifecycleState
+      type: string
     redpanda.core.admin.v2.InFlightRequests:
       additionalProperties: false
       properties:
@@ -1399,6 +1577,48 @@ components:
           type: array
       title: ListShadowTopicsResponse
       type: object
+    redpanda.core.admin.v2.MemberVersion:
+      additionalProperties: false
+      description: |-
+        MemberVersion is one cluster member's reported version state, as seen
+         by the controller leader.
+      properties:
+        alive:
+          description: |-
+            Liveness of this member per the controller leader's health
+             monitor.
+          title: alive
+          type: boolean
+        logicalVersion:
+          description: |-
+            Latest logical version this member reports, i.e. the highest
+             version its binary supports. Meaningful only when version_known is
+             true.
+          format: int64
+          title: logical_version
+          type:
+            - integer
+            - string
+        nodeId:
+          description: Broker / node id.
+          format: int32
+          title: node_id
+          type: integer
+        releaseVersion:
+          description: |-
+            Human-readable Redpanda release version (e.g. "v25.2.1") reported
+             by this member, when known. Distinct from logical_version:
+             multiple releases can share one logical version.
+          title: release_version
+          type: string
+        versionKnown:
+          description: |-
+            False when the controller leader has not yet received a version
+             report for this member (e.g. freshly added, or restarting).
+          title: version_known
+          type: boolean
+      title: MemberVersion
+      type: object
     redpanda.core.admin.v2.NameFilter:
       additionalProperties: false
       description: A filter based on the name of a resource
@@ -1421,6 +1641,44 @@ components:
           description: Literal or prefix
           title: pattern_type
       title: NameFilter
+      type: object
+    redpanda.core.admin.v2.PartitionIcebergStatus:
+      additionalProperties: false
+      properties:
+        commitLag:
+          description: |-
+            Number of records written to Parquet but not yet committed to the
+             catalog.
+          format: int64
+          title: commit_lag
+          type:
+            - integer
+            - string
+        lastCommittedOffset:
+          description: |-
+            Last Kafka offset committed to the Iceberg catalog. Unset if nothing has
+             been committed yet.
+          format: int64
+          nullable: true
+          title: last_committed_offset
+          type:
+            - integer
+            - string
+        lastTranslatedOffset:
+          description: |-
+            Highest Kafka offset written to Parquet (inclusive). Unset if nothing
+             has been translated yet.
+          format: int64
+          nullable: true
+          title: last_translated_offset
+          type:
+            - integer
+            - string
+        partition:
+          format: int32
+          title: partition
+          type: integer
+      title: PartitionIcebergStatus
       type: object
     redpanda.core.admin.v2.PatternType:
       description: The matching pattern type
@@ -1642,6 +1900,39 @@ components:
           title: user
       title: RoleMember
       type: object
+    redpanda.core.admin.v2.RoleSyncOptions:
+      additionalProperties: false
+      description: Options for syncing RBAC roles
+      properties:
+        effectiveInterval:
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Duration"
+          description: The effective interval for the task
+          readOnly: true
+          title: effective_interval
+        interval:
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Duration"
+          description: |-
+            Sync interval
+             If 0 provided, defaults to 30 seconds
+          title: interval
+        paused:
+          description: |-
+            Allows user to pause the role sync task.  If paused, then the task will
+             enter the 'paused' state and will not sync roles from the source cluster
+          title: paused
+          type: boolean
+        roleNameFilters:
+          description: |-
+            Filters selecting which roles to shadow by name.  Defaults to empty: no
+             roles are synced until at least one include filter is added
+          items:
+            $ref: "#/components/schemas/redpanda.core.admin.v2.NameFilter"
+          title: role_name_filters
+          type: array
+      title: RoleSyncOptions
+      type: object
     redpanda.core.admin.v2.RoleUser:
       additionalProperties: false
       description: RoleUser represents a user member of a Role.
@@ -1652,10 +1943,178 @@ components:
           type: string
       title: RoleUser
       type: object
+    redpanda.core.admin.v2.SchemaRegistryAuthOptions:
+      additionalProperties: false
+      description: Authentication settings for source Schema Registry HTTP requests.
+      oneOf:
+        - properties:
+            basic:
+              allOf:
+                - $ref: "#/components/schemas/redpanda.core.admin.v2.HTTPBasicAuthOptions"
+              description: Authenticate source Schema Registry requests with HTTP Basic auth.
+              title: basic
+          required:
+            - basic
+          title: basic
+      title: SchemaRegistryAuthOptions
+      type: object
+    redpanda.core.admin.v2.SchemaRegistryContextDestination:
+      additionalProperties: false
+      description: Destination context mapping for source Schema Registry data.
+      oneOf:
+        - properties:
+            exact:
+              allOf:
+                - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistryExactContextMappings"
+              description: Map selected source contexts to explicit destination contexts.
+              title: exact
+          required:
+            - exact
+          title: exact
+        - properties:
+            identity:
+              allOf:
+                - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistryIdentityContextMapping"
+              description: Preserve source context names in the destination Schema Registry.
+              title: identity
+          required:
+            - identity
+          title: identity
+      title: SchemaRegistryContextDestination
+      type: object
+    redpanda.core.admin.v2.SchemaRegistryContextMap:
+      additionalProperties: false
+      description: One source-to-destination context mapping.
+      properties:
+        destination:
+          description: Destination context name.
+          title: destination
+          type: string
+        source:
+          description: Source context name.
+          title: source
+          type: string
+      title: SchemaRegistryContextMap
+      type: object
+    redpanda.core.admin.v2.SchemaRegistryCurrentSync:
+      additionalProperties: false
+      description: A Schema Registry sync that is currently running.
+      properties:
+        summary:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncSummary"
+          description: Counters for the sync currently running.
+          title: summary
+        syncType:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncType"
+          description: Type of Schema Registry sync currently running.
+          title: sync_type
+      title: SchemaRegistryCurrentSync
+      type: object
+    redpanda.core.admin.v2.SchemaRegistryExactContextMappings:
+      additionalProperties: false
+      description: Explicit source-to-destination context mappings.
+      properties:
+        mappings:
+          description: |-
+            Explicit source-to-destination context mappings. Every source context in
+             the effective source scope must have exactly one mapping.
+          items:
+            $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistryContextMap"
+          title: mappings
+          type: array
+      title: SchemaRegistryExactContextMappings
+      type: object
+    redpanda.core.admin.v2.SchemaRegistryIdentityContextMapping:
+      additionalProperties: false
+      description: Preserve source context names in the destination Schema Registry.
+      title: SchemaRegistryIdentityContextMapping
+      type: object
+    redpanda.core.admin.v2.SchemaRegistryInventory:
+      additionalProperties: false
+      description: Last observed Schema Registry inventory.
+      properties:
+        destinationSubjectVersions:
+          description: |-
+            Number of destination subject versions corresponding to the selected
+             source subjects after applying destination context mapping.
+          format: int64
+          title: destination_subject_versions
+          type:
+            - integer
+            - string
+        destinationSubjects:
+          description: |-
+            Number of destination subjects corresponding to the selected source
+             subjects after applying destination context mapping.
+          format: int64
+          title: destination_subjects
+          type:
+            - integer
+            - string
+        selectedSourceSubjectVersions:
+          description: |-
+            Number of source subject versions selected for replication after
+             applying source scope context and subject filters.
+          format: int64
+          title: selected_source_subject_versions
+          type:
+            - integer
+            - string
+        selectedSourceSubjects:
+          description: |-
+            Number of source subjects selected for replication after applying source
+             scope context and subject filters.
+          format: int64
+          title: selected_source_subjects
+          type:
+            - integer
+            - string
+      title: SchemaRegistryInventory
+      type: object
+    redpanda.core.admin.v2.SchemaRegistrySourceFilter:
+      additionalProperties: false
+      description: |-
+        Filter for specific Schema Registry contexts and subjects to select for
+         replication. If unset or empty, the whole source Schema Registry is
+         replicated.
+      properties:
+        contexts:
+          description: |-
+            Source contexts to replicate in full, for example ".", ".prod", or
+             ".staging". If both `contexts` and `subjects` are set, the effective
+             source scope is the union of both selections.
+          items:
+            type: string
+          title: contexts
+          type: array
+        subjects:
+          description: |-
+            Exact source subjects to replicate, using Schema Registry qualified
+             subject syntax. For example, "orders-value" selects the subject in the
+             default context, and ":.prod:orders-value" selects the subject in context
+             ".prod". If both `contexts` and `subjects` are set, the union of both
+             selections is replicated. If a subject is also included by `contexts`, it
+             is counted and replicated once.
+          items:
+            type: string
+          title: subjects
+          type: array
+      title: SchemaRegistrySourceFilter
+      type: object
     redpanda.core.admin.v2.SchemaRegistrySyncOptions:
       additionalProperties: false
       description: Options for how the Schema Registry is synced.
       oneOf:
+        - properties:
+            shadowSchemaRegistryApi:
+              allOf:
+                - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncOptions.ShadowSchemaRegistryApi"
+              title: shadow_schema_registry_api
+          required:
+            - shadowSchemaRegistryApi
+          title: shadow_schema_registry_api
         - properties:
             shadowSchemaRegistryTopic:
               allOf:
@@ -1665,6 +2124,105 @@ components:
             - shadowSchemaRegistryTopic
           title: shadow_schema_registry_topic
       title: SchemaRegistrySyncOptions
+      type: object
+    redpanda.core.admin.v2.SchemaRegistrySyncOptions.ShadowSchemaRegistryApi:
+      additionalProperties: false
+      description: |-
+        Replicates selected Schema Registry subjects, configs, modes, and schema
+         IDs over the Schema Registry HTTP API.
+      properties:
+        authOptions:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistryAuthOptions"
+          description: |-
+            Authentication settings for requests to the source Schema Registry.
+             If unset, requests are sent without authentication.
+          title: auth_options
+        destination:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistryContextDestination"
+          description: |-
+            Mapping from source contexts implied by `source_filter` to
+             destination contexts. Each source context included in the replication
+             must map to a distinct destination context to avoid
+             collisions. If unset, source context names are preserved.
+          title: destination
+        effectiveFullSyncInterval:
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Duration"
+          description: The effective interval between full scans.
+          readOnly: true
+          title: effective_full_sync_interval
+        effectiveMaxSourceRequestsPerSecond:
+          description: The effective maximum request rate, in requests per second.
+          format: int32
+          readOnly: true
+          title: effective_max_source_requests_per_second
+          type: integer
+        effectiveTailInterval:
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Duration"
+          description: The effective interval between incremental polls.
+          readOnly: true
+          title: effective_tail_interval
+        fullSyncInterval:
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Duration"
+          description: |-
+            Interval between full scans of the selected source subjects. If unset
+             or zero, the cluster default of 5m is used.
+          title: full_sync_interval
+        maxSourceRequestsPerSecond:
+          description: |-
+            Maximum request rate, in requests per second, for calls to the source
+             Schema Registry. If unset or zero, a default rate limit of 30
+             requests/s is used.
+          format: int32
+          title: max_source_requests_per_second
+          type: integer
+        paused:
+          description: |-
+            Allows the user to pause the Schema Registry sync task. If paused,
+             the task enters the 'paused' state and stops replicating schemas from
+             the source, and the per-context client write protection on the
+             contexts this link owns is lifted.
+          title: paused
+          type: boolean
+        sourceFilter:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySourceFilter"
+          description: |-
+            Filter for specific Schema Registry contexts and subjects to select
+             for replication. If unset or empty, the whole source Schema Registry
+             is replicated.
+          title: source_filter
+        sourceUrl:
+          description: The source Schema Registry URL to use.
+          title: source_url
+          type: string
+        tailInterval:
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Duration"
+          description: |-
+            Interval between incremental polls for new source subjects and
+             subject versions. If unset or zero, the cluster default of 10s is
+             used.
+          title: tail_interval
+        tlsSettings:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.common.v1.TLSSettings"
+          description: TLS settings for requests to the source Schema Registry.
+          nullable: true
+          title: tls_settings
+        unsupportedSchemaFeaturePolicy:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.UnsupportedSchemaFeaturePolicy"
+          description: |-
+            Policy for handling source schema features unsupported by the
+             destination, such as rulesets or metadata tags. If unset, FAIL is
+             used.
+          title: unsupported_schema_feature_policy
+      title: ShadowSchemaRegistryApi
       type: object
     redpanda.core.admin.v2.SchemaRegistrySyncOptions.ShadowSchemaRegistryTopic:
       additionalProperties: false
@@ -1684,6 +2242,119 @@ components:
          delete it.
       title: ShadowSchemaRegistryTopic
       type: object
+    redpanda.core.admin.v2.SchemaRegistrySyncStatus:
+      additionalProperties: false
+      description: Status of Schema Registry syncing.
+      properties:
+        currentSync:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistryCurrentSync"
+          description: |-
+            Sync currently running. This is unset when no Schema Registry sync is
+             running.
+          nullable: true
+          title: current_sync
+        inventory:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistryInventory"
+          description: |-
+            Last observed source and destination Schema Registry inventory. These
+             counts are updated as sync work observes source and destination state.
+          title: inventory
+        lastErrorMessage:
+          description: |-
+            Short sanitized summary of the most recent Schema Registry sync
+             error. Detailed errors are written to broker logs.
+          title: last_error_message
+          type: string
+        lastFullSync:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncSummary"
+          description: |-
+            Counters from the most recently completed full sync. This is unset until
+             a full sync completes on the current task instance.
+          nullable: true
+          title: last_full_sync
+        totalsSinceTaskStart:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncSummary"
+          description: |-
+            Cumulative counters since the Schema Registry task started. These
+             counters reset after task restart or leadership transfer.
+          title: totals_since_task_start
+      title: SchemaRegistrySyncStatus
+      type: object
+    redpanda.core.admin.v2.SchemaRegistrySyncSummary:
+      additionalProperties: false
+      description: Summary counters for one Schema Registry sync or for a cumulative interval.
+      properties:
+        compatibilityConfigsChanged:
+          description: |-
+            Number of selected compatibility configuration changes applied to the
+             destination.
+          format: int64
+          title: compatibility_configs_changed
+          type:
+            - integer
+            - string
+        errors:
+          description: Number of errors observed during the sync or cumulative interval.
+          format: int64
+          title: errors
+          type:
+            - integer
+            - string
+        finishTime:
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
+          description: |-
+            Time when the sync finished. This is unset for a sync that is still
+             running and for cumulative counters.
+          nullable: true
+          title: finish_time
+        modesChanged:
+          description: Number of selected mode changes applied to the destination.
+          format: int64
+          title: modes_changed
+          type:
+            - integer
+            - string
+        startTime:
+          allOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
+          description: |-
+            Time when the sync started. For cumulative counters, this is the time
+             when the Schema Registry task started.
+          nullable: true
+          title: start_time
+        subjectVersionsChanged:
+          description: |-
+            Number of selected subject versions created, updated, or deleted on the
+             destination.
+          format: int64
+          title: subject_versions_changed
+          type:
+            - integer
+            - string
+        unsupportedFeaturesRemoved:
+          description: |-
+            Number of unsupported fields removed from schemas or schema configs when
+             UNSUPPORTED_SCHEMA_FEATURE_POLICY_REMOVE is used.
+          format: int64
+          title: unsupported_features_removed
+          type:
+            - integer
+            - string
+      title: SchemaRegistrySyncSummary
+      type: object
+    redpanda.core.admin.v2.SchemaRegistrySyncType:
+      description: Type of Schema Registry sync currently running.
+      enum:
+        - SCHEMA_REGISTRY_SYNC_TYPE_UNSPECIFIED
+        - SCHEMA_REGISTRY_SYNC_TYPE_FULL
+        - SCHEMA_REGISTRY_SYNC_TYPE_TAIL
+      title: SchemaRegistrySyncType
+      type: string
     redpanda.core.admin.v2.ScramConfig:
       additionalProperties: false
       description: SCRAM settings
@@ -1962,6 +2633,11 @@ components:
             - $ref: "#/components/schemas/redpanda.core.admin.v2.ConsumerOffsetSyncOptions"
           description: Consumer offset sync options
           title: consumer_offset_sync_options
+        roleSyncOptions:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.RoleSyncOptions"
+          description: Role sync options
+          title: role_sync_options
         schemaRegistrySyncOptions:
           allOf:
             - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncOptions"
@@ -1991,6 +2667,11 @@ components:
       additionalProperties: false
       description: Status of the shadow link
       properties:
+        schemaRegistrySyncStatus:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.SchemaRegistrySyncStatus"
+          description: Status of Schema Registry syncing.
+          title: schema_registry_sync_status
         shadowTopics:
           description: Status of shadow topics
           items:
@@ -2136,6 +2817,23 @@ components:
         - TASK_STATE_FAULTED
       title: TaskState
       type: string
+    redpanda.core.admin.v2.TopicIcebergStatus:
+      additionalProperties: false
+      properties:
+        lifecycleState:
+          allOf:
+            - $ref: "#/components/schemas/redpanda.core.admin.v2.IcebergLifecycleState"
+          title: lifecycle_state
+        partitions:
+          items:
+            $ref: "#/components/schemas/redpanda.core.admin.v2.PartitionIcebergStatus"
+          title: partitions
+          type: array
+        topic:
+          title: topic
+          type: string
+      title: TopicIcebergStatus
+      type: object
     redpanda.core.admin.v2.TopicMetadataSyncOptions:
       additionalProperties: false
       allOf:
@@ -2303,6 +3001,14 @@ components:
           title: source_last_updated_timestamp
       title: TopicPartitionInformation
       type: object
+    redpanda.core.admin.v2.UnsupportedSchemaFeaturePolicy:
+      description: Policy for handling source schema features unsupported by the destination.
+      enum:
+        - UNSUPPORTED_SCHEMA_FEATURE_POLICY_UNSPECIFIED
+        - UNSUPPORTED_SCHEMA_FEATURE_POLICY_FAIL
+        - UNSUPPORTED_SCHEMA_FEATURE_POLICY_REMOVE
+      title: UnsupportedSchemaFeaturePolicy
+      type: string
     redpanda.core.admin.v2.UpdateScramCredentialRequest:
       additionalProperties: false
       description: |-
@@ -2511,9 +3217,9 @@ info:
   title: Redpanda Admin API
   version: v2.0.0
   x-admin-api-major: v2.0.0
-  x-generated-at: 2026-06-12T15:48:04.811Z
+  x-generated-at: 2026-07-17T02:15:01.594Z
   x-generator: redpanda-docs-openapi-bundler
-  x-redpanda-core-version: v26.1.10
+  x-redpanda-core-version: v26.2.1-rc4
 openapi: 3.1.0
 paths:
   /redpanda.core.admin.v2.BrokerService/GetBroker:
@@ -2626,6 +3332,143 @@ paths:
       summary: ListKafkaConnections
       tags:
         - ClusterService
+  /redpanda.core.admin.v2.FeaturesService/FinalizeUpgrade:
+    post:
+      description: |-
+        Requests that the controller commit the cluster to the latest
+         logical version reported uniformly by all members, activating
+         version-gated features and making the prior version unavailable
+         for downgrade. Valid only when the cluster configuration
+         `features_auto_finalization` is disabled. The target version is
+         determined from current cluster state — there is no version
+         parameter.
+
+         The request returns success once accepted by the controller
+         leader; the actual advance happens asynchronously and depends on
+         cluster preconditions (member-version uniformity, node liveness)
+         observed by the controller's background loop. If those
+         preconditions are not met, the advance is silently skipped and
+         the operator must re-issue once the cluster is in a safe state.
+         Operators should poll `cluster_version` (via `GET /v1/features`)
+         to confirm.
+      operationId: redpanda.core.admin.v2.FeaturesService.FinalizeUpgrade
+      parameters:
+        - in: header
+          name: Connect-Protocol-Version
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - in: header
+          name: Connect-Timeout-Ms
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/redpanda.core.admin.v2.FinalizeUpgradeRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/redpanda.core.admin.v2.FinalizeUpgradeResponse"
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+          description: Error
+      summary: FinalizeUpgrade
+      tags:
+        - FeaturesService
+  /redpanda.core.admin.v2.FeaturesService/GetUpgradeStatus:
+    post:
+      description: |-
+        Reports observability for the upgrade-finalization lifecycle: the
+         cluster's active logical version, the logical version each member
+         reports (i.e. what its binary supports), whether the cluster is
+         eligible to finalize, and the active version that a
+         FinalizeUpgrade would produce. Read-only; intended to be polled
+         before and after FinalizeUpgrade.
+
+         The response reflects the controller leader's view; the request is
+         transparently redirected there.
+      operationId: redpanda.core.admin.v2.FeaturesService.GetUpgradeStatus
+      parameters:
+        - in: header
+          name: Connect-Protocol-Version
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - in: header
+          name: Connect-Timeout-Ms
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/redpanda.core.admin.v2.GetUpgradeStatusRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/redpanda.core.admin.v2.GetUpgradeStatusResponse"
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+          description: Error
+      summary: GetUpgradeStatus
+      tags:
+        - FeaturesService
+  /redpanda.core.admin.v2.IcebergService/GetIcebergStatus:
+    post:
+      description: |-
+        Reports Iceberg catalog reachability and, for every Iceberg topic, the
+         per-partition translated/committed offsets and commit lag. Translation
+         lag (live-log high watermark minus the translated offset) is a
+         client-side join with the Kafka API and is not returned here.
+      operationId: redpanda.core.admin.v2.IcebergService.GetIcebergStatus
+      parameters:
+        - in: header
+          name: Connect-Protocol-Version
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - in: header
+          name: Connect-Timeout-Ms
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/redpanda.core.admin.v2.GetIcebergStatusRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/redpanda.core.admin.v2.GetIcebergStatusResponse"
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+          description: Error
+      summary: Reports Iceberg catalog reachability and, for every Iceberg topic, the  per-partition translated/committed offsets and commit lag. Translation  lag (live-log high watermark minus the translated offset) is a  client-side join with the Kafka API and is not returned here.
+      tags:
+        - IcebergService
   /redpanda.core.admin.v2.SecurityService/AddRoleMembers:
     post:
       description: |-
