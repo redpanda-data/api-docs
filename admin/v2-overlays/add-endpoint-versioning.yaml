@@ -90,6 +90,12 @@ actions:
       x-state: "Added in v26.1"
 
 # 26.2 endpoints
+  - target: "$.paths['/redpanda.core.admin.v2.FeaturesService/FinalizeUpgrade'].post"
+    update:
+      x-state: "Added in v26.2"
+  - target: "$.paths['/redpanda.core.admin.v2.FeaturesService/GetUpgradeStatus'].post"
+    update:
+      x-state: "Added in v26.2"
   - target: "$.paths['/redpanda.core.admin.v2.IcebergService/GetIcebergStatus'].post"
     update:
       x-state: "Added in v26.2"

@@ -16,6 +16,9 @@ actions:
       - name: ClusterService
         description: |-
           ClusterService provides information about the Redpanda cluster as a whole, such as its configuration, status, and client connections.
+      - name: FeaturesService
+        description: |-
+          Use FeaturesService to manage finalization of a deferred (unfinalized) major version upgrade. Finalize an upgrade to commit the cluster to the new logical version, or check finalization status to see whether a rollback to the previous version is still possible.
       - name: IcebergService
         description: |-
           Use IcebergService to monitor the health of Iceberg topics, including Iceberg catalog connectivity and per-partition catalog commit lag.
