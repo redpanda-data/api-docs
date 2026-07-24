@@ -1452,6 +1452,15 @@ components:
           $ref: '#/components/schemas/GCPServiceAccount'
         redpanda_operator_service_account:
           $ref: '#/components/schemas/GCPServiceAccount'
+        rpsql_api_service_account:
+          $ref: '#/components/schemas/GCPServiceAccount'
+        rpsql_cloud_storage_bucket:
+          $ref: '#/components/schemas/CustomerManagedGoogleCloudStorageBucket'
+        rpsql_secret_manager_prefix:
+          description: GCP Secret Manager prefix for Redpanda SQL Iceberg catalog credentials.
+          type: string
+        rpsql_service_account:
+          $ref: '#/components/schemas/GCPServiceAccount'
       title: GCP Customer-Managed Resoures
       type: object
     DNSEntry:
@@ -1706,17 +1715,17 @@ components:
             In this example, in proto `field` could take one of the following values:
 
             * `full_name` for a violation in the `full_name` value
-            * `email_addresses[1].email` for a violation in the `email` field of the
+            * `email_addresses[0].email` for a violation in the `email` field of the
               first `email_addresses` message
-            * `email_addresses[3].type[2]` for a violation in the second `type`
+            * `email_addresses[2].type[1]` for a violation in the second `type`
               value in the third `email_addresses` message.
 
             In JSON, the same values are represented as:
 
             * `fullName` for a violation in the `fullName` value
-            * `emailAddresses[1].email` for a violation in the `email` field of the
+            * `emailAddresses[0].email` for a violation in the `email` field of the
               first `emailAddresses` message
-            * `emailAddresses[3].type[2]` for a violation in the second `type`
+            * `emailAddresses[2].type[1]` for a violation in the second `type`
               value in the third `emailAddresses` message.
           type: string
         localized_message:
@@ -2025,6 +2034,27 @@ components:
         name:
           description: The unique name of the group.
           example: engineering
+          type: string
+      type: object
+    HTTPBasicAuthOptions:
+      description: HTTP Basic auth credentials.
+      properties:
+        password:
+          description: HTTP Basic auth password. For Confluent Cloud, this is the API secret.
+          type: string
+        password_set:
+          description: Indicates that the password has been set.
+          readOnly: true
+          type: boolean
+        password_set_at:
+          description: |-
+            Timestamp of when the password was last set - only valid if password_set
+            is true.
+          format: date-time
+          readOnly: true
+          type: string
+        username:
+          description: HTTP Basic auth username. For Confluent Cloud, this is the API key.
           type: string
       type: object
     HTTPProxySpec:
@@ -2806,6 +2836,7 @@ components:
         - TYPE_CREATE_NETWORK_PEERING
         - TYPE_DELETE_NETWORK_PEERING
         - TYPE_UPDATE_NETWORK
+        - TYPE_UPDATE_SERVERLESS_CLUSTER
         - TYPE_CREATE_SHADOW_LINK
         - TYPE_UPDATE_SHADOW_LINK
         - TYPE_DELETE_SHADOW_LINK
@@ -3439,6 +3470,31 @@ components:
             type: string
           type: array
       type: object
+    RoleSyncOptions:
+      properties:
+        effective_interval:
+          readOnly: true
+          title: The effective interval for the task
+          type: string
+        interval:
+          title: |-
+            Sync interval
+            If 0 provided, defaults to 30 seconds
+          type: string
+        paused:
+          title: |-
+            Allows user to pause the role sync task.  If paused, then the task will
+            enter the 'paused' state and will not sync roles from the source cluster
+          type: boolean
+        role_name_filters:
+          items:
+            $ref: '#/components/schemas/NameFilter'
+          title: |-
+            Filters selecting which roles to shadow by name.  Defaults to empty: no
+            roles are synced until at least one include filter is added
+          type: array
+      title: Options for syncing RBAC roles
+      type: object
     RoleUpdate:
       properties:
         description:
@@ -3475,6 +3531,106 @@ components:
           readOnly: true
           type: string
       type: object
+    SchemaRegistryAuthOptions:
+      description: Authentication settings for source Schema Registry HTTP requests.
+      properties:
+        basic:
+          $ref: '#/components/schemas/HTTPBasicAuthOptions'
+      type: object
+    SchemaRegistryContextDestination:
+      description: Destination context mapping for source Schema Registry data.
+      properties:
+        exact:
+          $ref: '#/components/schemas/SchemaRegistryExactContextMappings'
+        identity:
+          $ref: '#/components/schemas/SchemaRegistryIdentityContextMapping'
+      type: object
+    SchemaRegistryContextMap:
+      description: One source-to-destination context mapping.
+      properties:
+        destination:
+          description: Destination context name.
+          type: string
+        source:
+          description: Source context name.
+          type: string
+      type: object
+    SchemaRegistryCurrentSync:
+      description: A Schema Registry sync that is currently running.
+      properties:
+        summary:
+          $ref: '#/components/schemas/SchemaRegistrySyncSummary'
+        sync_type:
+          $ref: '#/components/schemas/SchemaRegistrySyncType'
+      type: object
+    SchemaRegistryExactContextMappings:
+      description: Explicit source-to-destination context mappings.
+      properties:
+        mappings:
+          description: |-
+            Explicit source-to-destination context mappings. Every source context in
+            the effective source scope must have exactly one mapping.
+          items:
+            $ref: '#/components/schemas/SchemaRegistryContextMap'
+          type: array
+      type: object
+    SchemaRegistryIdentityContextMapping:
+      description: Preserve source context names in the destination Schema Registry.
+      type: object
+    SchemaRegistryInventory:
+      description: Last observed Schema Registry inventory.
+      properties:
+        destination_subject_versions:
+          description: |-
+            Number of destination subject versions corresponding to the selected
+            source subjects after applying destination context mapping.
+          format: int64
+          type: string
+        destination_subjects:
+          description: |-
+            Number of destination subjects corresponding to the selected source
+            subjects after applying destination context mapping.
+          format: int64
+          type: string
+        selected_source_subject_versions:
+          description: |-
+            Number of source subject versions selected for replication after
+            applying source scope context and subject filters.
+          format: int64
+          type: string
+        selected_source_subjects:
+          description: |-
+            Number of source subjects selected for replication after applying source
+            scope context and subject filters.
+          format: int64
+          type: string
+      type: object
+    SchemaRegistrySourceFilter:
+      description: |-
+        Filter for specific Schema Registry contexts and subjects to select for
+        replication. If unset or empty, the whole source Schema Registry is
+        replicated.
+      properties:
+        contexts:
+          description: |-
+            Source contexts to replicate in full, for example ".", ".prod", or
+            ".staging". If both `contexts` and `subjects` are set, the effective
+            source scope is the union of both selections.
+          items:
+            type: string
+          type: array
+        subjects:
+          description: |-
+            Exact source subjects to replicate, using Schema Registry qualified
+            subject syntax. For example, "orders-value" selects the subject in the
+            default context, and ":.prod:orders-value" selects the subject in context
+            ".prod". If both `contexts` and `subjects` are set, the union of both
+            selections is replicated. If a subject is also included by `contexts`, it
+            is counted and replicated once.
+          items:
+            type: string
+          type: array
+      type: object
     SchemaRegistrySpec:
       description: Cluster's Schema Registry properties. See the [Schema Registry overview](https://docs.redpanda.com/redpanda-cloud/manage/schema-reg/schema-reg-overview/) and the [Schema Registry API reference](https://docs.redpanda.com/api/doc/schema-registry) for more information.
       properties:
@@ -3486,9 +3642,82 @@ components:
     SchemaRegistrySyncOptions:
       description: Options for how the Schema Registry is synced.
       properties:
+        shadow_schema_registry_api:
+          $ref: '#/components/schemas/ShadowSchemaRegistryApi'
         shadow_schema_registry_topic:
           $ref: '#/components/schemas/ShadowSchemaRegistryTopic'
       type: object
+    SchemaRegistrySyncStatus:
+      description: Status of Schema Registry syncing.
+      properties:
+        current_sync:
+          $ref: '#/components/schemas/SchemaRegistryCurrentSync'
+        inventory:
+          $ref: '#/components/schemas/SchemaRegistryInventory'
+        last_error_message:
+          description: |-
+            Short sanitized summary of the most recent Schema Registry sync
+            error. Detailed errors are written to broker logs.
+          type: string
+        last_full_sync:
+          $ref: '#/components/schemas/SchemaRegistrySyncSummary'
+        totals_since_task_start:
+          $ref: '#/components/schemas/SchemaRegistrySyncSummary'
+      type: object
+    SchemaRegistrySyncSummary:
+      description: Summary counters for one Schema Registry sync or for a cumulative interval.
+      properties:
+        compatibility_configs_changed:
+          description: |-
+            Number of selected compatibility configuration changes applied to the
+            destination.
+          format: int64
+          type: string
+        errors:
+          description: Number of errors observed during the sync or cumulative interval.
+          format: int64
+          type: string
+        finish_time:
+          description: |-
+            Time when the sync finished. This is unset for a sync that is still
+            running and for cumulative counters.
+          format: date-time
+          nullable: true
+          type: string
+        modes_changed:
+          description: Number of selected mode changes applied to the destination.
+          format: int64
+          type: string
+        start_time:
+          description: |-
+            Time when the sync started. For cumulative counters, this is the time
+            when the Schema Registry task started.
+          format: date-time
+          nullable: true
+          type: string
+        subject_versions_changed:
+          description: |-
+            Number of selected subject versions created, updated, or deleted on the
+            destination.
+          format: int64
+          type: string
+        unsupported_features_removed:
+          description: |-
+            Number of unsupported fields removed from schemas or schema configs when
+            UNSUPPORTED_SCHEMA_FEATURE_POLICY_REMOVE is used.
+          format: int64
+          type: string
+      type: object
+    SchemaRegistrySyncType:
+      description: |-
+        Type of Schema Registry sync currently running.
+
+         - SCHEMA_REGISTRY_SYNC_TYPE_FULL: A full source scan is running.
+         - SCHEMA_REGISTRY_SYNC_TYPE_TAIL: An incremental tail sync is running.
+      enum:
+        - SCHEMA_REGISTRY_SYNC_TYPE_FULL
+        - SCHEMA_REGISTRY_SYNC_TYPE_TAIL
+      type: string
     Scope:
       properties:
         dataplane_id:
@@ -4014,6 +4243,8 @@ components:
           $ref: '#/components/schemas/v2.ShadowLinkClientOptions'
         consumer_offset_sync_options:
           $ref: '#/components/schemas/ConsumerOffsetSyncOptions'
+        role_sync_options:
+          $ref: '#/components/schemas/RoleSyncOptions'
         schema_registry_sync_options:
           $ref: '#/components/schemas/SchemaRegistrySyncOptions'
         security_sync_options:
@@ -4080,6 +4311,8 @@ components:
       type: string
     ShadowLinkStatus:
       properties:
+        schema_registry_sync_status:
+          $ref: '#/components/schemas/SchemaRegistrySyncStatus'
         shadow_topics:
           items:
             $ref: '#/components/schemas/ShadowTopic'
@@ -4135,6 +4368,63 @@ components:
           $ref: '#/components/schemas/SecuritySettingsSyncOptions'
         topic_metadata_sync_options:
           $ref: '#/components/schemas/TopicMetadataSyncOptions'
+      type: object
+    ShadowSchemaRegistryApi:
+      description: |-
+        Replicates selected Schema Registry subjects, configs, modes, and schema
+        IDs over the Schema Registry HTTP API.
+      properties:
+        auth_options:
+          $ref: '#/components/schemas/SchemaRegistryAuthOptions'
+        destination:
+          $ref: '#/components/schemas/SchemaRegistryContextDestination'
+        effective_full_sync_interval:
+          description: The effective interval between full scans.
+          readOnly: true
+          type: string
+        effective_max_source_requests_per_second:
+          description: The effective maximum request rate, in requests per second.
+          format: int32
+          readOnly: true
+          type: integer
+        effective_tail_interval:
+          description: The effective interval between incremental polls.
+          readOnly: true
+          type: string
+        full_sync_interval:
+          description: |-
+            Interval between full scans of the selected source subjects. If unset
+            or zero, the cluster default of 5m is used.
+          type: string
+        max_source_requests_per_second:
+          description: |-
+            Maximum request rate, in requests per second, for calls to the source
+            Schema Registry. If unset or zero, a default rate limit of 30
+            requests/s is used.
+          format: int32
+          type: integer
+        paused:
+          description: |-
+            Allows the user to pause the Schema Registry sync task. If paused,
+            the task enters the 'paused' state and stops replicating schemas from
+            the source, and the per-context client write protection on the
+            contexts this link owns is lifted.
+          type: boolean
+        source_filter:
+          $ref: '#/components/schemas/SchemaRegistrySourceFilter'
+        source_url:
+          description: The source Schema Registry URL to use.
+          type: string
+        tail_interval:
+          description: |-
+            Interval between incremental polls for new source subjects and
+            subject versions. If unset or zero, the cluster default of 10s is
+            used.
+          type: string
+        tls_settings:
+          $ref: '#/components/schemas/common.v1.TLSSettings'
+        unsupported_schema_feature_policy:
+          $ref: '#/components/schemas/UnsupportedSchemaFeaturePolicy'
       type: object
     ShadowSchemaRegistryTopic:
       description: |-
@@ -4316,10 +4606,10 @@ components:
         [IANA Time Zone Database](https://www.iana.org/time-zones).
       properties:
         id:
-          description: IANA Time Zone Database time zone, e.g. "America/New_York".
+          description: IANA Time Zone Database time zone. For example "America/New_York".
           type: string
         version:
-          description: Optional. IANA Time Zone Database version number, e.g. "2019a".
+          description: Optional. IANA Time Zone Database version number. For example "2019a".
           type: string
       type: object
     TopicMetadataSyncOptions:
@@ -4442,6 +4732,16 @@ components:
       type: object
     Unspecified:
       type: object
+    UnsupportedSchemaFeaturePolicy:
+      description: |-
+        Policy for handling source schema features unsupported by the destination.
+
+         - UNSUPPORTED_SCHEMA_FEATURE_POLICY_FAIL: Fail the sync when an unsupported schema feature is encountered.
+         - UNSUPPORTED_SCHEMA_FEATURE_POLICY_REMOVE: Remove unsupported schema features before writing to the destination.
+      enum:
+        - UNSUPPORTED_SCHEMA_FEATURE_POLICY_FAIL
+        - UNSUPPORTED_SCHEMA_FEATURE_POLICY_REMOVE
+      type: string
     UpdateClusterMetadata:
       description: Resource describing an in-progress UpdateCluster Operation.
       properties:
@@ -4997,6 +5297,9 @@ components:
           $ref: '#/components/schemas/GCPServiceAccount'
         rpsql_cloud_storage_bucket:
           $ref: '#/components/schemas/CustomerManagedGoogleCloudStorageBucket'
+        rpsql_secret_manager_prefix:
+          description: GCP Secret Manager prefix for Redpanda SQL Iceberg catalog credentials.
+          type: string
         rpsql_service_account:
           $ref: '#/components/schemas/GCPServiceAccount'
         subnet:
@@ -6583,6 +6886,7 @@ paths:
                 - TYPE_CREATE_NETWORK_PEERING
                 - TYPE_DELETE_NETWORK_PEERING
                 - TYPE_UPDATE_NETWORK
+                - TYPE_UPDATE_SERVERLESS_CLUSTER
                 - TYPE_CREATE_SHADOW_LINK
                 - TYPE_UPDATE_SHADOW_LINK
                 - TYPE_DELETE_SHADOW_LINK

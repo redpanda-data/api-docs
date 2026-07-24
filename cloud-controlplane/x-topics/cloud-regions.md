@@ -80,13 +80,21 @@ Usage tiers define the sizing of a cluster and provide tested and guaranteed wor
       <ul>
         <li>tier-1-gcp-v2-x86: BYOC, Dedicated</li>
         <li>tier-2-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-2-gcp-v3-x86: BYOC</li>
         <li>tier-3-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-3-gcp-v3-x86: BYOC</li>
         <li>tier-4-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-4-gcp-v3-x86: BYOC</li>
         <li>tier-5-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-5-gcp-v3-x86: BYOC</li>
         <li>tier-6-gcp-v2-x86: BYOC</li>
+        <li>tier-6-gcp-v3-x86: BYOC</li>
         <li>tier-7-gcp-v2-x86: BYOC</li>
+        <li>tier-7-gcp-v3-x86: BYOC</li>
         <li>tier-8-gcp-v2-x86: BYOC</li>
+        <li>tier-8-gcp-v3-x86: BYOC</li>
         <li>tier-9-gcp-v2-x86: BYOC</li>
+        <li>tier-9-gcp-v3-x86: BYOC</li>
       </ul>
     </td>
   </tr>
@@ -131,13 +139,21 @@ Usage tiers define the sizing of a cluster and provide tested and guaranteed wor
       <ul>
         <li>tier-1-gcp-v2-x86: BYOC, Dedicated</li>
         <li>tier-2-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-2-gcp-v3-x86: BYOC</li>
         <li>tier-3-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-3-gcp-v3-x86: BYOC</li>
         <li>tier-4-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-4-gcp-v3-x86: BYOC</li>
         <li>tier-5-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-5-gcp-v3-x86: BYOC</li>
         <li>tier-6-gcp-v2-x86: BYOC</li>
+        <li>tier-6-gcp-v3-x86: BYOC</li>
         <li>tier-7-gcp-v2-x86: BYOC</li>
+        <li>tier-7-gcp-v3-x86: BYOC</li>
         <li>tier-8-gcp-v2-x86: BYOC</li>
+        <li>tier-8-gcp-v3-x86: BYOC</li>
         <li>tier-9-gcp-v2-x86: BYOC</li>
+        <li>tier-9-gcp-v3-x86: BYOC</li>
       </ul>
     </td>
   </tr>
@@ -148,13 +164,21 @@ Usage tiers define the sizing of a cluster and provide tested and guaranteed wor
       <ul>
         <li>tier-1-gcp-v2-x86: BYOC, Dedicated</li>
         <li>tier-2-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-2-gcp-v3-x86: BYOC</li>
         <li>tier-3-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-3-gcp-v3-x86: BYOC</li>
         <li>tier-4-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-4-gcp-v3-x86: BYOC</li>
         <li>tier-5-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-5-gcp-v3-x86: BYOC</li>
         <li>tier-6-gcp-v2-x86: BYOC</li>
+        <li>tier-6-gcp-v3-x86: BYOC</li>
         <li>tier-7-gcp-v2-x86: BYOC</li>
+        <li>tier-7-gcp-v3-x86: BYOC</li>
         <li>tier-8-gcp-v2-x86: BYOC</li>
+        <li>tier-8-gcp-v3-x86: BYOC</li>
         <li>tier-9-gcp-v2-x86: BYOC</li>
+        <li>tier-9-gcp-v3-x86: BYOC</li>
       </ul>
     </td>
   </tr>
@@ -165,13 +189,21 @@ Usage tiers define the sizing of a cluster and provide tested and guaranteed wor
       <ul>
         <li>tier-1-gcp-v2-x86: BYOC, Dedicated</li>
         <li>tier-2-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-2-gcp-v3-x86: BYOC</li>
         <li>tier-3-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-3-gcp-v3-x86: BYOC</li>
         <li>tier-4-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-4-gcp-v3-x86: BYOC</li>
         <li>tier-5-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-5-gcp-v3-x86: BYOC</li>
         <li>tier-6-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-6-gcp-v3-x86: BYOC</li>
         <li>tier-7-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-7-gcp-v3-x86: BYOC</li>
         <li>tier-8-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-8-gcp-v3-x86: BYOC</li>
         <li>tier-9-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-9-gcp-v3-x86: BYOC</li>
       </ul>
     </td>
   </tr>
@@ -182,13 +214,21 @@ Usage tiers define the sizing of a cluster and provide tested and guaranteed wor
       <ul>
         <li>tier-1-gcp-v2-x86: BYOC</li>
         <li>tier-2-gcp-v2-x86: BYOC</li>
+        <li>tier-2-gcp-v3-x86: BYOC</li>
         <li>tier-3-gcp-v2-x86: BYOC</li>
+        <li>tier-3-gcp-v3-x86: BYOC</li>
         <li>tier-4-gcp-v2-x86: BYOC</li>
+        <li>tier-4-gcp-v3-x86: BYOC</li>
         <li>tier-5-gcp-v2-x86: BYOC</li>
+        <li>tier-5-gcp-v3-x86: BYOC</li>
         <li>tier-6-gcp-v2-x86: BYOC</li>
+        <li>tier-6-gcp-v3-x86: BYOC</li>
         <li>tier-7-gcp-v2-x86: BYOC</li>
+        <li>tier-7-gcp-v3-x86: BYOC</li>
         <li>tier-8-gcp-v2-x86: BYOC</li>
+        <li>tier-8-gcp-v3-x86: BYOC</li>
         <li>tier-9-gcp-v2-x86: BYOC</li>
+        <li>tier-9-gcp-v3-x86: BYOC</li>
       </ul>
     </td>
   </tr>
@@ -250,13 +290,21 @@ Usage tiers define the sizing of a cluster and provide tested and guaranteed wor
       <ul>
         <li>tier-1-gcp-v2-x86: BYOC</li>
         <li>tier-2-gcp-v2-x86: BYOC</li>
+        <li>tier-2-gcp-v3-x86: BYOC</li>
         <li>tier-3-gcp-v2-x86: BYOC</li>
+        <li>tier-3-gcp-v3-x86: BYOC</li>
         <li>tier-4-gcp-v2-x86: BYOC</li>
+        <li>tier-4-gcp-v3-x86: BYOC</li>
         <li>tier-5-gcp-v2-x86: BYOC</li>
+        <li>tier-5-gcp-v3-x86: BYOC</li>
         <li>tier-6-gcp-v2-x86: BYOC</li>
+        <li>tier-6-gcp-v3-x86: BYOC</li>
         <li>tier-7-gcp-v2-x86: BYOC</li>
+        <li>tier-7-gcp-v3-x86: BYOC</li>
         <li>tier-8-gcp-v2-x86: BYOC</li>
+        <li>tier-8-gcp-v3-x86: BYOC</li>
         <li>tier-9-gcp-v2-x86: BYOC</li>
+        <li>tier-9-gcp-v3-x86: BYOC</li>
       </ul>
     </td>
   </tr>
@@ -267,13 +315,21 @@ Usage tiers define the sizing of a cluster and provide tested and guaranteed wor
       <ul>
         <li>tier-1-gcp-v2-x86: BYOC, Dedicated</li>
         <li>tier-2-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-2-gcp-v3-x86: BYOC</li>
         <li>tier-3-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-3-gcp-v3-x86: BYOC</li>
         <li>tier-4-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-4-gcp-v3-x86: BYOC</li>
         <li>tier-5-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-5-gcp-v3-x86: BYOC</li>
         <li>tier-6-gcp-v2-x86: BYOC</li>
+        <li>tier-6-gcp-v3-x86: BYOC</li>
         <li>tier-7-gcp-v2-x86: BYOC</li>
+        <li>tier-7-gcp-v3-x86: BYOC</li>
         <li>tier-8-gcp-v2-x86: BYOC</li>
+        <li>tier-8-gcp-v3-x86: BYOC</li>
         <li>tier-9-gcp-v2-x86: BYOC</li>
+        <li>tier-9-gcp-v3-x86: BYOC</li>
       </ul>
     </td>
   </tr>
@@ -284,13 +340,21 @@ Usage tiers define the sizing of a cluster and provide tested and guaranteed wor
       <ul>
         <li>tier-1-gcp-v2-x86: BYOC, Dedicated</li>
         <li>tier-2-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-2-gcp-v3-x86: BYOC</li>
         <li>tier-3-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-3-gcp-v3-x86: BYOC</li>
         <li>tier-4-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-4-gcp-v3-x86: BYOC</li>
         <li>tier-5-gcp-v2-x86: BYOC, Dedicated</li>
+        <li>tier-5-gcp-v3-x86: BYOC</li>
         <li>tier-6-gcp-v2-x86: BYOC</li>
+        <li>tier-6-gcp-v3-x86: BYOC</li>
         <li>tier-7-gcp-v2-x86: BYOC</li>
+        <li>tier-7-gcp-v3-x86: BYOC</li>
         <li>tier-8-gcp-v2-x86: BYOC</li>
+        <li>tier-8-gcp-v3-x86: BYOC</li>
         <li>tier-9-gcp-v2-x86: BYOC</li>
+        <li>tier-9-gcp-v3-x86: BYOC</li>
       </ul>
     </td>
   </tr>
@@ -301,13 +365,21 @@ Usage tiers define the sizing of a cluster and provide tested and guaranteed wor
       <ul>
         <li>tier-1-gcp-v2-x86: BYOC</li>
         <li>tier-2-gcp-v2-x86: BYOC</li>
+        <li>tier-2-gcp-v3-x86: BYOC</li>
         <li>tier-3-gcp-v2-x86: BYOC</li>
+        <li>tier-3-gcp-v3-x86: BYOC</li>
         <li>tier-4-gcp-v2-x86: BYOC</li>
+        <li>tier-4-gcp-v3-x86: BYOC</li>
         <li>tier-5-gcp-v2-x86: BYOC</li>
+        <li>tier-5-gcp-v3-x86: BYOC</li>
         <li>tier-6-gcp-v2-x86: BYOC</li>
+        <li>tier-6-gcp-v3-x86: BYOC</li>
         <li>tier-7-gcp-v2-x86: BYOC</li>
+        <li>tier-7-gcp-v3-x86: BYOC</li>
         <li>tier-8-gcp-v2-x86: BYOC</li>
+        <li>tier-8-gcp-v3-x86: BYOC</li>
         <li>tier-9-gcp-v2-x86: BYOC</li>
+        <li>tier-9-gcp-v3-x86: BYOC</li>
       </ul>
     </td>
   </tr>
@@ -318,13 +390,21 @@ Usage tiers define the sizing of a cluster and provide tested and guaranteed wor
       <ul>
         <li>tier-1-gcp-v2-x86: BYOC</li>
         <li>tier-2-gcp-v2-x86: BYOC</li>
+        <li>tier-2-gcp-v3-x86: BYOC</li>
         <li>tier-3-gcp-v2-x86: BYOC</li>
+        <li>tier-3-gcp-v3-x86: BYOC</li>
         <li>tier-4-gcp-v2-x86: BYOC</li>
+        <li>tier-4-gcp-v3-x86: BYOC</li>
         <li>tier-5-gcp-v2-x86: BYOC</li>
+        <li>tier-5-gcp-v3-x86: BYOC</li>
         <li>tier-6-gcp-v2-x86: BYOC</li>
+        <li>tier-6-gcp-v3-x86: BYOC</li>
         <li>tier-7-gcp-v2-x86: BYOC</li>
+        <li>tier-7-gcp-v3-x86: BYOC</li>
         <li>tier-8-gcp-v2-x86: BYOC</li>
+        <li>tier-8-gcp-v3-x86: BYOC</li>
         <li>tier-9-gcp-v2-x86: BYOC</li>
+        <li>tier-9-gcp-v3-x86: BYOC</li>
       </ul>
     </td>
   </tr>
