@@ -3217,9 +3217,9 @@ info:
   title: Redpanda Admin API
   version: v2.0.0
   x-admin-api-major: v2.0.0
-  x-generated-at: 2026-07-17T02:15:01.594Z
+  x-generated-at: 2026-07-28T03:36:21.883Z
   x-generator: redpanda-docs-openapi-bundler
-  x-redpanda-core-version: v26.2.1-rc4
+  x-redpanda-core-version: v26.2.1
 openapi: 3.1.0
 paths:
   /redpanda.core.admin.v2.BrokerService/GetBroker:
