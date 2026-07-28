@@ -1,0 +1,17 @@
+# TEMPORARY FIX: override the auto-generated summary for GetIcebergStatus.
+#
+# Upstream, the proto's leading comment for GetIcebergStatus is emitted as the
+# operation `summary`, producing a long run-on paragraph instead of a short
+# title. Every other v2 endpoint uses its bare method name as the summary, so
+# this overlay restores that convention for GetIcebergStatus.
+#
+# Remove this overlay once the proto is fixed upstream and the regenerated
+# admin-v2.yaml emits a short summary on its own.
+overlay: 1.0.0
+info:
+  title: Fix GetIcebergStatus summary (temporary)
+  version: 1.0.0
+actions:
+  - target: "$.paths['/redpanda.core.admin.v2.IcebergService/GetIcebergStatus'].post"
+    update:
+      summary: GetIcebergStatus
