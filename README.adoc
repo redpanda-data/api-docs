@@ -20,8 +20,6 @@ This repository hosts the documentation content for Redpanda APIs.
 
 The Redpanda docs are open source, and we welcome your contributions!
 
-Before you add or edit content, consult the Redpanda https://github.com/redpanda-data/docs-site/blob/main/meta-docs/STYLE-GUIDE.adoc[Style Guide] for product documentation guidelines.
-
 To contribute to the Redpanda docs, you have the following options:
 
 |===
@@ -51,7 +49,7 @@ If you are a Redpanda employee, submit doc issues in the Documentation https://r
 You have two options to contribute to the documentation:
 
 . Directly edit a page on GitHub by selecting **Make a contribution** > **Edit on GitHub** located at the bottom of a documentation page.
-. Clone the docs repository to make changes locally on your machine. For a guide, see {url-playbook}/blob/main/meta-docs/CONTRIBUTING.adoc[Submit your first contribution].
+. Clone the docs repository to make changes locally on your machine, then open a pull request.
 
 Check the open docs issues. If you find an issue you'd like to work on:
 
